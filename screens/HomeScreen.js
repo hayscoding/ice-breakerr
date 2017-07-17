@@ -8,9 +8,12 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
+
+const {height, width} = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -21,7 +24,27 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return(
-      <View></View>
+      <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <View style={styles.mainTitle}>
+            <Text style={styles.underline}>Recent Updates</Text>
+          </View>
+          <ScrollView style={styles.recentUpdates}>
+            <View style={styles.partyUpdate}>
+              <Text style={styles.name}>10:33pm: PARTY IN COMMONS!!</Text>
+            </View>
+            <View style={styles.update}>
+              <Text style={styles.name}>12:14pm: Need people for LCU labor</Text>
+            </View>
+            <View style={styles.goodUpdate}>
+              <Text style={styles.name}>11:32am: Food is currently in the kitchen</Text>
+            </View>
+            <View style={styles.badUpdate}>
+              <Text style={styles.name}>9:00am: You have labor hours today</Text>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
     )
   };
 }
@@ -31,85 +54,90 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
+  topContainer: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderBottomWidth: 2,
+    borderColor: 'lightgrey',
+  },
+  name: {
+    color: '#2B2B2B',
     fontSize: 15,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 80,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 140,
-    height: 38,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 23,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
     marginTop: 5,
+    marginBottom: 2,
+    textAlign: 'center'
   },
-  helpContainer: {
-    marginTop: 15,
+  match: {
+    justifyContent: 'center', 
     alignItems: 'center',
+    height: 50,
+    borderBottomWidth: 1,
+    borderColor: 'lightgrey',
+    backgroundColor:'white',
   },
-  helpLink: {
-    paddingVertical: 15,
+  mainTitle: {
+    height: height/20,
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor:'white',
+    width: width/6*5,
+    borderBottomWidth: 1,
+    borderColor: 'lightgrey',
   },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+  underline: {
+    color: '#2B2B2B',
+    fontSize: 20,
+    marginTop: 5,
+    marginBottom: 1,
+    textAlign: 'center',
+  },
+  recentUpdates: {
+    flex: 1,
+    width: width/6*5,
+  },
+  update: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 10,
+    backgroundColor: '#EDEDED',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  badUpdate: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 10,
+    backgroundColor: 'pink',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  goodUpdate: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 10,
+    backgroundColor: 'lightgreen',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  partyUpdate: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 10,
+    backgroundColor: '#D7B5FF',
+    borderRadius: 25,
+    overflow: 'hidden',
   },
 });

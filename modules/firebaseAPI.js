@@ -75,7 +75,7 @@ export const getMatches = (key, func) => {
       else
         func(null)
     })
-}con
+}
 
 export const getUser = (key) => {
   return firebase.database().ref().child('users').child(key).once('value')
