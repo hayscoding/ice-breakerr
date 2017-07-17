@@ -102,6 +102,25 @@ export const getUsersCb = (keyArray, func) => {
     })
 }
 
+
+export const getAllUsers = (func) => {
+  firebase.database().ref().child('users').once('value')
+    .then((snap) => {
+      if(snap.val() != null) {
+        const users = []
+
+
+        if(snap.val() != null)
+          getUsersCb(Object.keys(snap.val()), (profiles) => {
+            if(profiles != null)
+              func(profiles)
+          })
+        else
+          func(null)
+      }
+    })
+}
+
 export const updateUserInfoInGame = (gameKey, profileIndex, key, value) => {
   firebase.database().ref().child('games').child(gameKey).child('profilesInfo/'+profileIndex)
     .update({[key]:value})
