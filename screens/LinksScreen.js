@@ -12,7 +12,8 @@ export default class LinksScreen extends React.Component {
   };
 
   componentWillMount() {
-      this.state = { 
+      this.state = {
+        user: this.props.navigation.state.params.user, 
         profiles: [],
       }
 
@@ -22,7 +23,7 @@ export default class LinksScreen extends React.Component {
   }
 
   showProfile(profile) {
-    this.props.navigation.navigate('Profile', {profile: profile})
+    this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
   }
 
   render() {

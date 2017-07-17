@@ -11,8 +11,9 @@ import {
 const {height, width} = Dimensions.get('window');
 
 export default class Profile extends Component {
+
   startChat(profile) {
-    return null
+    this.props.navigation.navigate('Chat', {profile: this.props.navigation.state.params.profile, user: this.props.navigation.state.params.user})
   }
 
   render() {

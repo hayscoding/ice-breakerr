@@ -6,6 +6,8 @@ import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from './LoginScreen'
 import LoadingScreen from './LoadingScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import ChatScreen from '../screens/ChatScreen'
+
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 const RootStackNavigator = StackNavigator(
@@ -21,6 +23,9 @@ const RootStackNavigator = StackNavigator(
     },
     Profile: {
       screen: ProfileScreen,
+    },
+    Chat: {
+      screen: ChatScreen,
     },
   },
   {

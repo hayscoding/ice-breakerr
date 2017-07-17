@@ -17,16 +17,13 @@ const {height, width} = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: 'Ice Breaker',
+    title: 'Your Chats',
   };
 
   render() {
     return(
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <View style={styles.mainTitle}>
-            <Text style={styles.underline}>Recent Updates</Text>
-          </View>
           <ScrollView style={styles.recentUpdates}>
             <View style={styles.partyUpdate}>
               <Text style={styles.name}>10:33pm: PARTY IN COMMONS!!</Text>

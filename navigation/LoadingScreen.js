@@ -24,7 +24,7 @@ export default class Loading extends Component {
           const user = snap.val()
           if (user != null) {
             this.firebaseRef.child(fbAuth.uid).off('value')
-            this.props.navigation.navigate('Home')
+            this.props.navigation.navigate('Home', {user})
             //this.props.navigator.push(Router.getRoute('menu', {user}))
           }
         }) 
