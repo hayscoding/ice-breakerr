@@ -15,10 +15,10 @@ import SettingsScreen from '../screens/SettingsScreen';
 export default TabNavigator(
   {
     Home: {
-      screen: HomeScreen,
+      screen: LinksScreen,
     },
     Links: {
-      screen: LinksScreen,
+      screen: HomeScreen,
     },
     Settings: {
       screen: SettingsScreen,

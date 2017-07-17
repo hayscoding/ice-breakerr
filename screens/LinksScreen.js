@@ -6,7 +6,9 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
-    title: 'Members',
+    title: 'People Near You',
+    headerLeft: null,
+    gesturesEnabled: false,
   };
 
   componentWillMount() {
@@ -15,8 +17,6 @@ export default class LinksScreen extends React.Component {
       }
 
       FirebaseAPI.getAllUsers((users) => {
-        // console.log('users')
-        // console.log(users)
         this.setState({profiles: users})
       })
   }

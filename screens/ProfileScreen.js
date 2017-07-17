@@ -11,6 +11,10 @@ import {
 const {height, width} = Dimensions.get('window');
 
 export default class Profile extends Component {
+  startChat(profile) {
+    return null
+  }
+
   render() {
     const profile = this.props.navigation.state.params.profile
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
@@ -23,10 +27,12 @@ export default class Profile extends Component {
             source={{uri: fbImageUrl}}
             style={{width:width, height:height/2}} />
           <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.bio}>Profile bio goes here...</Text>
-          <Text style={styles.bio}>Contact info goes here...{'\n'}</Text>
-          <Text style={styles.bio}>Number of days as a member goes here...</Text>
-          <Text style={styles.bio}>Current vacation status goes here...</Text>
+          <Text style={styles.bio}>Profile bio goes here...{'\n'}</Text>
+          <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
+            <TouchableOpacity onPress={() => {this.startChat(profile)}} >
+              <Text style={styles.chatButton} >Send Message</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     )
@@ -36,7 +42,9 @@ export default class Profile extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
     height:height,
     width:width,
     backgroundColor:'white',
@@ -58,4 +66,20 @@ const styles = StyleSheet.create({
     color:'black',
     textAlign: 'center'
   },
+  chatButton: {
+    width: width,
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    textAlign: 'center', 
+    color:'white', 
+    fontSize:24, 
+    backgroundColor: 'green',
+    borderColor: 'lightgrey', 
+    borderTopWidth: 3, 
+    // shadowColor: '#000000', 
+    // shadowOffset: {width: 0, height: 0}, 
+    // shadowRadius: 10, 
+    // shadowOpacity: 0.5,
+  }
 });
