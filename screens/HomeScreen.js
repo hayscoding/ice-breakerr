@@ -13,6 +13,8 @@ import {
 
 import { MonoText } from '../components/StyledText';
 
+import * as FirebaseAPI from '../modules/firebaseAPI'
+
 const {height, width} = Dimensions.get('window');
 
 export default class HomeScreen extends React.Component {
@@ -20,24 +22,40 @@ export default class HomeScreen extends React.Component {
     title: 'Your Chats',
   };
 
+  componentWillMount() {
+      this.state = {
+        user: this.props.navigation.state.params.user, 
+        profiles: []
+      }
+
+      FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
+        this.setState({profiles: profiles})
+      })
+  }
+
+  openChat(profile) {
+    this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
+  }
+
+
   render() {
     return(
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <ScrollView style={styles.recentUpdates}>
-            <View style={styles.partyUpdate}>
-              <Text style={styles.name}>10:33pm: PARTY IN COMMONS!!</Text>
-            </View>
-            <View style={styles.update}>
-              <Text style={styles.name}>12:14pm: Need people for LCU labor</Text>
-            </View>
-            <View style={styles.goodUpdate}>
-              <Text style={styles.name}>11:32am: Food is currently in the kitchen</Text>
-            </View>
-            <View style={styles.badUpdate}>
-              <Text style={styles.name}>9:00am: You have labor hours today</Text>
-            </View>
-          </ScrollView>
+          {
+            this.state.profiles.map((profile) => {
+              return (
+                <TouchableOpacity onPress={() => {this.openChat(profile)}}
+                key={profile.uid+"-touchable"} >
+                  <View style={styles.match}  key={profile.uid+"-container"}>
+                    <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            })
+          }
+      </ScrollView>
         </View>
       </View>
     )

@@ -102,14 +102,32 @@ export const getUsersCb = (keyArray, func) => {
     })
 }
 
+export const getChat = (key) => {
+  return firebase.database().ref().child('messages').child(key).once('value')
+    .then((snap) => snap.val())
+}
+
+export const getProfilesInChatsWithKey = (key, func) => {
+  return firebase.database().ref().child('messages').once('value')
+    .then((snap) => {
+    if(snap.val() != null) {
+        const profileUids = []
+
+        Object.keys(snap.val()).forEach((chatID) => {
+          if(chatID.split('-').some((uid) => {return uid == key}))
+            profileUids.push(chatID.split('-').filter((uid) => {return uid != key}))
+        })
+
+        getUsersCb(profileUids, (profiles) => {func(profiles)})
+      }
+    })
+}
+
 
 export const getAllUsers = (func) => {
   firebase.database().ref().child('users').once('value')
     .then((snap) => {
       if(snap.val() != null) {
-        const users = []
-
-
         if(snap.val() != null)
           getUsersCb(Object.keys(snap.val()), (profiles) => {
             if(profiles != null)
