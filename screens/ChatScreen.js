@@ -35,8 +35,7 @@ export default class Match extends Component {
       interactionsComplete: false,
     }
 
-
-    const profileUid = this.props.navigation.state.params.uid
+    const profileUid = this.props.navigation.state.params.profile.uid
     const uid = this.props.navigation.state.params.user.uid
 
     //Sort uid concatenation in order of greatness so every user links to the same chat

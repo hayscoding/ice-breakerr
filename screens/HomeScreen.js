@@ -53,8 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderBottomWidth: 2,
-    borderColor: 'lightgrey',
   },
   name: {
     color: '#2B2B2B',
