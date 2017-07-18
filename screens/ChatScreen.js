@@ -109,7 +109,7 @@ export default class Match extends Component {
 
   	return(
   		<View style={{flex: 1}}>
-        <View>
+        <View style={{borderBottomWidth: 1, borderColor: 'lightgrey'}}>
           	<Text style={styles.name}>{profile.name}</Text>
         </View>
   		  <View style={styles.container}>
@@ -122,9 +122,6 @@ export default class Match extends Component {
                 _id: this.state.user.uid,
               }} />
           </View>
-  		    <TouchableOpacity style={{justifyContent: 'flex-start', alignItems:'center'}} onPress={() => {}}>
-  		      <Text style={{marginTop: 10, marginBottom: 20, fontSize: 40}}></Text>
-  		    </TouchableOpacity>
   		  </View>
   		</View>
   	)
@@ -133,56 +130,14 @@ export default class Match extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 13,
-    borderTopWidth: 2,
-    borderColor: 'lightgrey',
+    flex: 1,
     backgroundColor:'white',
   },
-  promptText: {
-    marginTop: 10, 
-    marginBottom: 20,
-    margin: 10, 
-    fontSize: 28,
-    textAlign: 'center'
-  },
-  promptTouchable: {
-    justifyContent: 'flex-start',
-    alignItems:'center', 
-    height: height/7,
-    borderBottomWidth: 2, 
-    borderColor: 'gray'
-  },
-  containerTop: {
-    flex: 1,
-    marginTop: 5,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgray'
-  },
-  containerBottom: {
-    flex: 1,
-    marginTop: 5,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray'
-  },
-  nameHeader: {
-    width: width,
-    alignSelf: 'center',
-    borderBottomWidth:  1,
-    borderColor: 'lightgrey'
-  },
-  nameHeaderPipe: {
-    width: width/5,
-    alignSelf: 'center',
-  },
   name: {
-    color: '#2B2B2B',
+    backgroundColor:'white',
     fontSize: 20,   
     textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 });
