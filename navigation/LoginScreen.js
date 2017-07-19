@@ -18,7 +18,7 @@ const APP_ID = '1897933140424590';
 
 const {height, width} = Dimensions.get('window');
 
-export default class Login extends Component {
+export default class Login extends React.Component {
 	static navigationOptions = {
 	    title: 'Ice Breaker',
 	    headerLeft: null,

@@ -107,6 +107,49 @@ export const getChat = (key) => {
     .then((snap) => snap.val())
 }
 
+export const getChatCb = (key, func) => {
+  return firebase.database().ref().child('messages').child(key).once('value')
+    .then((snap) => { func(snap.val()) })
+}
+
+export const getChatsCb = (keyArray, func) => {
+  firebase.database().ref().child('messages').once('value')
+    .then((snap) => {
+      if(snap.val() != null) {
+        const chats = []
+
+        keyArray.forEach((key) => {
+          chats.push(snap.val()[key])
+        })
+
+        func(chats)
+      }
+    })
+}
+
+export const getChatWithProfiles = (userKey, profileKey, func) => {
+  //Sort uid concatenation in order of greatness so every user links to the same chat
+  const uidArray = [userKey, profileKey]
+  uidArray.sort()
+  const chatID = uidArray[0]+'-'+uidArray[1]
+
+  getChatCb(chatID, (chat) => { func(chat) })
+}
+
+export const getChatIDsWithProfiles = (userKey, profileKeyArray, func) => {
+  const chatIDs = []
+
+  profileKeyArray.forEach((profileKey) => {
+    const uidArray = [userKey, profileKey]
+    uidArray.sort()
+    const chatID = uidArray[0]+'-'+uidArray[1]
+
+    chatIDs.push(chatID)
+  })
+
+  func(chatIDs)
+}
+
 export const getProfilesInChatsWithKey = (key, func) => {
   return firebase.database().ref().child('messages').once('value')
     .then((snap) => {
@@ -135,6 +178,16 @@ export const checkForChat = (userKey, profileKey, func) => {
         })
 
         func(hasChat)
+      } 
+  })
+}
+
+export const watchChatForRecentMessage = (key, func) => {
+  firebase.database().ref().child('message').child(key).on('value', (snap) => {
+      if(snap.val() != null) {
+        console.log('snapaf slkdjfalskdfjlkasjf')
+        console.log(snap.val()[0])
+        func(snap.val()[0])
       } 
   })
 }
