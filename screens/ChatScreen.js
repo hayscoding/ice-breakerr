@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   Image,
+  Button, 
   Text,
   TouchableOpacity, 
   Dimensions,
@@ -20,10 +21,14 @@ import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
+const size = 50;
+
 export default class Match extends Component {
-  static navigationOptions = {
-    title: 'Chat',
-  };
+  static navigationOptions = ({ navigation }) => ({
+    title: `${navigation.state.params.profile.name}`,
+    headerRight: (<Button title='Info' 
+                    onPress={() => {navigation.navigate('Profile', {profile: navigation.state.params.profile, user: navigation.state.params.user})}} />),
+  });
 
   componentWillMount() {
     this.state = { 
@@ -56,10 +61,10 @@ export default class Match extends Component {
       this.setState({interactionsComplete: true});
     });
   }
-  nextProfileIndex() {
-    this.setState({
-      profileIndex:this.state.profileIndex+1
-    })
+
+  getFbImageUrl(profile) {
+    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
+    return fbImageUrl
   }
 
    watchChat() {
@@ -108,9 +113,6 @@ export default class Match extends Component {
 
   	return(
   		<View style={{flex: 1}}>
-        <View style={{borderBottomWidth: 1, borderColor: 'lightgrey'}}>
-          	<Text style={styles.name}>{profile.name}</Text>
-        </View>
   		  <View style={styles.container}>
   		  	<View style={{flex:1, borderBottomWidth: 1, borderColor: 'gray'}} >
             <GiftedChat
