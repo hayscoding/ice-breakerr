@@ -1,8 +1,11 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
+
+const {height, width} = Dimensions.get('window');
+const size = 50;
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
@@ -29,19 +32,28 @@ export default class LinksScreen extends React.Component {
     this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
   }
 
+  getFbImageUrl(profile) {
+    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
+    return fbImageUrl
+  }
+
   render() {
     return (
       <ScrollView style={styles.container}>
       {
         this.state.profiles.map((profile) => {
-            return (
-              <TouchableOpacity onPress={() => {this.showProfile(profile)}}
-              key={profile.uid+"-touchable"} >
-                <View style={styles.match}  key={profile.uid+"-container"}>
-                  <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
-                </View>
-              </TouchableOpacity>
-            )
+          return (
+            <TouchableOpacity onPress={() => {this.showProfile(profile)}}
+            key={profile.uid+"-touchable"} >
+              <View style={styles.match}  key={profile.uid+"-container"}>
+                <Image
+                  resizeMode='cover'
+                  source={{uri: this.getFbImageUrl(profile)}}
+                  style={[{width: size, height: size, borderRadius: size/2}]}/>
+                <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
+              </View>
+            </TouchableOpacity>
+          )
         })
       }
       </ScrollView>
@@ -56,17 +68,21 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#2B2B2B',
-    fontSize: 15,
-    marginTop: 5,
-    marginBottom: 2,
-    textAlign: 'center'
+    fontSize: 18,
+    marginTop: 15,
+    paddingLeft: 30,
+    textAlign: 'left',
   },
   match: {
-    justifyContent: 'center', 
-    alignItems: 'center',
-    height: 50,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start', 
+    alignItems: 'flex-start',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
     backgroundColor:'white',
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 30,
   },
 });

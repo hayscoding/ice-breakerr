@@ -10,7 +10,7 @@ import {
 
 const {height, width} = Dimensions.get('window');
 
-export default class Profile extends Component {
+export default class Profile extends React.Component {
 
   startChat(profile) {
     this.props.navigation.navigate('Chat', {profile: this.props.navigation.state.params.profile, user: this.props.navigation.state.params.user})
@@ -19,6 +19,8 @@ export default class Profile extends Component {
   render() {
     const profile = this.props.navigation.state.params.profile
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
+
+    console.log(fbImageUrl)
 
     return(
       <View style={{flex: 1}}>
