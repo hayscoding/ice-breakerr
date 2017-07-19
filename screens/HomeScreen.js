@@ -105,7 +105,7 @@ export default class HomeScreen extends React.Component {
                     <Image
                       resizeMode='cover'
                       source={{uri: this.getFbImageUrl(profile)}}
-                      style={[{width: size, height: size, borderRadius: size/2}]}/>  
+                      style={[{width: size, height: size, borderRadius: size/4}]}/>  
                     <View>   
                       <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
                       <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   messagePreview: {
-    color: 'lightgray',
+    color: 'gray',
     fontSize: 12,
     paddingLeft: 15,
     paddingTop: 2,

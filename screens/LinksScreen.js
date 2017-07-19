@@ -5,7 +5,7 @@ import { ExpoLinksView } from '@expo/samples';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
-const size = 50;
+const size = 275;
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
@@ -39,24 +39,27 @@ export default class LinksScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-      {
-        this.state.profiles.map((profile) => {
-          return (
-            <TouchableOpacity onPress={() => {this.showProfile(profile)}}
-            key={profile.uid+"-touchable"} >
-              <View style={styles.match}  key={profile.uid+"-container"}>
-                <Image
-                  resizeMode='cover'
-                  source={{uri: this.getFbImageUrl(profile)}}
-                  style={[{width: size, height: size, borderRadius: size/2}]}/>
-                <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
-              </View>
-            </TouchableOpacity>
-          )
-        })
-      }
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView>
+        {
+          this.state.profiles.map((profile) => {
+            return (
+              <TouchableOpacity onPress={() => {this.showProfile(profile)}}
+              key={profile.uid+"-touchable"} >
+                <View style={styles.match}  key={profile.uid+"-container"}>
+                  <View style={styles.shadow} key={profile.uid+"-shadow"}>
+                    <Image
+                      resizeMode='cover'
+                      source={{uri: this.getFbImageUrl(profile)}}
+                      style={styles.image}/>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
+          })
+        }
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -64,25 +67,34 @@ export default class LinksScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    width: width,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   name: {
     color: '#2B2B2B',
     fontSize: 18,
     marginTop: 15,
-    paddingLeft: 30,
     textAlign: 'left',
   },
   match: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start', 
-    alignItems: 'flex-start',
-    borderBottomWidth: 1,
-    borderColor: 'lightgrey',
-    backgroundColor:'white',
+    width: width,
+    justifyContent: 'center', 
+    alignItems: 'center',
     paddingTop: 10,
     paddingBottom: 10,
-    paddingLeft: 30,
   },
+  shadow: {
+    shadowColor: '#000000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowRadius: 20, 
+    shadowOpacity: 0.2,
+    borderRadius: size/4,
+  },
+  image: {
+    width: size, 
+    height: size,
+    borderRadius: size/4,
+  }
 });
