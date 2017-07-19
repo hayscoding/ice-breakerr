@@ -28,7 +28,7 @@ export default class HomeScreen extends React.Component {
         profiles: []
       }
 
-      FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
+      FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
         this.setState({profiles: profiles})
       })
   }

@@ -12,7 +12,7 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 import LoginScreen from './LoginScreen'
 import HomeScreen from '../screens/HomeScreen';
 
-export default class Loading extends Component {
+export default class Loading extends React.Component {
   componentWillMount() {
     this.firebaseRef = firebase.database().ref('users')
   }
