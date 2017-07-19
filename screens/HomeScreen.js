@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   recentUpdates: {
     flex: 1,
-    width: width/6*5,
+    width: width,
   },
   update: {
     paddingTop: 10,
