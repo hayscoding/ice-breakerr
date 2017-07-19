@@ -23,7 +23,7 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 const {height, width} = Dimensions.get('window');
 const size = 50;
 
-export default class Match extends Component {
+export default class ChatScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.profile.name}`,
     headerRight: (<Button title='Info' 

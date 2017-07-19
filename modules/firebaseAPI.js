@@ -123,6 +123,22 @@ export const getProfilesInChatsWithKey = (key, func) => {
     })
 }
 
+export const checkForChat = (userKey, profileKey, func) => {
+  firebase.database().ref().child('messages').once('value')
+    .then((snap) => {
+      if(snap.val() != null) {
+        let hasChat = false
+
+        Object.keys(snap.val()).forEach((chatID) => {
+          if(chatID.split('-').some((uid) => {return uid == userKey}) && chatID.split('-').some((uid) => {return uid == profileKey}))
+            hasChat = true
+        })
+
+        func(hasChat)
+      } 
+  })
+}
+
 export const watchProfilesInChatsWithKey = (key, func) => {
   return firebase.database().ref().child('messages').on('value', (snap) => {
     if(snap.val() != null) {

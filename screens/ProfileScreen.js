@@ -8,9 +8,35 @@ import {
   Dimensions,
 } from 'react-native';
 
+import * as FirebaseAPI from '../modules/firebaseAPI'
+
 const {height, width} = Dimensions.get('window');
 
 export default class Profile extends React.Component {
+  componentWillMount() {
+    this.state = {
+      user: this.props.navigation.state.params.user, 
+      profile: this.props.navigation.state.params.profile,
+      hasChat: false,
+    }
+
+    FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
+      this.setState({hasChat: outcome})
+    })
+  }
+
+  sendMessageTouchable(profile) {
+    if(!this.state.hasChat)
+      return(
+        <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
+          <TouchableOpacity onPress={() => {this.startChat(profile)}} >
+            <Text style={styles.chatButton} >Send Message</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    else
+      return null
+  }
 
   startChat(profile) {
     this.props.navigation.navigate('Chat', {profile: this.props.navigation.state.params.profile, user: this.props.navigation.state.params.user})
@@ -31,11 +57,7 @@ export default class Profile extends React.Component {
             style={{width:width, height:height/2}} />
           <Text style={styles.name}>{profile.name}</Text>
           <Text style={styles.bio}>Profile bio goes here...{'\n'}</Text>
-          <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
-            <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-              <Text style={styles.chatButton} >Send Message</Text>
-            </TouchableOpacity>
-          </View>
+          { this.sendMessageTouchable(profile) } 
         </View>
       </View>
     )
@@ -47,7 +69,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     height:height,
     width:width,
     backgroundColor:'white',
