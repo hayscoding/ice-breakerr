@@ -24,6 +24,8 @@ const size = 50;
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Your Chats',
+    headerLeft: null,
+    gesturesEnabled: false,
   };
 
   componentWillMount() {
@@ -38,6 +40,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentWillUnmount() {
+    FirebaseAPI.turnOffChatListener()
     this.state.profiles.map((profile) => {
       const uidArray = [profile.uid, this.state.user.uid]
       uidArray.sort()

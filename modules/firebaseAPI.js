@@ -207,6 +207,10 @@ export const watchProfilesInChatsWithKey = (key, func) => {
     })
 }
 
+export const turnOffChatListener = () => {
+  return firebase.database().ref().child('messages').off()
+}
+
 
 export const getAllUsers = (func) => {
   firebase.database().ref().child('users').once('value')

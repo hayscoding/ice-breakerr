@@ -35,9 +35,6 @@ export default class ChatScreen extends Component {
       messages: [],
       user: this.props.navigation.state.params.user,
       profile: this.props.navigation.state.params.profile, 
-      reachedMax: false,
-      reachedMax: false, 
-      interactionsComplete: false,
     }
 
     const profileUid = this.props.navigation.state.params.profile.uid
@@ -50,16 +47,14 @@ export default class ChatScreen extends Component {
 
     this.watchChat()
   }
-  
+
   componentWillUnmount() {
-    firebase.database().ref().off()
     firebase.database().ref().child('messages').child(this.chatID).off()
   }
 
-  componentDidMount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({interactionsComplete: true});
-    });
+  componentWillUpdate() {
+    // if(this.state.mounted)
+    //   this.setState({mounted: false})
   }
 
   getFbImageUrl(profile) {
@@ -67,12 +62,12 @@ export default class ChatScreen extends Component {
     return fbImageUrl
   }
 
-   watchChat() {
+  watchChat() {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')
       .on('value', (snap) => {
-      if(this.state.chatLoaded)
-        this.setState({chatLoaded: false})
+      if(this.state.mounted)
+        this.setState({mounted: false})
 
       let messages = []
       snap.forEach((child) => {
@@ -96,13 +91,13 @@ export default class ChatScreen extends Component {
 
   onSend(message) {
     // if(!this.state.reachedMax) {
-      firebase.database().ref().child('messages').child(this.chatID)
-        .push({
-          text: message[0].text,
-          createdAt: new Date().getTime(),
-          sender: message[0].user._id,
-          name: this.state.user.name 
-        })
+    firebase.database().ref().child('messages').child(this.chatID)
+      .push({
+        text: message[0].text,
+        createdAt: new Date().getTime(),
+        sender: message[0].user._id,
+        name: this.state.user.name 
+      })
   }
 
   render() {
