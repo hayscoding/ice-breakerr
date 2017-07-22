@@ -1,0 +1,12 @@
+{
+  "extends": "cooperka/react-native",
+
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+
+  // Any rules here will override those from
+  // https://github.com/cooperka/eslint-config-cooperka.
+  "rules": {}
+}

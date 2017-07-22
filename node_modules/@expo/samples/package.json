@@ -1,0 +1,72 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "@expo/samples@~1.0.4",
+        "scope": "@expo",
+        "escapedName": "@expo%2fsamples",
+        "name": "@expo/samples",
+        "rawSpec": "~1.0.4",
+        "spec": ">=1.0.4 <1.1.0",
+        "type": "range"
+      },
+      "/Users/brent/universe/apps/new-project-template"
+    ]
+  ],
+  "_from": "@expo/samples@>=1.0.4 <1.1.0",
+  "_id": "@expo/samples@1.0.4",
+  "_inCache": true,
+  "_location": "/@expo/samples",
+  "_nodeVersion": "7.9.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/samples-1.0.4.tgz_1498094364491_0.8856314988806844"
+  },
+  "_npmUser": {
+    "name": "expoadmin",
+    "email": "exponent.team@gmail.com"
+  },
+  "_npmVersion": "4.6.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "@expo/samples@~1.0.4",
+    "scope": "@expo",
+    "escapedName": "@expo%2fsamples",
+    "name": "@expo/samples",
+    "rawSpec": "~1.0.4",
+    "spec": ">=1.0.4 <1.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@expo/samples/-/samples-1.0.4.tgz",
+  "_shasum": "992605cc8306b1220130b70ec7b51fbec58b33f5",
+  "_shrinkwrap": null,
+  "_spec": "@expo/samples@~1.0.4",
+  "_where": "/Users/brent/universe/apps/new-project-template",
+  "author": "",
+  "dependencies": {},
+  "description": "",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "992605cc8306b1220130b70ec7b51fbec58b33f5",
+    "tarball": "https://registry.npmjs.org/@expo/samples/-/samples-1.0.4.tgz"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "expoadmin",
+      "email": "exponent.team@gmail.com"
+    }
+  ],
+  "name": "@expo/samples",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.4"
+}

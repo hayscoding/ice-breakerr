@@ -12,7 +12,7 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
 
-export default class Profile extends React.Component {
+export default class ProfileScreen extends React.Component {
   componentWillMount() {
     this.state = {
       user: this.props.navigation.state.params.user, 
@@ -45,8 +45,6 @@ export default class Profile extends React.Component {
   render() {
     const profile = this.props.navigation.state.params.profile
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
-
-    console.log(fbImageUrl)
 
     return(
       <View style={{flex: 1}}>

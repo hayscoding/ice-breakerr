@@ -9,10 +9,11 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
-import LoginScreen from './LoginScreen'
-import HomeScreen from '../screens/HomeScreen';
 
-export default class Loading extends React.Component {
+
+import LoginScreen from './LoginScreen'
+
+export default class LoadingScreen extends React.Component {
   componentWillMount() {
     this.firebaseRef = firebase.database().ref('users')
   }
@@ -24,14 +25,18 @@ export default class Loading extends React.Component {
           const user = snap.val()
           if (user != null) {
             this.firebaseRef.child(fbAuth.uid).off('value')
-            this.props.navigation.navigate('Home', {user})
-            //this.props.navigator.push(Router.getRoute('menu', {user}))
+            this.props.navigation.dispatch(NavigationActions.reset({
+              index: 0,
+              actions: [
+                NavigationActions.navigate({routeName: 'Home',  params: {user: user}})
+              ]
+            })); 
           }
         }) 
       } else {                         // no user is signed in
             this.props.navigation.navigate('Login')
       }
-    })    
+    })
   }
 
   render() {
