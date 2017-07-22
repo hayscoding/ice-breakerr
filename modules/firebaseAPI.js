@@ -18,22 +18,6 @@ export const updateUser = (uid, key, value) => {
     .update({[key]:value})
 }
 
-export const getQuestions = (func) => {
-  firebase.database().ref().child('questions').once('value', (snap) => {
-    if (snap.val()) {
-      const questions = snap.val().slice(0, 4)
-      func(questions)
-    }})  
-}
-
-export const getQuestion = (idString, func) => {
-  firebase.database().ref().child('questions').child(idString).once('value', 
-    (snap) => { 
-      if(snap.val())
-        func(snap.val())
-    })
-}
-
 export const mergeUser = (uid, newData) => {
   console.log('newData', newData)
   watchUserLocationDemo(uid)
@@ -50,31 +34,6 @@ export const mergeUser = (uid, newData) => {
     const mergedUser = {...defaults, ...current, ...newData}
     firebaseRefAtUID.update(mergedUser)
   })  
-}
-
-export const unlikeProfile = (userUid, profileUid) => {
-  firebase.database().ref().child('relationships').child(userUid).child('liked')
-  .child(profileUid).set(false)
-}
-
-export const matchProfile = (userUid, profileUid) => {
-  firebase.database().ref().child('relationships').child(userUid).child('matches')
-    .child(profileUid).set(true)
-  firebase.database().ref().child('relationships').child(profileUid).child('matches')
-    .child(userUid).set(true)
-}
-
-export const getMatches = (key, func) => {
-  firebase.database().ref().child('relationships/'+key).child('matches').once('value')
-    .then((snap) => {
-      if(snap.val() != null)
-          getUsersCb(Object.keys(snap.val()), (profiles) => {
-            if(profiles != null)
-              func(profiles)
-          })
-      else
-        func(null)
-    })
 }
 
 export const getUser = (key) => {
@@ -237,24 +196,6 @@ export const removeWatchUser = (key) => {
   firebase.database().ref().child('users/'+key).off()
 }
 
-export const watchMatches = (key, func) => {
-  firebase.database().ref().child('relationships/'+key).child('matches').on('value', (snap) => {
-    func(snap.val())
-  })
-}
-
-export const checkMatches = (key, func) => {
-  firebase.database().ref().child('relationships/'+key).child('matches').once('value', (snap) => {
-    if(snap.val() != undefined)
-      func(snap.val())
-    else
-      func(null)})
-}
-
-export const removeMatchesWatcher = (key) => {
-  firebase.database().ref().child('relationships/'+key).child('matches').off()
-}
-
 export const watchUserLocation = (key) => {
   const firebaseRef = firebase.database().ref()
   const geoFire = new GeoFire(firebaseRef.child('geoData/'))
@@ -282,70 +223,4 @@ export const watchUserLocationDemo = (key) => {
     }, (error) => {
       // console.log("Error: " + error);
     })
-}
-
-export const findProfiles = (user, func) => {
-  const firebaseRef = firebase.database().ref()
-  const geoFire = new GeoFire(firebaseRef.child('geoData/'))
-  geoFire.get(user.uid).then(location => {    
-    const geoQuery = geoFire.query({
-      center: location,
-      radius: user.maxDistance
-    })
-    geoQuery.on("ready", (res) => { // loaded geodata
-      geoQuery.cancel()
-    })
-
-    let profiles = []
-    let timeOutSet = false
-
-    geoQuery.on("key_entered", (key, location, distance) => {
-      // console.log(key + " entered query at " + location + " (" + distance + " km from center)");
-
-      if(!timeOutSet) {
-            timeOutSet = true
-            // console.log('settingTimer')
-            setTimeout(() => {
-              // console.log('timedOut')
-              geoQuery.cancel()
-
-              if(filter.filterWithPreferences(profiles, user).length >= 2) {
-                func(shuffleArray(filter.filterWithPreferences(profiles, user)))
-              } else if(filter.filterWithPreferences(profiles, user).length < 2)
-                func('timedOut')
-
-              geoQuery.cancel()
-            }, 4000) 
-        }
-
-      getUser(key).then((entry) => {
-        if(entry != null) {
-          filter.filterProfile(entry, user, (profile) => {
-            if(profile != false)
-              profiles.push(profile)
-          }) 
-        }   
-      })
-    }) 
-  }) 
-}
-
-const shuffleArray = (array) => {
-  let counter = array.length;
-
-  // While there are elements in the array
-  while (counter > 0) {
-    // Pick a random index
-    let index = Math.floor(Math.random() * counter);
-
-    // Decrease counter by 1
-    counter--;
-
-    // And swap the last element with it
-    let temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
-  }
-
-  return array
 }

@@ -6,7 +6,6 @@ import { InteractionManager } from 'react-native'
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
-
 import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from './LoginScreen'
 import LoadingScreen from './LoadingScreen'
