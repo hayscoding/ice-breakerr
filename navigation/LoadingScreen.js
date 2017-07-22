@@ -3,18 +3,24 @@ import {
   StyleSheet,
   Text,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  InteractionManager,
 } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
+import RootStackNavigator from './RootNavigation'
 
 import LoginScreen from './LoginScreen'
 
 export default class LoadingScreen extends React.Component {
   componentWillMount() {
+    this.state = {
+      hasUser: false,
+    }
+
     this.firebaseRef = firebase.database().ref('users')
   }
 
@@ -25,16 +31,17 @@ export default class LoadingScreen extends React.Component {
           const user = snap.val()
           if (user != null) {
             this.firebaseRef.child(fbAuth.uid).off('value')
-            this.props.navigation.dispatch(NavigationActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({routeName: 'Home',  params: {user: user}})
-              ]
-            })); 
+            this.setState({hasUser: true})
+            InteractionManager.runAfterInteractions(() => {
+              this.props.navigation.goBack()
+            })
           }
         }) 
       } else {                         // no user is signed in
-            this.props.navigation.navigate('Login')
+        this.setState({hasUser: false})
+        InteractionManager.runAfterInteractions(() => {
+          this.props.navigation.navigate('Login')
+        })
       }
     })
   }

@@ -16,7 +16,7 @@ export default class LinksScreen extends React.Component {
 
   componentWillMount() {
       this.state = {
-        user: this.props.navigation.state.params.user, 
+        user: this.props.screenProps.user, 
         profiles: [],
       }
 
