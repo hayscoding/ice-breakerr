@@ -20,9 +20,12 @@ export default class ProfileScreen extends React.Component {
       hasChat: false,
     }
 
-    FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
-      this.setState({hasChat: outcome})
-    })
+    if(this.state.user != this.state.profile)
+      FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
+        this.setState({hasChat: outcome})
+      })
+    else
+      this.setState({hasChat: true})  //set true so user cannot chat themself
   }
 
   sendMessageTouchable(profile) {
@@ -53,8 +56,10 @@ export default class ProfileScreen extends React.Component {
             resizeMode='cover'
             source={{uri: fbImageUrl}}
             style={{width:width, height:height/2}} />
-          <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.bio}>Profile bio goes here...{'\n'}</Text>
+          <View style={styles.body}>
+            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.bio}>Profile bio goes here...{'\n'}</Text>
+          </View>
           { this.sendMessageTouchable(profile) } 
         </View>
       </View>
@@ -66,28 +71,33 @@ export default class ProfileScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'flex-start',
     height:height,
     width:width,
     backgroundColor:'white',
-    },
+  },  
+  body: {
+    paddingTop: 10,
+    paddingLeft: 30,
+  },
   text: {
     color: '#2B2B2B',
     fontSize: 48,
-    textAlign: 'center'
+    textAlign: 'left'
   },
   name: {
     color: '#2B2B2B',
-    fontSize: 20,
+    fontSize: 24,
     marginTop: 5,
     marginBottom: 2,
-    textAlign: 'center'
+    textAlign: 'left',
+    fontWeight: 'bold',
   },
   bio: {
     fontSize:14,
     color:'black',
-    textAlign: 'center'
+    textAlign: 'left'
   },
   chatButton: {
     width: width,
