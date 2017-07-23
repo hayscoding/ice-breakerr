@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity, 
   Dimensions,
+  InteractionManager,
+  Icon,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'

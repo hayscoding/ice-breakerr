@@ -1,7 +1,7 @@
 import { Notifications } from 'expo';
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import { View, ActivityIndicator, InteractionManager } from 'react-native'
+import { View, ActivityIndicator, InteractionManager, Icon } from 'react-native'
 
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -46,11 +46,12 @@ const LoginNavigator = StackNavigator(
     },
   },
   {
-    navigationOptions: () => ({
+    navigationOptions: ({ onPress }) => ({
       headerTitleStyle: {
         fontWeight: 'normal',
         color: '#0099FF',
       },
+      headerLeft: <Icon name={'chevron-left'} onPress={ () => { IntractionManager.runAfterInteractions(() => { onPress() }) } } />,
     }),
   }
 );
