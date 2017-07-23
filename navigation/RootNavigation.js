@@ -51,7 +51,7 @@ const LoginNavigator = StackNavigator(
         fontWeight: 'normal',
         color: '#0099FF',
       },
-      headerLeft: <Icon name={'chevron-left'} onPress={ () => { IntractionManager.runAfterInteractions(() => { onPress() }) } } />,
+      headerLeft: () => { return <Icon name={'chevron-left'} onPress={ () => { IntractionManager.runAfterInteractions(() => { onPress() }) } } />},
     }),
   }
 );
