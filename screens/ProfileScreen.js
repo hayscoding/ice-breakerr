@@ -8,6 +8,7 @@ import {
   Dimensions,
   InteractionManager,
   Icon,
+  ScrollView,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -52,18 +53,21 @@ export default class ProfileScreen extends React.Component {
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
 
     return(
-      <View style={{flex: 1}}>
-        <View style={styles.container}>  
+      <View style={styles.container}>  
+        <ScrollView>
           <Image 
             resizeMode='cover'
             source={{uri: fbImageUrl}}
             style={{width:width, height:height/2}} />
-          <View style={styles.body}>
+          <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.bio}>Profile bio goes here...{'\n'}</Text>
+            <Text style={styles.subtitle}>Profile bio goes here...{'\n'}</Text>
           </View>
-          { this.sendMessageTouchable(profile) } 
-        </View>
+          <View style={styles.bioContainer}>
+            <Text style={styles.bio}>I am the greatest human being on earth.</Text>
+          </View>
+        </ScrollView>
+        { this.sendMessageTouchable(profile) } 
       </View>
     )
   }
@@ -79,9 +83,23 @@ const styles = StyleSheet.create({
     width:width,
     backgroundColor:'white',
   },  
-  body: {
+  headerContainer: {
     paddingTop: 10,
     paddingLeft: 30,
+    paddingRight: 30,
+  },
+  bioContainer: {
+    width: width,
+    borderTopWidth: 1,
+    borderColor: '#FAFAFA',
+  },
+  bio: {
+    fontSize:16,
+    color: 'black',
+    textAlign: 'left',
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
   },
   text: {
     color: '#2B2B2B',
@@ -90,15 +108,15 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#2B2B2B',
-    fontSize: 24,
+    fontSize: 22,
     marginTop: 5,
     marginBottom: 2,
     textAlign: 'left',
     fontWeight: 'bold',
   },
-  bio: {
+  subtitle: {
     fontSize:14,
-    color:'black',
+    color: 'gray',
     textAlign: 'left'
   },
   chatButton: {
