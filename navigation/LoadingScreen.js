@@ -18,32 +18,41 @@ import LoginScreen from './LoginScreen'
 export default class LoadingScreen extends React.Component {
   componentWillMount() {
     this.state = {
-      hasUser: false,
+      needsLogin: false,
+      unsubscribe: '',  //Used to make sure the listener doesn't update unmount
     }
 
     this.firebaseRef = firebase.database().ref('users')
   }
 
+  componentDidUpdate() {
+    if(this.state.needsLogin)
+      InteractionManager.runAfterInteractions(() => {
+        this.props.navigation.navigate('Login')
+      })
+  }
+
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(fbAuth => {
-      if (fbAuth) {     // user is signed in and is found in db
-        this.firebaseRef.child(fbAuth.uid).on('value', snap => {
-          const user = snap.val()
-          if (user != null) {
-            this.firebaseRef.child(fbAuth.uid).off('value')
-            this.setState({hasUser: true})
-            InteractionManager.runAfterInteractions(() => {
+    this.setState({unsubscribe: firebase.auth().onAuthStateChanged(fbAuth => {
+        if (fbAuth) {     // user is signed in and is found in db
+          this.firebaseRef.child(fbAuth.uid).on('value', snap => {
+            const user = snap.val()
+            if (user != null) {
+              this.firebaseRef.child(fbAuth.uid).off('value')
+
               this.props.navigation.goBack()
-            })
-          }
-        }) 
-      } else {                         // no user is signed in
-        this.setState({hasUser: false})
-        InteractionManager.runAfterInteractions(() => {
-          this.props.navigation.navigate('Login')
-        })
-      }
+            }
+          }) 
+        } else {                         // no user is signed in
+          this.setState({needsLogin: true})
+        }
+      })
     })
+  }
+
+  componentWillUnmount() {
+    //Stops listening to onAuthStateChanged() so unmounted updates do not occur
+    this.state.unsubscribe()
   }
 
   render() {

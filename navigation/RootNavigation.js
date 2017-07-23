@@ -1,7 +1,7 @@
 import { Notifications } from 'expo';
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import { InteractionManager } from 'react-native'
+import { View, ActivityIndicator, InteractionManager } from 'react-native'
 
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -61,15 +61,16 @@ export default class RootNavigator extends React.Component {
     this.state = {
       user: {},
       hasUser: false,
+      waiting: true,
     }
 
     this.firebaseRef = firebase.database().ref('users')
+    this.checkForUser()
+    // this.setState({waiting: true})
   }
 
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications();
-
-    this.checkForUser()
   }
 
   componentWillUnmount() {
@@ -77,30 +78,33 @@ export default class RootNavigator extends React.Component {
   }
 
   checkForUser() {
-    this.setState({hasUser: false})
-
     firebase.auth().onAuthStateChanged(fbAuth => {
       if (fbAuth) {     // user is signed in and is found in db
         this.firebaseRef.child(fbAuth.uid).on('value', snap => {
           const user = snap.val()
           if (user != null) {
             this.firebaseRef.child(fbAuth.uid).off('value')
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({user: user, hasUser: true})
-            })
+            this.setState({user: user, hasUser: true, waiting: false})
           }
         }) 
       } else {                         // no user is signed in
-            this.setState({hasUser: false})
+        this.setState({hasUser: false, waiting: false})
       }
     })
   }
 
   render() {
-    if(this.state.hasUser)
-      return <RootStackNavigator screenProps={{user: this.state.user}}/>;
+    if(this.state.waiting)
+      return (
+        <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+          <ActivityIndicator size="small"/>
+        </View>
+      )
     else
-      return <LoginNavigator />
+      if(this.state.hasUser)
+        return <RootStackNavigator screenProps={{user: this.state.user}}/>;
+      else
+        return <LoginNavigator />
   }
 
   _registerForPushNotifications() {
