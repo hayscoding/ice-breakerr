@@ -100,9 +100,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
-    // shadowColor: '#000000', 
-    // shadowOffset: {width: 0, height: 0}, 
-    // shadowRadius: 10, 
-    // shadowOpacity: 0.5,
   }
 });
