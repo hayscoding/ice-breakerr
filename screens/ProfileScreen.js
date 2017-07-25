@@ -81,12 +81,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     height:height,
     width:width,
-    backgroundColor:'white',
+    backgroundColor: 'white',
   },  
   headerContainer: {
     paddingTop: 10,
     paddingLeft: 30,
     paddingRight: 30,
+    backgroundColor:'#FAFAFA',
   },
   bioContainer: {
     width: width,

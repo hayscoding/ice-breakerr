@@ -88,13 +88,13 @@ const styles = StyleSheet.create({
   shadow: {
     shadowColor: '#000000', 
     shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 20, 
-    shadowOpacity: 0.2,
-    borderRadius: size/4,
+    shadowRadius: 7, 
+    shadowOpacity: 0.4,
+    borderRadius: size/5,
   },
   image: {
     width: size, 
     height: size,
-    borderRadius: size/4,
+    borderRadius: size/5,
   }
 });

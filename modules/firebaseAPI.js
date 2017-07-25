@@ -6,6 +6,7 @@ import Exponent from 'expo';
 export const loginUser = (accessToken) => {
     const provider = firebase.auth.FacebookAuthProvider //declare fb provider
     const credential = provider.credential(accessToken) //generate fb credential
+    
     return firebase.auth().signInWithCredential(credential) // signin to firebase using facebook credential
 }
 
@@ -20,15 +21,17 @@ export const updateUser = (uid, key, value) => {
 
 export const mergeUser = (uid, newData) => {
   console.log('newData', newData)
+
   watchUserLocationDemo(uid)
+
   const firebaseRefAtUID = firebase.database().ref().child('users/'+uid)
+
   return firebaseRefAtUID.once("value").then((snap) => {
     const defaults = {
         maxDistance: 5,
         ageRange: [18,24],
         uid: uid,
         birthday: "01/01/1992",
-        isSearchingForGame: false,
     }
     const current = snap.val()
     const mergedUser = {...defaults, ...current, ...newData}
