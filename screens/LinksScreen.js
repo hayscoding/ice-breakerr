@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000000', 
     shadowOffset: {width: 0, height: 0}, 
     shadowRadius: 7, 
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     borderRadius: size/5,
   },
   image: {

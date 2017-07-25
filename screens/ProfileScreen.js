@@ -20,7 +20,7 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
-      photoUrls: [],
+      photoUrls: '../assets/images/21st_image_outdoor.jpg',
       hasChat: false,
     }
 
@@ -56,10 +56,16 @@ export default class ProfileScreen extends React.Component {
     return(
       <View style={styles.container}>  
         <ScrollView>
-          <Image 
-            resizeMode='cover'
-            source={{uri: fbImageUrl}}
-            style={{width:width, height:height/2}} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
+            <Image 
+              resizeMode='cover'
+              source={{uri: fbImageUrl}}
+              style={{width:width, height:height/2}} />
+            <Image 
+              resizeMode='cover'
+              source={require( "../assets/images/21st_image_outdoor.jpg")}
+              style={{width:width, height:height/2}} />
+          </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name}</Text>
             <Text style={styles.subtitle}>Profile bio goes here...{'\n'}</Text>
