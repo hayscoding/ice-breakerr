@@ -20,6 +20,7 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
+      photoUrls: [],
       hasChat: false,
     }
 

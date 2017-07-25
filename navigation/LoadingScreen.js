@@ -33,6 +33,7 @@ export default class LoadingScreen extends React.Component {
   }
 
   componentDidMount() {
+    //set unsubscribe as the output of the function so listener can be destroyed later
     this.setState({unsubscribe: firebase.auth().onAuthStateChanged(fbAuth => {
         if (fbAuth) {     // user is signed in and is found in db
           this.firebaseRef.child(fbAuth.uid).on('value', snap => {
