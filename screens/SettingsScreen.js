@@ -35,6 +35,14 @@ export default class SettingsScreen extends React.Component {
       () => console.log('signout not successful'))
   }
 
+  updateUser(user) {
+  }
+
+  editProfile() {
+    this.props.navigation.navigate('Edit', 
+      {user: this.state.user, cb: (user) => { this.setState({user}) }})
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -47,7 +55,7 @@ export default class SettingsScreen extends React.Component {
           </TouchableOpacity>
           <Text style={styles.name}>{this.state.user.name}</Text>
         </View> 
-        <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
+        <TouchableOpacity style={styles.optionContainer} onPress={() => {this.editProfile()}}>
           <Text style={styles.option}>EDIT PROFILE</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>

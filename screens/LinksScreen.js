@@ -28,6 +28,17 @@ export default class LinksScreen extends React.Component {
       })
   }
 
+  componentDidUpdate() {
+    setTimeout(() => {
+      FirebaseAPI.getAllUsers((users) => {
+        //Filter out the current user from the other individuals
+        this.setState({profiles: users.filter((user) => {
+          return user.uid != this.state.user.uid 
+        })})
+      })
+    }, 500)
+  }
+
   showProfile(profile) {
     this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
   }

@@ -9,26 +9,19 @@ import {
   InteractionManager,
   Icon,
   ScrollView,
+  TextInput,
+  findNodeHandle,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
 
-export default class ProfileScreen extends React.Component {
+export default class EditProfileScreen extends React.Component {
   componentWillMount() {
     this.state = {
       user: this.props.navigation.state.params.user, 
-      profile: this.props.navigation.state.params.profile,
-      hasChat: false,
     }
-
-    FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
-      InteractionManager.runAfterInteractions(() => {
-        if(this._mounted)
-          this.setState({profile: profile}) 
-      })
-    })
 
     this._mounted = false
   }
@@ -36,72 +29,67 @@ export default class ProfileScreen extends React.Component {
   componentDidMount() {
     //Set this true so no warning appears if component unmounts during process
     this._mounted = true
-
-    if(this.state.user != this.state.profile)
-      FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
-        if(this._mounted)
-          this.setState({hasChat: outcome})
-      })
-    else if(this._mounted)
-      this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
-  }
-
-  componentWillUpdate() {
-    
   }
 
   componentWillUnmount() {
-    this._mounted = false;
+    this._mounted = false
   }
 
-  sendMessageTouchable(profile) {
-    if(!this.state.hasChat && this._mounted)
-      return(
-        <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
-          <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-            <Text style={styles.chatButton}>Send Message</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    else
-      return null
+  setBio(bio) {
+    FirebaseAPI.updateUser(this.state.user.uid, 'bio', bio)
+
+    const updatedUser = this.state.user
+    updatedUser.bio = bio
+
+    this.setState({user: updatedUser})
+    this.props.navigation.state.params.cb(updatedUser)
   }
 
-  startChat(profile) {
-    this.props.navigation.navigate('Chat', {profile: this.props.navigation.state.params.profile, user: this.props.navigation.state.params.user})
+  // Scroll a component into view. Just pass the component ref string.
+  textInputFocused(refName) {
+    setTimeout(() => {
+      let scrollResponder = this.refs.scrollView.getScrollResponder();
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+        findNodeHandle(this.refs[refName]),
+        190, //additionalOffset
+        true
+      );
+    }, 50);
   }
 
   render() {
-    const profile = this.props.navigation.state.params.profile
-    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
+    const user = this.state.user
 
     return(
       <View style={styles.container}>  
-        <ScrollView>
+        <ScrollView ref='scrollView'>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
             {
-              this.state.profile.photoUrls.map((url) => {
+              this.state.user.photoUrls.map((url) => {
                 return <Image 
                   resizeMode='cover'
                   source={{uri: url}}
                   style={{width:width, height:height/2}} 
-                  key={profile.uid+"-"+url} />
+                  key={user.uid+"-"+url} />
               })
             }
           </ScrollView>
           <View style={styles.headerContainer}>
-            <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.age}>23 years old</Text>
-            <Text style={styles.subtitle}>Work info goes here...</Text>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
           </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>
-          </View>
+          <Text style={styles.title}>About You</Text>
           <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{profile.bio}</Text>
+            <TextInput ref='bio'
+              style={styles.bio} 
+              returnKeyType='done'
+              multiline={true}
+              blurOnSubmit={true}
+              onChangeText={(text) => this.setBio(text)}
+              onFocus={this.textInputFocused.bind(this, 'bio')}
+              value={this.state.user.bio} />
           </View>
         </ScrollView>
-        { this.sendMessageTouchable(profile) } 
       </View>
     )
   }
@@ -115,26 +103,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     height:height,
     width:width,
-    backgroundColor: 'white',
+    backgroundColor: '#FAFAFA',
   },  
   headerContainer: {
-    paddingTop: 5,
-    paddingBottom: 10,
+    paddingTop: 10,
     paddingLeft: 20,
     paddingRight: 20,
     backgroundColor:'white',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
   },
-  titleContainer: {
-    backgroundColor:'#FAFAFA',
-  },
   bioContainer: {
     flex: 1,
     width: width,
     alignSelf: 'center',
     justifyContent: 'flex-start',
-    borderTopWidth: 1,
+    borderWidth: 1,
     borderColor: 'lightgrey',
   },
   bio: {
@@ -158,24 +142,16 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     fontSize: 24,
     marginTop: 5,
-    marginBottom: 1,
+    marginBottom: 2,
     textAlign: 'left',
     fontWeight: 'bold',
-  },
-  age: {
-    color: '#2B2B2B',
-    textAlign: 'left',
-    fontSize: 16,
-    marginTop: 2,
-    marginBottom: 3,
-    color: 'gray',
   },
   title: {
     fontSize:16,
     color: 'black',
     textAlign: 'left',
     fontWeight: 'bold',
-    paddingTop: 15,
+    paddingTop: 20,
     paddingBottom: 5,
     paddingLeft: 20,
   },

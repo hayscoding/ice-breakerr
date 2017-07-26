@@ -11,6 +11,7 @@ import LoginScreen from './LoginScreen'
 import LoadingScreen from './LoadingScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import ChatScreen from '../screens/ChatScreen'
+import EditProfileScreen from '../screens/EditProfileScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -25,6 +26,9 @@ const RootStackNavigator = StackNavigator(
     Chat: {
       screen: ChatScreen,
     },
+    Edit: {
+      screen: EditProfileScreen,
+    }
   },
   {
     navigationOptions: () => ({
