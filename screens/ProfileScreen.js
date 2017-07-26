@@ -20,7 +20,6 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
-      photoUrls: '../assets/images/21st_image_outdoor.jpg',
       hasChat: false,
     }
 
@@ -29,7 +28,7 @@ export default class ProfileScreen extends React.Component {
         this.setState({hasChat: outcome})
       })
     else
-      this.setState({hasChat: true})  //set true so user cannot chat themself
+      this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
   }
 
   sendMessageTouchable(profile) {
@@ -57,14 +56,15 @@ export default class ProfileScreen extends React.Component {
       <View style={styles.container}>  
         <ScrollView>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
-            <Image 
-              resizeMode='cover'
-              source={{uri: fbImageUrl}}
-              style={{width:width, height:height/2}} />
-            <Image 
-              resizeMode='cover'
-              source={require( "../assets/images/21st_image_outdoor.jpg")}
-              style={{width:width, height:height/2}} />
+            {
+              this.state.profile.photoUrls.map((url) => {
+                return <Image 
+                  resizeMode='cover'
+                  source={{uri: url}}
+                  style={{width:width, height:height/2}} 
+                  key={profile.uid+"-"+url} />
+              })
+            }
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name}</Text>

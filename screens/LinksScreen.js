@@ -5,7 +5,7 @@ import { ExpoLinksView } from '@expo/samples';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
-const size = 275;
+const size = width/10*7.5;
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {

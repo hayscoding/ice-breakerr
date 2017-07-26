@@ -31,11 +31,45 @@ export const mergeUser = (uid, token, newData) => {
         maxDistance: 5,
         uid: uid,
         fbAuthToken: token,
+        photoUrls: [],
     }
     const current = snap.val()
     const mergedUser = {...defaults, ...current, ...newData}
     firebaseRefAtUID.update(mergedUser)
+    
+    getPhotoUrlsFromFbCb(newData.id, token, (urls) => {
+      mergeUserPhotoUrls(uid, urls)
+    })
   })  
+}
+
+export const mergeUserPhotoUrls = (uid, urls) => {
+  const firebaseRefAtUID = firebase.database().ref().child('users/'+uid)
+
+  return firebaseRefAtUID.once("value").then((snap) => {
+    firebaseRefAtUID.update({photoUrls: urls})
+  }) 
+}
+
+export const getPhotoUrlsFromFbCb = (id, token, func) => { 
+  fetch(`https://graph.facebook.com/${id}/albums?access_token=${token}`)
+    .then((response) => { 
+      response.json().then((res) => { 
+        const album = res.data.filter((album) => {
+          if(album.name == 'Profile Pictures')
+            return album
+        })
+
+        fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
+          .then((response) => {
+            response.json().then((res) => {
+              func(res.data.map((photo) => {
+                return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
+              }))
+            })
+        })
+    })
+  })
 }
 
 export const getUser = (key) => {
