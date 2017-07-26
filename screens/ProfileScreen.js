@@ -38,7 +38,7 @@ export default class ProfileScreen extends React.Component {
     else if(this._mounted)
       this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
   }
-  
+
   componentWillUpdate() {
     
   }
@@ -84,10 +84,10 @@ export default class ProfileScreen extends React.Component {
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.subtitle}>Profile bio goes here...{'\n'}</Text>
+            <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
           </View>
           <View style={styles.bioContainer}>
-            <Text style={styles.bio}>I am the greatest human being on earth.</Text>
+            <Text style={styles.bio}>{profile.bio}</Text>
           </View>
         </ScrollView>
         { this.sendMessageTouchable(profile) } 
@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
   },
   bio: {
     fontSize:16,
-    color: 'black',
+    color: '#565656',
     textAlign: 'left',
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
   },
   text: {
-    color: '#2B2B2B',
+    color: '#565656',
     fontSize: 48,
     textAlign: 'left'
   },

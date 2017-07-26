@@ -32,11 +32,12 @@ export const mergeUser = (uid, token, newData) => {
         uid: uid,
         fbAuthToken: token,
         photoUrls: [],
+        bio: '',
     }
     const current = snap.val()
     const mergedUser = {...defaults, ...current, ...newData}
     firebaseRefAtUID.update(mergedUser)
-    
+
     getPhotoUrlsFromFbCb(newData.id, token, (urls) => {
       mergeUserPhotoUrls(uid, urls)
     })
