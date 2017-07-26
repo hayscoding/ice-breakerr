@@ -23,20 +23,36 @@ export default class ProfileScreen extends React.Component {
       hasChat: false,
     }
 
+    this._mounted = false
+  }
+
+  componentDidMount() {
+    //Set this true so no warning appears if component unmounts during process
+    this._mounted = true
+
     if(this.state.user != this.state.profile)
       FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
-        this.setState({hasChat: outcome})
+        if(this._mounted)
+          this.setState({hasChat: outcome})
       })
-    else
+    else if(this._mounted)
       this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
+  }
+  
+  componentWillUpdate() {
+    
+  }
+
+  componentWillUnmount() {
+    this._mounted = false;
   }
 
   sendMessageTouchable(profile) {
-    if(!this.state.hasChat)
+    if(!this.state.hasChat && this._mounted)
       return(
         <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
           <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-            <Text style={styles.chatButton} >Send Message</Text>
+            <Text style={styles.chatButton}>Send Message</Text>
           </TouchableOpacity>
         </View>
       )
