@@ -55,13 +55,16 @@ export default class ProfileScreen extends React.Component {
   }
 
   sendMessageTouchable(profile) {
-    return(
-      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
-        <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-          <Text style={styles.chatButton}>Send Message</Text>
-        </TouchableOpacity>
-      </View>
-    )
+    if(!this.state.hasChat && this._mounted)
+      return(
+        <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
+          <TouchableOpacity onPress={() => {this.startChat(profile)}} >
+            <Text style={styles.chatButton}>Send Message</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    else
+      return null
   }
 
   startChat(profile) {

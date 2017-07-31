@@ -45,13 +45,34 @@ export default class EditProfileScreen extends React.Component {
     this.props.navigation.state.params.cb(updatedUser)
   }
 
+  setEmojis(emojis) {
+    FirebaseAPI.updateUser(this.state.user.uid, 'emojis', emojis)
+
+    const updatedUser = this.state.user
+    updatedUser.emojis = emojis
+
+    this.setState({user: updatedUser})
+    this.props.navigation.state.params.cb(updatedUser)
+  }
+
+  setInterests(interests) {
+    FirebaseAPI.updateUser(this.state.user.uid, 'interests', interests)
+
+    const updatedUser = this.state.user
+    updatedUser.interests = interests
+
+    this.setState({user: updatedUser})
+    this.props.navigation.state.params.cb(updatedUser)
+  }
+
+
   // Scroll a component into view. Just pass the component ref string.
   textInputFocused(refName) {
     setTimeout(() => {
       let scrollResponder = this.refs.scrollView.getScrollResponder();
       scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
         findNodeHandle(this.refs[refName]),
-        190, //additionalOffset
+        200, //additionalOffset
         true
       );
     }, 50);
@@ -76,6 +97,7 @@ export default class EditProfileScreen extends React.Component {
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.age}>23 years old</Text>
             <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
           </View>
           <Text style={styles.title}>Express Who You Are</Text>
@@ -88,6 +110,28 @@ export default class EditProfileScreen extends React.Component {
               onChangeText={(text) => this.setBio(text)}
               onFocus={this.textInputFocused.bind(this, 'bio')}
               value={this.state.user.bio} />
+          </View>
+          <Text style={styles.title}>Enter Your Favorite Emojis</Text>
+          <View style={styles.bioContainer}>
+            <TextInput ref='emojis'
+              style={styles.bio} 
+              returnKeyType='done'
+              multiline={true}
+              blurOnSubmit={true}
+              onChangeText={(text) => this.setEmojis(text)}
+              onFocus={this.textInputFocused.bind(this, 'emojis')}
+              value={this.state.user.emojis} />
+          </View>
+          <Text style={styles.title}>List Your Top Interests</Text>
+          <View style={styles.bioContainer}>
+            <TextInput ref='interests'
+              style={styles.bio} 
+              returnKeyType='done'
+              multiline={true}
+              blurOnSubmit={true}
+              onChangeText={(text) => this.setInterests(text)}
+              onFocus={this.textInputFocused.bind(this, 'interests')}
+              value={this.state.user.interests} />
           </View>
         </ScrollView>
       </View>
