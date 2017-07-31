@@ -64,9 +64,6 @@ export default class SettingsScreen extends React.Component {
         <TouchableOpacity style={styles.optionContainer} onPress={() => {this.logout()}}>
           <Text style={styles.option}>LOGOUT</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
-          <Text style={styles.option}>DELETE ACCOUNT</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -84,7 +81,7 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
   },
   optionContainer: {
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     width: width,
     borderTopWidth: 1,
