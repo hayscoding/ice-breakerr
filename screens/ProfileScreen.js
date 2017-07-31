@@ -55,16 +55,13 @@ export default class ProfileScreen extends React.Component {
   }
 
   sendMessageTouchable(profile) {
-    if(!this.state.hasChat && this._mounted)
-      return(
-        <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
-          <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-            <Text style={styles.chatButton}>Send Message</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    else
-      return null
+    return(
+      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
+        <TouchableOpacity onPress={() => {this.startChat(profile)}} >
+          <Text style={styles.chatButton}>Send Message</Text>
+        </TouchableOpacity>
+      </View>
+    )
   }
 
   startChat(profile) {
@@ -80,17 +77,17 @@ export default class ProfileScreen extends React.Component {
         <ScrollView>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
             {
-              this.state.profile.photoUrls.map((url) => {
-                return <Image 
-                  resizeMode='cover'
-                  source={{uri: url}}
-                  style={{width:width, height:height/2}} 
-                  key={profile.uid+"-"+url} />
-              })
+              // this.state.profile.photoUrls.map((url) => {
+              //   return <Image 
+              //     resizeMode='cover'
+              //     source={{uri: url}}
+              //     style={{width:width, height:height/2}} 
+              //     key={profile.uid+"-"+url} />
+              // })
             }
           </ScrollView>
           <View style={styles.headerContainer}>
-            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
             <Text style={styles.age}>23 years old</Text>
             <Text style={styles.subtitle}>Work info goes here...</Text>
           </View>
@@ -99,6 +96,18 @@ export default class ProfileScreen extends React.Component {
           </View>
           <View style={styles.bioContainer}>
             <Text style={styles.bio}>{profile.bio}</Text>
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Favorite Emojis</Text>
+          </View>
+          <View style={styles.bioContainer}>
+            <Text style={styles.bio}>{profile.emojis}</Text>
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Top Interests</Text>
+          </View>
+          <View style={styles.bioContainer}>
+            <Text style={styles.bio}>{profile.interests}</Text>
           </View>
         </ScrollView>
         { this.sendMessageTouchable(profile) } 
@@ -115,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     height:height,
     width:width,
-    backgroundColor: 'white',
+    backgroundColor: '#FAFAFA',
   },  
   headerContainer: {
     paddingTop: 5,
@@ -135,6 +144,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'flex-start',
     borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: 'lightgrey',
   },
   bio: {

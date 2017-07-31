@@ -78,7 +78,7 @@ export default class EditProfileScreen extends React.Component {
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
           </View>
-          <Text style={styles.title}>About You</Text>
+          <Text style={styles.title}>Express Who You Are</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='bio'
               style={styles.bio} 

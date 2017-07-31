@@ -59,7 +59,7 @@ export default class SettingsScreen extends React.Component {
           <Text style={styles.option}>EDIT PROFILE</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
-          <Text style={styles.option}></Text>
+          <Text style={styles.option}>CONTACT SUPPORT</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionContainer} onPress={() => {this.logout()}}>
           <Text style={styles.option}>LOGOUT</Text>
