@@ -15,15 +15,19 @@ const {height, width} = Dimensions.get('window');
 const size = 225;
 
 export default class SettingsScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Settings',
+  };
+
   componentWillMount() {
     this.state = {
       user: this.props.screenProps.user, 
     }
+
+    console.log('USER SADLKFJLAKJFLAJFLKJLKFJLKASJF')
+    console.log(this.state.user)
   }
 
-  static navigationOptions = {
-    title: 'Settings',
-  };
 
   showProfile(profile) {
     this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})

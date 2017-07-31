@@ -41,15 +41,17 @@ export default class HomeScreen extends React.Component {
 
   componentWillUnmount() {
     FirebaseAPI.turnOffChatListener()
-    this.state.profiles.map((profile) => {
-      const uidArray = [profile.uid, this.state.user.uid]
-      uidArray.sort()
-      const chatID = uidArray[0]+'-'+uidArray[1]
+    
+    if(this.state.profiles.length > 0)
+      this.state.profiles.map((profile) => {
+        const uidArray = [profile.uid, this.state.user.uid]
+        uidArray.sort()
+        const chatID = uidArray[0]+'-'+uidArray[1]
 
-      firebase.database().ref().child('messages').child(chatID)
-        .orderByChild('createdAt')
-        .off()
-    })
+        firebase.database().ref().child('messages').child(chatID)
+          .orderByChild('createdAt')
+          .off()
+      })
   }
 
   listenLastMessage(profile) {

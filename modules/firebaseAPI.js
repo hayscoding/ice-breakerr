@@ -38,20 +38,15 @@ export const mergeUser = (uid, token, newData) => {
     }
     const current = snap.val()
     const mergedUser = {...defaults, ...current, ...newData}
-    firebaseRefAtUID.update(mergedUser)
 
-    getPhotoUrlsFromFbCb(newData.id, token, (urls) => {
-      mergeUserPhotoUrls(uid, urls)
-    })
+    firebaseRefAtUID.update(mergedUser)
   })  
 }
 
 export const mergeUserPhotoUrls = (uid, urls) => {
-  const firebaseRefAtUID = firebase.database().ref().child('users/'+uid)
+  const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)
 
-  return firebaseRefAtUID.once("value").then((snap) => {
-    firebaseRefAtUID.update({photoUrls: urls})
-  }) 
+  firebaseRefAtUID.update({photoUrls: urls})
 }
 
 export const getPhotoUrlsFromFbCb = (id, token, func) => { 
