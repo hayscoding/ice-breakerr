@@ -6,11 +6,12 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
 
-export default class LinksScreen extends React.Component {
+export default class BioScreen extends React.Component {
   static navigationOptions = {
     title: 'People Near You',
     headerLeft: null,
     gesturesEnabled: false,
+    timer: {},
   };
 
   componentWillMount() {
@@ -25,15 +26,33 @@ export default class LinksScreen extends React.Component {
           return user.uid != this.state.user.uid 
         })})
       })
+
+      this._mounted = false
+  }
+
+  componentDidMount() {
+    this._mounted = true
+  }
+
+  componentWillUpdate() {
+    this._mounted = false
   }
 
   componentDidUpdate() {
-    setTimeout(() => {
-      FirebaseAPI.getAllUsers((users) => {
-        //Filter out the current user from the other individuals
-        this.setState({profiles: users.filter((user) => {
-          return user.uid != this.state.user.uid 
-        })})
+    this.updateProfilesTimer()
+  }
+
+  updateProfilesTimer() {
+    const timer = setTimeout(() => {
+      if(this._mounted)
+        FirebaseAPI.getAllUsers((users) => {
+          //Filter out the current user from the other individuals
+          this.setState({profiles: users.filter((user) => {
+            return user.uid != this.state.user.uid 
+            }),
+          })
+          
+        this._mounted = true
       })
     }, 500)
   }
@@ -61,7 +80,7 @@ export default class LinksScreen extends React.Component {
                     <View style={styles.headerContainer}>
                       <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                       <Text style={styles.age}>23 years old</Text>
-                      <Text style={styles.subtitle}>Work info goes here...</Text>
+                      <Text style={styles.subtitle}>Location info goes here...</Text>
                     </View>
                     <Text style={styles.bio}>{profile.bio}</Text>
                   </View>
@@ -92,6 +111,7 @@ const styles = StyleSheet.create({
   },
   match: {
     width: width,
+    height: height/3, 
     justifyContent: 'center', 
     alignItems: 'center',
     paddingBottom: 20,

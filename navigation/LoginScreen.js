@@ -38,7 +38,7 @@ export default class Login extends React.Component {
 	fbLogin = async() => {
 	 	const { type, token } = await Exponent.Facebook.logInWithReadPermissionsAsync(
 		    APP_ID, {
-		      permissions: ['public_profile', 'user_photos'],
+		      permissions: ['public_profile', 'user_photos', 'user_birthday', 'email'],
 		    });
 		if (type === 'success') {
 	        const fields = ['email', 'name', 'gender']

@@ -24,7 +24,7 @@ export const mergeUser = (uid, token, newData) => {
 
   watchUserLocationDemo(uid)
 
-  const firebaseRefAtUID = firebase.database().ref().child('users/'+uid)
+  const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)
 
   return firebaseRefAtUID.once("value").then((snap) => {
     const defaults = {
