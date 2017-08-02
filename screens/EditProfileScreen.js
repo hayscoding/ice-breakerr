@@ -78,6 +78,19 @@ export default class EditProfileScreen extends React.Component {
     }, 50);
   }
 
+  getPhotos() {
+    if(this.state.user.photoUrls != undefined)
+      this.state.user.photoUrls.map((url) => {
+        return <Image 
+          resizeMode='cover'
+          source={{uri: url}}
+          style={{width:width, height:height/2}} 
+          key={user.uid+"-"+url} />
+      })
+    else
+      return
+  }
+
   render() {
     const user = this.state.user
 
@@ -85,15 +98,7 @@ export default class EditProfileScreen extends React.Component {
       <View style={styles.container}>  
         <ScrollView ref='scrollView'>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
-            {
-              this.state.user.photoUrls.map((url) => {
-                return <Image 
-                  resizeMode='cover'
-                  source={{uri: url}}
-                  style={{width:width, height:height/2}} 
-                  key={user.uid+"-"+url} />
-              })
-            }
+            { this.getPhotos() }
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{user.name}</Text>
@@ -104,9 +109,8 @@ export default class EditProfileScreen extends React.Component {
           <View style={styles.bioContainer}>
             <TextInput ref='bio'
               style={styles.bio} 
-              returnKeyType='done'
               multiline={true}
-              blurOnSubmit={true}
+              blurOnSubmit={false}
               onChangeText={(text) => this.setBio(text)}
               onFocus={this.textInputFocused.bind(this, 'bio')}
               value={this.state.user.bio} />
