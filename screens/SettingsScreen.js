@@ -23,9 +23,6 @@ export default class SettingsScreen extends React.Component {
     this.state = {
       user: this.props.screenProps.user, 
     }
-
-    console.log('USER SADLKFJLAKJFLAJFLKJLKFJLKASJF')
-    console.log(this.state.user)
   }
 
 

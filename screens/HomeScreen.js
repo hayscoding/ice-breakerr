@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  InteractionManager,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -29,19 +30,49 @@ export default class HomeScreen extends React.Component {
   };
 
   componentWillMount() {
-      this.state = {
-        user: this.props.screenProps.user, 
-        profiles: [],
-      }
+    this.state = {
+      user: this.props.screenProps.user, 
+      profiles: [],
+      photoUrls: [],
+      loaded: false,
+    }
 
-      FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
-        this.setState({profiles: profiles})
+
+    FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
+      this.setState({profiles: profiles})
+
+      this.state.profiles.forEach((profile) => {
+        const uidArray = [profile.uid, this.state.user.uid]
+        uidArray.sort()
+        const chatID = uidArray[0]+'-'+uidArray[1]
+
+        FirebaseAPI.getChatCb(chatID, (chat) => {
+          const msgCount = Object.values(chat).filter((message) => {
+            return message.sender == profile.uid
+          }).length
+
+          if(msgCount >= 5) 
+            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}]})
+          else
+            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}]})
+        })
       })
+    })
+  }
+
+  componentDidUpdate() {
+    if(!this.state.loaded && this.state.profiles.length != 0 && this.state.profiles.length == this.state.photoUrls.length){
+      console.log('CLKAJSLKJLKFJSDLKFJASLKFJASFLK')
+      console.log(this.state.photoUrls)
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({loaded: true})
+      })
+    }
   }
 
   componentWillUnmount() {
     FirebaseAPI.turnOffChatListener()
-    
+
     if(this.state.profiles.length > 0)
       this.state.profiles.map((profile) => {
         const uidArray = [profile.uid, this.state.user.uid]
@@ -91,40 +122,40 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
   }
 
-  getFbImageUrl(profile) {
-    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
-    return fbImageUrl
-  }
-
   render() {
-    return(
-      <View style={styles.container}>
-        <View style={styles.topContainer}>
-          <ScrollView style={styles.recentUpdates}>
-          {
-            this.state.profiles.map((profile) => {
-              return (
-                <TouchableOpacity onPress={() => {this.openChat(profile)}}
-                key={profile.uid+"-touchable"} >
-                  <View style={styles.match}  key={profile.uid+"-container"}>
-                    <Image
-                      resizeMode='cover'
-                      source={{uri: this.getFbImageUrl(profile)}}
-                      style={[{width: size, height: size, borderRadius: size/4}]}/>  
-                    <View>   
-                      <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
-                      <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
+    if(this.state.loaded) {
+      return(
+        <View style={styles.container}>
+          <View style={styles.topContainer}>
+            <ScrollView style={styles.recentUpdates}>
+            {
+              this.state.profiles.map((profile) => {
+                return (
+                  <TouchableOpacity onPress={() => {this.openChat(profile)}}
+                  key={profile.uid+"-touchable"} >
+                    <View style={styles.match}  key={profile.uid+"-container"}>
+                      <Image
+                        resizeMode='cover'
+                        source={{uri: this.state.photoUrls.find((urlObj) => {
+                          return urlObj.uid == profile.uid
+                        }).url}}
+                        style={[{width: size, height: size, borderRadius: size/4}]}/>  
+                      <View>   
+                        <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
+                        <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              )
-            })
-          }
-      </ScrollView>
+                  </TouchableOpacity>
+                )
+              })
+            }
+        </ScrollView>
+          </View>
         </View>
-      </View>
-    )
-  };
+      )
+    } else
+      return(<View></View>)
+  }
 }
 
 const styles = StyleSheet.create({

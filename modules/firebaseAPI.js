@@ -120,6 +120,17 @@ export const getChatsCb = (keyArray, func) => {
     })
 }
 
+export const getChatMessageCountFromUid = (chatID, uid) => {
+  firebase.database().ref().child('messages').child(key).once('value')
+    .then((snap) => {
+      const messageCount = Object.values(snap.val()).filter((message) => {
+        return message.sender == uid
+      }).length
+
+      return messageCount
+    })
+}
+
 export const getChatWithProfiles = (userKey, profileKey, func) => {
   //Sort uid concatenation in order of greatness so every user links to the same chat
   const uidArray = [userKey, profileKey]
