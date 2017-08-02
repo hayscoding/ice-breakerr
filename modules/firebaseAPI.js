@@ -52,20 +52,23 @@ export const mergeUserPhotoUrls = (uid, urls) => {
 export const getPhotoUrlsFromFbCb = (id, token, func) => { 
   fetch(`https://graph.facebook.com/${id}/albums?access_token=${token}`)
     .then((response) => { 
-      response.json().then((res) => { 
-        const album = res.data.filter((album) => {
-          if(album.name == 'Profile Pictures')
-            return album
-        })
+        response.json().then((res) => { 
+          const album = res.data.filter((album) => {
+            if(album.name == 'Profile Pictures')
+              return album
+          })
 
-        fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
-          .then((response) => {
-            response.json().then((res) => {
-              func(res.data.map((photo) => {
-                return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
-              }))
-            })
-        })
+        if(album[0] != null)
+          fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
+            .then((response) => {
+              response.json().then((res) => {
+                func(res.data.map((photo) => {
+                  return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
+                }))
+              })
+          })
+        else
+          func([])
     })
   })
 }

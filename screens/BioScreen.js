@@ -51,7 +51,7 @@ export default class BioScreen extends React.Component {
             return user.uid != this.state.user.uid 
             }),
           })
-          
+
         this._mounted = true
       })
     }, 500)
@@ -79,8 +79,8 @@ export default class BioScreen extends React.Component {
                   <View style={styles.shadow} key={profile.uid+"-shadow"}>
                     <View style={styles.headerContainer}>
                       <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                      <Text style={styles.age}>23 years old</Text>
-                      <Text style={styles.subtitle}>Location info goes here...</Text>
+                      <Text style={styles.age}>21 years old</Text>
+                      <Text style={styles.subtitle}>Austin, TX</Text>
                     </View>
                     <Text style={styles.bio}>{profile.bio}</Text>
                   </View>
