@@ -80,15 +80,15 @@ export default class EditProfileScreen extends React.Component {
 
   getPhotos() {
     if(this.state.user.photoUrls != undefined)
-      this.state.user.photoUrls.map((url) => {
+      return this.state.user.photoUrls.map((url) => {
         return <Image 
           resizeMode='cover'
           source={{uri: url}}
           style={{width:width, height:height/2}} 
-          key={user.uid+"-"+url} />
+          key={this.state.user.uid+"-"+url} />
       })
     else
-      return
+      return null
   }
 
   render() {
