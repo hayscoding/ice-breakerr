@@ -92,10 +92,6 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     const profile = this.props.navigation.state.params.profile
-    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
-
-    console.log('PHOT URLSSSS')
-    console.log(this.state.photoUrls)
 
     return(
       <View style={styles.container}>  
