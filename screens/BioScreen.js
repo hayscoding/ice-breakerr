@@ -67,31 +67,34 @@ export default class BioScreen extends React.Component {
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-        {
-          this.state.profiles.map((profile) => {
-            return (
-              <TouchableOpacity onPress={() => {this.showProfile(profile)}}
-              key={profile.uid+"-touchable"} >
-                <View style={styles.match}  key={profile.uid+"-container"}>
-                  <View style={styles.shadow} key={profile.uid+"-shadow"}>
-                    <View style={styles.headerContainer}>
-                      <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                      <Text style={styles.age}>21 years old</Text>
-                      <Text style={styles.subtitle}>Austin, TX</Text>
+    if(this.state.profiles.length > 0)
+      return (
+        <View style={styles.container}>
+          <ScrollView>
+          {
+            this.state.profiles.map((profile) => {
+              return (
+                <TouchableOpacity onPress={() => {this.showProfile(profile)}}
+                key={profile.uid+"-touchable"} >
+                  <View style={styles.match}  key={profile.uid+"-container"}>
+                    <View style={styles.shadow} key={profile.uid+"-shadow"}>
+                      <View style={styles.headerContainer}>
+                        <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                        <Text style={styles.age}>21 years old</Text>
+                        <Text style={styles.subtitle}>Austin, TX</Text>
+                      </View>
+                      <Text style={styles.bio}>{profile.bio}</Text>
                     </View>
-                    <Text style={styles.bio}>{profile.bio}</Text>
                   </View>
-                </View>
-              </TouchableOpacity>
-            )
-          })
-        }
-        </ScrollView>
-      </View>
-    );
+                </TouchableOpacity>
+              )
+            })
+          }
+          </ScrollView>
+        </View>
+      );
+    else
+      return <View></View>
   }
 }
 
