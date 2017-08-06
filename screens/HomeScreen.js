@@ -64,8 +64,6 @@ export default class HomeScreen extends React.Component {
 
   componentDidUpdate() {
     if(!this.state.loaded && this.state.profiles.length != 0 && this.state.profiles.length == this.state.photoUrls.length){
-      console.log('CLKAJSLKJLKFJSDLKFJASLKFJASFLK')
-      console.log(this.state.photoUrls)
       InteractionManager.runAfterInteractions(() => {
         this.setState({loaded: true})
       })

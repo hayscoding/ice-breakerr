@@ -20,13 +20,32 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
+      photoUrls: [],
       hasChat: false,
     }
 
     FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
+
       InteractionManager.runAfterInteractions(() => {
-        if(this._mounted)
-          this.setState({profile: profile}) 
+        if(this._mounted) {
+          const uidArray = [profile.uid, this.state.user.uid]
+          uidArray.sort()
+          const chatID = uidArray[0]+'-'+uidArray[1]
+
+          FirebaseAPI.getChatCb(chatID, (chat) => {
+            const msgCount = Object.values(chat).filter((message) => {
+              return message.sender == profile.uid
+            }).length
+
+            console.log('PROFOOPPOESKEFOKEOF')
+            console.log(this.state.profile)
+
+            if(msgCount >= 5) 
+              this.setState({profile: profile, photoUrls: profile.photoUrls})
+            else
+              this.setState({profile: profile, photoUrls: []})
+          })
+        }
       })
     })
 
@@ -75,18 +94,21 @@ export default class ProfileScreen extends React.Component {
     const profile = this.props.navigation.state.params.profile
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
 
+    console.log('PHOT URLSSSS')
+    console.log(this.state.photoUrls)
+
     return(
       <View style={styles.container}>  
         <ScrollView>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
             {
-              // this.state.profile.photoUrls.map((url) => {
-              //   return <Image 
-              //     resizeMode='cover'
-              //     source={{uri: url}}
-              //     style={{width:width, height:height/2}} 
-              //     key={profile.uid+"-"+url} />
-              // })
+              this.state.photoUrls.map((url) => {
+                return <Image 
+                  resizeMode='cover'
+                  source={{uri: url}}
+                  style={{width:width, height:height/2}} 
+                  key={profile.uid+"-"+url} />
+              })
             }
           </ScrollView>
           <View style={styles.headerContainer}>
