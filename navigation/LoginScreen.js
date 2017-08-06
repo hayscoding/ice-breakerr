@@ -64,8 +64,8 @@ export default class Login extends React.Component {
 				source={require( "../assets/images/ice-breaker-logo.png")}
 				style={{width:size, height:size}} />
 	      	</View>
-	      	<View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 25, paddingRight: 25, paddingBottom: 40}}>
-		      	<TouchableOpacity onPress={this.fbLogin}>
+	      	<View style={{flex: 1, width: width/3*2.5, justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 25, paddingRight: 25, paddingBottom: 40, }}>
+		      	<TouchableOpacity style={styles.loginTouchable} onPress={this.fbLogin}>
 		      		<Text style={styles.login}>Log in with Facebook</Text>
 		      	</TouchableOpacity>
       		</View>
@@ -81,19 +81,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#1F4973',
   },
-  login: {
+  loginTouchable: {
   	width: width/3*2.5,
   	paddingTop: 25,
   	paddingBottom: 25,
   	justifyContent: 'center',
-  	textAlign: 'center', 
-  	color:'white', 
-  	fontSize:28, 
+  	borderRadius: 15,
   	backgroundColor: '#011f33',
-  	color: '#d6efff',
   	shadowColor: '#000000', 
   	shadowOffset: {width: 0, height: 0}, 
-  	shadowRadius: 20, 
-  	shadowOpacity: 0.65,
+  	shadowRadius: 10, 
+  	shadowOpacity: 0.3,
+  },
+  login: {
+  	fontSize:28, 
+  	textAlign: 'center', 
+  	color:'white', 
   }
 });
