@@ -126,7 +126,7 @@ export default class ProfileScreen extends React.Component {
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
             <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-            <Text style={styles.subtitle}>Work info goes here...</Text>
+            <Text style={styles.subtitle}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
           </View>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>

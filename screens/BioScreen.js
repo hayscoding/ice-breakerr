@@ -21,10 +21,16 @@ export default class BioScreen extends React.Component {
       }
 
       FirebaseAPI.getAllUsers((users) => {
-        //Filter out the current user from the other individuals
-        this.setState({profiles: users.filter((user) => {
-          return user.uid != this.state.user.uid 
-        })})
+        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+          //Filter out the current user from the other individuals
+          this.setState({profiles: users.filter((user) => {
+            return user.uid != this.state.user.uid 
+          }).filter((user) => {
+            return !(chattedProfiles.some((profile) => {
+              return profile.uid == user.uid
+            }))
+          })})
+        })
       })
 
       this._mounted = false
@@ -94,7 +100,7 @@ export default class BioScreen extends React.Component {
                       <View style={styles.headerContainer}>
                         <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                         <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                        <Text style={styles.subtitle}>Austin, TX</Text>
+                        <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
                       </View>
                       <Text style={styles.bio}>{profile.bio}</Text>
                     </View>
@@ -174,7 +180,15 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 16,
     marginTop: 2,
-    marginBottom: 3,
+    marginBottom: 1,
+    color: 'gray',
+  },
+  gender: {
+    color: '#2B2B2B',
+    textAlign: 'left',
+    fontSize: 16,
+    marginTop: 2,
+    marginBottom: 2,
     color: 'gray',
   },
 });

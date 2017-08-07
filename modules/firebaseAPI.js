@@ -143,7 +143,7 @@ export const getChatWithProfiles = (userKey, profileKey, func) => {
   getChatCb(chatID, (chat) => { func(chat) })
 }
 
-export const getChatIDsWithProfiles = (userKey, profileKeyArray, func) => {
+export const getChatIDsWithProfilesAndUser = (userKey, profileKeyArray, func) => {
   const chatIDs = []
 
   profileKeyArray.forEach((profileKey) => {
