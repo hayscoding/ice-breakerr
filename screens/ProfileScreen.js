@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     height:height,
     width:width,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#f7fbff',
   },  
   headerContainer: {
     paddingTop: 5,

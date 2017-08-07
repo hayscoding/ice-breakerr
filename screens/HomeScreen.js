@@ -126,8 +126,7 @@ export default class HomeScreen extends React.Component {
     if(this.state.loaded) {
       return(
         <View style={styles.container}>
-          <View style={styles.topContainer}>
-            <ScrollView style={styles.recentUpdates}>
+          <ScrollView style={styles.recentUpdates}>
             {
               this.state.profiles.map((profile) => {
                 return (
@@ -149,8 +148,7 @@ export default class HomeScreen extends React.Component {
                 )
               })
             }
-        </ScrollView>
-          </View>
+          </ScrollView>
         </View>
       )
     } else
@@ -161,12 +159,8 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  topContainer: {
-    flex: 1,
+    backgroundColor: '#f7fbff',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   name: {
     color: '#2B2B2B',
@@ -193,6 +187,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 30,
+    shadowColor: '#000000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowRadius: 7, 
+    shadowOpacity: 0.1,
   },
   mainTitle: {
     height: height/20,
