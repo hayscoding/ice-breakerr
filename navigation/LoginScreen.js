@@ -44,12 +44,11 @@ export default class Login extends React.Component {
 		if (type === 'success') {
 	        const fields = ['email', 'name', 'gender']
 	        // facebook user data request
-	        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`)
+	        const response = await fetch(`https://graph.facebook.com/me?fields=email,birthday,gender&access_token=${token}`)
 	        const user = await FirebaseAPI.loginUser(token)
 
 	        FirebaseAPI.mergeUser(await user.uid, await token, await response.json())
 	        	.then(() => console.log('merge success'), () => this.showError('Could not add you to database'))
-			
 		} else {
 			this.displayError('Facebook login failed')
 		}

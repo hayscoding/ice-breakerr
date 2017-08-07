@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
   },
   titleContainer: {
-    backgroundColor:'#FAFAFA',
+    backgroundColor:'#f7fbff',
   },
   bioContainer: {
     flex: 1,

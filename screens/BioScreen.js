@@ -57,6 +57,19 @@ export default class BioScreen extends React.Component {
     }, 500)
   }
 
+  getAge(dateString) {
+    console.log(dateString)
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+  }
+
+
   showProfile(profile) {
     this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
   }
@@ -80,7 +93,7 @@ export default class BioScreen extends React.Component {
                     <View style={styles.shadow} key={profile.uid+"-shadow"}>
                       <View style={styles.headerContainer}>
                         <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                        <Text style={styles.age}>21 years old</Text>
+                        <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                         <Text style={styles.subtitle}>Austin, TX</Text>
                       </View>
                       <Text style={styles.bio}>{profile.bio}</Text>
