@@ -77,6 +77,18 @@ export default class ProfileScreen extends React.Component {
     this._mounted = false;
   }
 
+  getAge(dateString) {
+    console.log(dateString)
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+  }
+
   sendMessageTouchable(profile) {
     if(!this.state.hasChat && this._mounted)
       return(
@@ -113,7 +125,7 @@ export default class ProfileScreen extends React.Component {
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-            <Text style={styles.age}>23 years old</Text>
+            <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
             <Text style={styles.subtitle}>Work info goes here...</Text>
           </View>
           <View style={styles.titleContainer}>
