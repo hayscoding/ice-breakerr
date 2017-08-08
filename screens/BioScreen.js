@@ -25,7 +25,7 @@ export default class BioScreen extends React.Component {
           //Filter out the current user from the other individuals
           this.setState({profiles: users.filter((user) => {
             return user.uid != this.state.user.uid 
-          }).filter((user) => {
+          }).filter((user) => { //Filter profiles already in chat with user
             return !(chattedProfiles.some((profile) => {
               return profile.uid == user.uid
             }))
@@ -93,19 +93,19 @@ export default class BioScreen extends React.Component {
           {
             this.state.profiles.map((profile) => {
               return (
-                <TouchableOpacity onPress={() => {this.showProfile(profile)}}
-                key={profile.uid+"-touchable"} >
-                  <View style={styles.match}  key={profile.uid+"-container"}>
-                    <View style={styles.shadow} key={profile.uid+"-shadow"}>
+                <View style={styles.match}  key={profile.uid+"-container"}>
+                  <View style={styles.shadow} key={profile.uid+"-shadow"}>
+                    <TouchableOpacity onPress={() => {this.showProfile(profile)}}
+                    key={profile.uid+"-touchable"} >
                       <View style={styles.headerContainer}>
                         <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                         <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                         <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
                       </View>
                       <Text style={styles.bio}>{profile.bio}</Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
+                </View>
               )
             })
           }
@@ -116,6 +116,8 @@ export default class BioScreen extends React.Component {
       return <View></View>
   }
 }
+
+const matchHeight = height/3*1.15
 
 const styles = StyleSheet.create({
   container: {
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
   },
   match: {
     width: width,
-    height: height/3, 
+    height: matchHeight, 
     justifyContent: 'center', 
     alignItems: 'center',
     paddingBottom: 20,
@@ -151,12 +153,16 @@ const styles = StyleSheet.create({
     width: width,
     alignSelf: 'flex-start',
     paddingTop: 10,
+    paddingBottom: 30,
     paddingLeft: 20,
     paddingRight: 20,
     fontSize:18,
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',
+    //The following limits the shown portion of bio
+    //to a max of 4 lines
+    lineHeight: (matchHeight/10*6)/5,
   },
   headerContainer: {
     paddingTop: 5,
