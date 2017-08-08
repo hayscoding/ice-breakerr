@@ -18,6 +18,10 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 const {height, width} = Dimensions.get('window');
 
 export default class EditProfileScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Edit Profile',
+  };
+
   componentWillMount() {
     this.state = {
       user: this.props.navigation.state.params.user, 
@@ -103,7 +107,7 @@ export default class EditProfileScreen extends React.Component {
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
             <Text style={styles.age}>23 years old</Text>
-            <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
+            <Text style={styles.subtitle}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
           </View>
           <Text style={styles.title}>Express Who You Are</Text>
           <View style={styles.bioContainer}>
@@ -137,6 +141,7 @@ export default class EditProfileScreen extends React.Component {
               onFocus={this.textInputFocused.bind(this, 'interests')}
               value={this.state.user.interests} />
           </View>
+          <View style={styles.spacer}></View>
         </ScrollView>
       </View>
     )
@@ -155,6 +160,7 @@ const styles = StyleSheet.create({
   },  
   headerContainer: {
     paddingTop: 10,
+    paddingBottom: 10,
     paddingLeft: 20,
     paddingRight: 20,
     backgroundColor:'white',
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   subtitle: {
-    fontSize:14,
+    fontSize:15,
     color: 'gray',
     textAlign: 'left'
   },
@@ -228,5 +234,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
-  }
+  },
+  spacer: {
+    height: 40,
+  },
 });

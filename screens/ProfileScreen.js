@@ -92,7 +92,7 @@ export default class ProfileScreen extends React.Component {
   sendMessageTouchable(profile) {
     if(!this.state.hasChat && this._mounted)
       return(
-        <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center',}}>
+        <View style={styles.chatButtonContainer}>
           <TouchableOpacity onPress={() => {this.startChat(profile)}} >
             <Text style={styles.chatButton}>Send Message</Text>
           </TouchableOpacity>
@@ -111,7 +111,7 @@ export default class ProfileScreen extends React.Component {
 
     return(
       <View style={styles.container}>  
-        <ScrollView>
+        <ScrollView style={{flex: height/10*9}}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
             {
               this.state.photoUrls.map((url) => {
@@ -228,9 +228,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   subtitle: {
-    fontSize:14,
+    fontSize:15,
     color: 'gray',
     textAlign: 'left'
+  },
+  chatButtonContainer: {
+    height: height/10, 
+    justifyContent: 'flex-end', 
+    alignItems: 'center'
   },
   chatButton: {
     width: width,
@@ -243,5 +248,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
-  }
+  },
 });
