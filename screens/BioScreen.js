@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   gender: {
     color: '#2B2B2B',
     textAlign: 'left',
-    fontSize: 16,
+    fontSize: 17,
     marginTop: 2,
     marginBottom: 2,
     color: 'gray',

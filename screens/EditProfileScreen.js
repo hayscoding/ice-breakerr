@@ -101,7 +101,7 @@ export default class EditProfileScreen extends React.Component {
             { this.getPhotos() }
           </ScrollView>
           <View style={styles.headerContainer}>
-            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
             <Text style={styles.age}>23 years old</Text>
             <Text style={styles.subtitle}>Work info goes here...{'\n'}</Text>
           </View>

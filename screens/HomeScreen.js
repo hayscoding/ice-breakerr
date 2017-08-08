@@ -140,7 +140,7 @@ export default class HomeScreen extends React.Component {
                         }).url}}
                         style={[{width: size, height: size, borderRadius: size/4}]}/>  
                       <View>   
-                        <Text style={styles.name} key={profile.uid+'-name'}>{profile.name}</Text>
+                        <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
                         <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
                       </View>
                     </View>

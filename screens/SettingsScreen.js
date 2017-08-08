@@ -54,7 +54,7 @@ export default class SettingsScreen extends React.Component {
               source={{uri: `https://graph.facebook.com/${this.state.user.id}/picture?height=${height}`}}
               style={[{width: size, height: size, borderRadius: size/2}]}/> 
           </TouchableOpacity>
-          <Text style={styles.name}>{this.state.user.name}</Text>
+          <Text style={styles.name}>{this.state.user.name.split(' ')[0]}</Text>
         </View> 
         <TouchableOpacity style={styles.optionContainer} onPress={() => {this.editProfile()}}>
           <Text style={styles.option}>EDIT PROFILE</Text>
