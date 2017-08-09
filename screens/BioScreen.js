@@ -93,19 +93,21 @@ export default class BioScreen extends React.Component {
           {
             this.state.profiles.map((profile) => {
               return (
-                <View style={styles.match}  key={profile.uid+"-container"}>
-                  <View style={styles.shadow} key={profile.uid+"-shadow"}>
+                  <View style={styles.match}  key={profile.uid+"-container"}>
                     <TouchableOpacity onPress={() => {this.showProfile(profile)}}
                     key={profile.uid+"-touchable"} >
-                      <View style={styles.headerContainer}>
-                        <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                        <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                        <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                      <View style={styles.content} >
+                        <View style={styles.headerContainer}>
+                          <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                          <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
+                          <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                        </View>
+                        <View style={styles.bioContainer}>
+                          <Text style={styles.bio}>{profile.bio}</Text>
+                        </View>
                       </View>
-                      <Text style={styles.bio}>{profile.bio}</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
               )
             })
           }
@@ -117,7 +119,7 @@ export default class BioScreen extends React.Component {
   }
 }
 
-const matchHeight = height/3*1.15
+const matchHeight = height/3*1.05
 
 const styles = StyleSheet.create({
   container: {
@@ -127,6 +129,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  content: {
+    width: width/20*19,
+    height: matchHeight, 
+    shadowColor: '#000000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowRadius: 7, 
+    shadowOpacity: 0.3,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    borderRadius: 10,
+    marginTop: 10,
+    backgroundColor: 'white'
+  },
   name: {
     color: '#2B2B2B',
     fontSize: 18,
@@ -135,22 +150,13 @@ const styles = StyleSheet.create({
   },
   match: {
     width: width,
-    height: matchHeight, 
     justifyContent: 'center', 
     alignItems: 'center',
-    paddingBottom: 20,
-  },
-  shadow: {
-    shadowColor: '#000000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 7, 
-    shadowOpacity: 0.3,
-    borderWidth: 1,
-    borderColor: 'lightgrey'
+    marginBottom: 10,
+    borderRadius: 10,
   },
   bio: {
     flex: 1,
-    width: width,
     alignSelf: 'flex-start',
     paddingTop: 10,
     paddingBottom: 30,
@@ -164,6 +170,11 @@ const styles = StyleSheet.create({
     //to a max of 4 lines
     lineHeight: (matchHeight/10*6)/5,
   },
+  bioContainer: {
+    flex: 1,
+    borderRadius: 10,
+    paddingBottom: 10,
+  },
   headerContainer: {
     paddingTop: 5,
     paddingBottom: 10,
@@ -172,6 +183,7 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
+    borderRadius: 10,
   },
   name: {
     color: '#2B2B2B',
@@ -180,6 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     textAlign: 'left',
     fontWeight: 'bold',
+    borderRadius: 10,
   },
   age: {
     color: '#2B2B2B',
@@ -188,6 +201,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 1,
     color: 'gray',
+    borderRadius: 10,
   },
   gender: {
     color: '#2B2B2B',
@@ -196,5 +210,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 2,
     color: 'gray',
+    borderRadius: 10,
   },
 });
