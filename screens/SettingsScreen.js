@@ -56,14 +56,20 @@ export default class SettingsScreen extends React.Component {
           </TouchableOpacity>
           <Text style={styles.name}>{this.state.user.name.split(' ')[0]}</Text>
         </View> 
-        <TouchableOpacity style={styles.optionContainer} onPress={() => {this.editProfile()}}>
-          <Text style={styles.option}>EDIT PROFILE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
-          <Text style={styles.option}>CONTACT SUPPORT</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={() => {this.logout()}}>
-          <Text style={styles.option}>LOGOUT</Text>
+        <View style={styles.columnContainer}>
+          <View style={styles.leftColumn}>
+             <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
+              <Text style={styles.option}>CONTACT SUPPORT</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.rightColumn}>
+            <TouchableOpacity style={styles.optionContainer} onPress={() => {this.editProfile()}}>
+              <Text style={styles.option}>EDIT PROFILE</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.bottomOptionContainer} onPress={() => {this.logout()}}>
+          <Text style={styles.logout}>LOGOUT</Text>
         </TouchableOpacity>
       </View>
     );
@@ -77,33 +83,58 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  columnContainer: {
+    flex: 1,
+    height: width/3,
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  leftColumn: {
+    flex: 1,
+    width: width/4,
+    height: width/4,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  rightColumn: {
+    flex: 1,
+    width: width/4,
+    height: width/4,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderLeftWidth: 1,
+    borderColor: 'lightgrey',
+  },
   option: {
     marginTop: 15, 
     marginBottom: 15, 
-    fontSize: 15, 
+    fontSize: 20, 
     color: '#2B2B2B',
     alignSelf: 'center',
+    textAlign: 'center',
+    color: 'gray',
   },
   optionContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: width/3*2,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    borderRadius: 15,
-    marginBottom: 25,
-    shadowColor: '#000000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 5, 
-    shadowOpacity: 0.1,
+    width: width/4,
+    height: width/4,
+    // backgroundColor: 'white',
+    // borderWidth: 1,
+    // borderColor: 'lightgrey',
+    // borderRadius: 360,
+    // shadowColor: '#000000', 
+    // shadowOffset: {width: 0, height: 0}, 
+    // shadowRadius: 5, 
+    // shadowOpacity: 0.1,
   },
   profileContainer: {
     flex: 1,
     justifyContent: 'flex-start', 
     alignItems: 'center',
     paddingTop: 25,
-    paddingBottom: 10,
   },
   name: {
     color: '#2B2B2B',
@@ -112,5 +143,25 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  logout: {
+    fontSize: 20, 
+    color: '#2B2B2B',
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
+  bottomOptionContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: 'lightgrey',
+    paddingBottom: 15,
+    paddingTop: 15,
+    shadowColor: '#000000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowRadius: 5, 
+    shadowOpacity: 0.1,
   },
 });

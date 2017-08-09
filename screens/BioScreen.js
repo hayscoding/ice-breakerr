@@ -98,9 +98,17 @@ export default class BioScreen extends React.Component {
                     key={profile.uid+"-touchable"} >
                       <View style={styles.content} >
                         <View style={styles.headerContainer}>
-                          <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                          <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                          <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                          <View style={styles.leftColumn}>
+                            <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                            <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
+                            <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                          </View>
+                          <View style={styles.rightColumn}>
+                            <TouchableOpacity onPress={() => {}}
+                            key={profile.uid+"-remove"} >
+                              <Text style={{fontSize: 24, color: 'lightgrey'}}>X</Text>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                         <View style={styles.bioContainer}>
                           <Text style={styles.bio}>{profile.bio}</Text>
@@ -120,6 +128,7 @@ export default class BioScreen extends React.Component {
 }
 
 const matchHeight = height/3*1.05
+const matchWidth =  width/20*19
 
 const styles = StyleSheet.create({
   container: {
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    width: width/20*19,
+    width: matchWidth,
     height: matchHeight, 
     shadowColor: '#000000', 
     shadowOffset: {width: 0, height: 0}, 
@@ -176,14 +185,26 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   headerContainer: {
+    flexDirection: 'row',
     paddingTop: 5,
-    paddingBottom: 10,
     paddingLeft: 20,
     paddingRight: 20,
+    paddingBottom: 10,
     backgroundColor:'white',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
     borderRadius: 10,
+  },
+  leftColumn: {
+    alignSelf: 'flex-start',
+    width: matchWidth/2,
+  },
+  rightColumn: {
+    width: matchWidth/3,
+    alignItems: 'flex-end',
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
   },
   name: {
     color: '#2B2B2B',
