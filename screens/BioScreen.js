@@ -53,17 +53,7 @@ export default class BioScreen extends React.Component {
 
           FirebaseAPI.watchForHasChat(this.state.user.uid, profile.uid, (hasChat) => {
             if(hasChat) {
-              const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
-              const updatedProfiles = this.state.profiles
-
-              FirebaseAPI.removeWatchUser(profile.uid)
-
-              updatedProfiles.splice(index, 1)
-
-              this.setState({profiles: updatedProfiles})
-              InteractionManager.runAfterInteractions(() => {
-                this.getProfiles()                
-              })
+              this.removeProfile(profile)
             }
           })
         })
@@ -110,6 +100,20 @@ export default class BioScreen extends React.Component {
     return fbImageUrl
   }
 
+  removeProfile(profile) {
+    const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
+    const updatedProfiles = this.state.profiles
+
+    FirebaseAPI.removeWatchUser(profile.uid)
+
+    updatedProfiles.splice(index, 1)
+
+    this.setState({profiles: updatedProfiles})
+    InteractionManager.runAfterInteractions(() => {
+      this.getProfiles()                
+    })
+  }
+
   render() {
     if(this.state.profiles.length > 0)
       return (
@@ -129,7 +133,7 @@ export default class BioScreen extends React.Component {
                             <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
                           </View>
                           <View style={styles.rightColumn}>
-                            <TouchableOpacity onPress={() => {}}
+                            <TouchableOpacity onPress={() => {this.removeProfile(profile)}}
                             key={profile.uid+"-remove"} >
                               <Text style={{fontSize: 24, color: 'lightgrey'}}>X</Text>
                             </TouchableOpacity>
