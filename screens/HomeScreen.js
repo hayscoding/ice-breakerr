@@ -65,8 +65,6 @@ export default class HomeScreen extends React.Component {
         return profile != undefined
       })})
 
-      console.log('Profile Keys: ', this.state.profiles, ', ', profiles)
-
       if(this.state.profiles != profiles)
         this.state.profiles.forEach((profile) => {
           const uidArray = [profile.uid, this.state.user.uid]

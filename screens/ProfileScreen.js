@@ -36,8 +36,6 @@ export default class ProfileScreen extends React.Component {
           const chatID = uidArray[0]+'-'+uidArray[1]
 
           FirebaseAPI.getChatCb(chatID, (chat) => {
-            console.log('CHAT')
-            console.log(chat)
             if(chat != null) {
               const msgCount = Object.values(chat).filter((message) => {
                 return message.sender == profile.uid
