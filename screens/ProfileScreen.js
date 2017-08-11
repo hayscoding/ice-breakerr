@@ -13,6 +13,8 @@ import {
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
+import firebase from 'firebase'
+
 const {height, width} = Dimensions.get('window');
 
 export default class ProfileScreen extends React.Component {
@@ -22,6 +24,7 @@ export default class ProfileScreen extends React.Component {
       profile: this.props.navigation.state.params.profile,
       photoUrls: [],
       hasChat: false,
+      startedChat: false,
     }
 
     FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
@@ -39,9 +42,6 @@ export default class ProfileScreen extends React.Component {
               const msgCount = Object.values(chat).filter((message) => {
                 return message.sender == profile.uid
               }).length
-
-              console.log('PROFOOPPOESKEFOKEOF')
-              console.log(this.state.profile)
 
               if(msgCount >= 5) 
                 this.setState({profile: profile, photoUrls: profile.photoUrls})
@@ -99,7 +99,14 @@ export default class ProfileScreen extends React.Component {
   }
 
   startChat(profile) {
-    this.props.navigation.navigate('Chat', {profile: this.props.navigation.state.params.profile, user: this.props.navigation.state.params.user})
+    FirebaseAPI.watchForNewChat(this.state.user.uid, this.state.profile.uid, (hasChat) => {
+      if(this.state.hasChat != hasChat)
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({hasChat: hasChat})
+        })
+    })
+
+    this.props.navigation.navigate('Chat', {profile: this.state.profile, user: this.state.user})
   }
 
   render() {

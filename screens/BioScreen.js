@@ -51,7 +51,7 @@ export default class BioScreen extends React.Component {
             this.setState({profiles: updatedProfiles})
           })
 
-          FirebaseAPI.watchForHasChat(this.state.user.uid, profile.uid, (hasChat) => {
+          FirebaseAPI.watchForNewChat(this.state.user.uid, profile.uid, (hasChat) => {
             if(hasChat) {
               this.removeProfile(profile)
             }

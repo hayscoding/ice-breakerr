@@ -37,29 +37,11 @@ export default class HomeScreen extends React.Component {
       loaded: false,
     }
 
+    this.watchChats()
+  }
 
-    FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
-      this.setState({profiles: profiles.filter((profile) => {
-        return profile != undefined
-      })})
-
-      this.state.profiles.forEach((profile) => {
-        const uidArray = [profile.uid, this.state.user.uid]
-        uidArray.sort()
-        const chatID = uidArray[0]+'-'+uidArray[1]
-
-        FirebaseAPI.getChatCb(chatID, (chat) => {
-          const msgCount = Object.values(chat).filter((message) => {
-            return message.sender == profile.uid
-          }).length
-
-          if(msgCount >= 5) 
-            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
-          else
-            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
-        })
-      })
-    })
+  componentDidUpdate() {
+    // this.watchChats()  
   }
 
   componentWillUnmount() {
@@ -75,6 +57,34 @@ export default class HomeScreen extends React.Component {
           .orderByChild('createdAt')
           .off()
       })
+  }
+
+  watchChats() {
+    FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
+      this.setState({profiles: profiles.filter((profile) => {
+        return profile != undefined
+      })})
+
+      console.log('Profile Keys: ', this.state.profiles, ', ', profiles)
+
+      if(this.state.profiles != profiles)
+        this.state.profiles.forEach((profile) => {
+          const uidArray = [profile.uid, this.state.user.uid]
+          uidArray.sort()
+          const chatID = uidArray[0]+'-'+uidArray[1]
+
+          FirebaseAPI.getChatCb(chatID, (chat) => {
+            const msgCount = Object.values(chat).filter((message) => {
+              return message.sender == profile.uid
+            }).length
+
+            if(msgCount >= 5) 
+              this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
+            else
+              this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
+          })
+        })
+    })
   }
 
   listenLastMessage(profile) {
@@ -107,7 +117,7 @@ export default class HomeScreen extends React.Component {
         recentMessage = messages[0]   
     })
 
-    return recentMessage.text
+    return recentMessage.text != undefined ? recentMessage.text : ' '
   }
 
   openChat(profile) {
