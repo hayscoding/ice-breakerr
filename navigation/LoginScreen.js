@@ -57,11 +57,11 @@ export default class Login extends React.Component {
     render() {
 	    return (
 	      <View style={styles.container}>
-	      	<View style={{flex: 1, justifyContent: 'flex-start'}}>
+	      	<View style={{flex: 1, justifyContent: 'flex-start',}}>
 				<Image 
 				resizeMode='cover'
 				source={require( "../assets/images/ice-breaker-logo.png")}
-				style={{width:size, height:size}} />
+				style={{width:size, height:size,}} />
 	      	</View>
 	      	<View style={{flex: 1, width: width/3*2.5, justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 25, paddingRight: 25, paddingBottom: 40, }}>
 		      	<TouchableOpacity style={styles.loginTouchable} onPress={this.fbLogin}>

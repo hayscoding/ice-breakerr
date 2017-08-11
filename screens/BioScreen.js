@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -20,24 +20,16 @@ export default class BioScreen extends React.Component {
         profiles: [],
       }
 
-      FirebaseAPI.getAllUsers((users) => {
-        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-          //Filter out the current user from the other individuals
-          this.setState({profiles: users.filter((user) => {
-            return user.uid != this.state.user.uid 
-          }).filter((user) => { //Filter profiles already in chat with user
-            return !(chattedProfiles.some((profile) => {
-              return profile.uid == user.uid
-            }))
-          })})
-        })
-      })
+      this.getProfiles()
+
+
 
       this._mounted = false
   }
 
   componentDidMount() {
     this._mounted = true
+    // this.updateProfilesTimer()
   }
 
   componentWillUpdate() {
@@ -45,22 +37,55 @@ export default class BioScreen extends React.Component {
   }
 
   componentDidUpdate() {
-    this.updateProfilesTimer()
+    // this.updateProfilesTimer()
+  }
+
+  componentWillUnmount() {
+    // this.stopWatchingUsers()
+  }
+
+  watchProfiles() {
+    InteractionManager.runAfterInteractions(() => {
+        this.state.profiles.forEach((profile) => { 
+          console.log(profile)
+          FirebaseAPI.watchUser(profile.uid, (updatedProfile) => {
+            const index = this.state.profiles.findIndex((profile) => { return profile.uid == updatedProfile.uid })
+            const updatedProfiles = this.state.profiles
+
+            updatedProfiles[index] = updatedProfile
+
+            this.setState({profiles: updatedProfiles})
+          })
+        })
+      })
   }
 
   updateProfilesTimer() {
     const timer = setTimeout(() => {
-      if(this._mounted)
-        FirebaseAPI.getAllUsers((users) => {
+      if(this._mounted) {
+        this.getProfiles()
+
+        this._mounted = true
+      }
+    }, 500)
+  }
+
+  getProfiles() {
+    FirebaseAPI.getAllUsers((users) => {
+        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
           //Filter out the current user from the other individuals
           this.setState({profiles: users.filter((user) => {
             return user.uid != this.state.user.uid 
-            }),
+          }).filter((user) => { //Filter profiles already in chat with user
+            return !(chattedProfiles.some((profile) => {
+              return profile.uid == user.uid
+              }))
+            }).slice(0, 4) //only show 4 profiles
           })
-
-        this._mounted = true
+        
+        this.watchProfiles()
+        })
       })
-    }, 500)
   }
 
   getAge(dateString) {

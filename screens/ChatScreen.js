@@ -26,7 +26,7 @@ const size = 50;
 export default class ChatScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.profile.name.split(' ')[0]}`,
-    headerRight: (<Button title='Info' 
+    headerRight: (<Button title='Info'
                     onPress={() => {navigation.navigate('Profile', {profile: navigation.state.params.profile, user: navigation.state.params.user})}} />),
   });
 

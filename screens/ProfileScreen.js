@@ -69,10 +69,6 @@ export default class ProfileScreen extends React.Component {
       this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
   }
 
-  componentWillUpdate() {
-    
-  }
-
   componentWillUnmount() {
     this._mounted = false;
   }
