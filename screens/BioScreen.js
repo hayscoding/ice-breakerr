@@ -66,13 +66,21 @@ export default class BioScreen extends React.Component {
           //Filter out the current user from the other individuals
           this.setState({profiles: users.filter((user) => {
             return user.uid != this.state.user.uid 
-          }).filter((user) => { //Filter profiles already in chat with user
-            return !(chattedProfiles.some((profile) => {
-              return profile.uid == user.uid
-              }))
+            }).filter((user) => { //Filter profiles already in chat with user
+              return !(chattedProfiles.some((profile) => {
+                return profile.uid == user.uid
+                }))
+            }).filter((user) => { //Filter rejected profiles
+              if(this.state.user.rejections != undefined)
+                return !Object.keys(this.state.user.rejections).some((uid) => {
+                  return uid == user.uid
+                })
+              else
+                return true
+
             }).slice(0, 4) //only show 4 profiles
           })
-        
+
         this.watchProfiles()
         })
       })
@@ -115,8 +123,14 @@ export default class BioScreen extends React.Component {
   }
 
   rejectProfile(profile) {
-    this.removeProfile(profile)
     FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+      this.setState({user: user})
+    })
+
+    InteractionManager.runAfterInteractions(() => {
+      this.removeProfile(profile)
+    })
   }
 
   render() {
