@@ -22,22 +22,15 @@ export default class BioScreen extends React.Component {
 
       this.getProfiles()
 
-
-
       this._mounted = false
   }
 
   componentDidMount() {
     this._mounted = true
-    // this.updateProfilesTimer()
   }
 
   componentWillUpdate() {
     this._mounted = false
-  }
-
-  componentDidUpdate() {
-    // this.updateProfilesTimer()
   }
 
   componentWillUnmount() {
@@ -47,27 +40,34 @@ export default class BioScreen extends React.Component {
   watchProfiles() {
     InteractionManager.runAfterInteractions(() => {
         this.state.profiles.forEach((profile) => { 
-          console.log(profile)
+          FirebaseAPI.removeWatchUser(profile.uid)
+
           FirebaseAPI.watchUser(profile.uid, (updatedProfile) => {
-            const index = this.state.profiles.findIndex((profile) => { return profile.uid == updatedProfile.uid })
+            const index = this.state.profiles.findIndex((user) => { return user.uid == updatedProfile.uid })
             const updatedProfiles = this.state.profiles
 
             updatedProfiles[index] = updatedProfile
 
             this.setState({profiles: updatedProfiles})
           })
+
+          FirebaseAPI.watchForHasChat(this.state.user.uid, profile.uid, (hasChat) => {
+            if(hasChat) {
+              const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
+              const updatedProfiles = this.state.profiles
+
+              FirebaseAPI.removeWatchUser(profile.uid)
+
+              updatedProfiles.splice(index, 1)
+
+              this.setState({profiles: updatedProfiles})
+              InteractionManager.runAfterInteractions(() => {
+                this.getProfiles()                
+              })
+            }
+          })
         })
       })
-  }
-
-  updateProfilesTimer() {
-    const timer = setTimeout(() => {
-      if(this._mounted) {
-        this.getProfiles()
-
-        this._mounted = true
-      }
-    }, 500)
   }
 
   getProfiles() {
