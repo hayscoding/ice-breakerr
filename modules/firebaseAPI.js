@@ -73,6 +73,12 @@ export const getPhotoUrlsFromFbCb = (id, token, func) => {
   })
 }
 
+export const rejectProfileFromUser = (userKey, profileKey) => {
+  var today = new Date();
+
+  return firebase.database().ref().child('users').child(userKey).child('rejections').update({[profileKey]:{date: today}})
+}
+
 export const getUser = (key) => {
   return firebase.database().ref().child('users').child(key).once('value')
     .then((snap) => snap.val())

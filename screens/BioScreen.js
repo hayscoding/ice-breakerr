@@ -114,6 +114,11 @@ export default class BioScreen extends React.Component {
     })
   }
 
+  rejectProfile(profile) {
+    this.removeProfile(profile)
+    FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+  }
+
   render() {
     if(this.state.profiles.length > 0)
       return (
@@ -133,7 +138,7 @@ export default class BioScreen extends React.Component {
                             <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
                           </View>
                           <View style={styles.rightColumn}>
-                            <TouchableOpacity onPress={() => {this.removeProfile(profile)}}
+                            <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
                             key={profile.uid+"-remove"} >
                               <Text style={{fontSize: 24, color: 'lightgrey'}}>X</Text>
                             </TouchableOpacity>
