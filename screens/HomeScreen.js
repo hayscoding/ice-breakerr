@@ -54,20 +54,12 @@ export default class HomeScreen extends React.Component {
           }).length
 
           if(msgCount >= 5) 
-            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}]})
+            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
           else
-            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}]})
+            this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
         })
       })
     })
-  }
-
-  componentDidUpdate() {
-    if(!this.state.loaded && this.state.profiles.length != 0 && this.state.profiles.length == this.state.photoUrls.length){
-      InteractionManager.runAfterInteractions(() => {
-        this.setState({loaded: true})
-      })
-    }
   }
 
   componentWillUnmount() {
@@ -129,15 +121,15 @@ export default class HomeScreen extends React.Component {
           <ScrollView style={styles.recentUpdates}>
             {
               this.state.profiles.map((profile) => {
+                const fbPhotoUrl = this.state.photoUrls.some((urlObj) => { return urlObj.uid == profile.uid }) ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
+                
                 return (
                   <TouchableOpacity onPress={() => {this.openChat(profile)}}
                   key={profile.uid+"-touchable"} >
                     <View style={styles.match}  key={profile.uid+"-container"}>
                       <Image
                         resizeMode='cover'
-                        source={{uri: this.state.photoUrls.find((urlObj) => {
-                          return urlObj.uid == profile.uid
-                        }).url}}
+                        source={{uri: fbPhotoUrl}}
                         style={[{width: size, height: size, borderRadius: size/4}]}/>  
                       <View>   
                         <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
