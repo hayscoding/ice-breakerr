@@ -6,7 +6,7 @@ import { View, ActivityIndicator, InteractionManager, Icon } from 'react-native'
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
-import MainTabNavigator from './MainTabNavigator';
+import IndexScreen from '../screens/IndexScreen';
 import LoginScreen from './LoginScreen'
 import LoadingScreen from './LoadingScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -18,7 +18,7 @@ import registerForPushNotificationsAsync from '../api/registerForPushNotificatio
 const RootStackNavigator = StackNavigator(
   {
     Main: {
-      screen: MainTabNavigator,
+      screen: IndexScreen,
     },
     Profile: {
       screen: ProfileScreen,

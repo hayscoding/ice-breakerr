@@ -8,7 +8,6 @@ const {height, width} = Dimensions.get('window');
 
 export default class BioScreen extends React.Component {
   static navigationOptions = {
-    title: 'People Near You',
     headerLeft: null,
     gesturesEnabled: false,
     timer: {},
