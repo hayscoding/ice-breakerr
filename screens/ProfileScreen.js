@@ -9,6 +9,7 @@ import {
   InteractionManager,
   Icon,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -83,12 +84,42 @@ export default class ProfileScreen extends React.Component {
     return age;
   }
 
+  rejectProfile(profile) {
+    Alert.alert(
+      ('Delete '+profile.name.split(' ')[0]+'?'),
+      'You will not be able to view their profile or messages again.',
+      [
+        {text: 'OK', onPress: () => {
+          FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+          FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+            this.setState({user: user})
+          })
+        }},
+        {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+      ],
+      { cancelable: false }
+    )
+  }
+
   sendMessageTouchable(profile) {
     if(!this.state.hasChat && this._mounted)
       return(
         <View style={styles.chatButtonContainer}>
           <TouchableOpacity onPress={() => {this.startChat(profile)}} >
             <Text style={styles.chatButton}>Send Message</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    else
+      return null
+  }
+
+  unmatchTouchable(profile) {
+    if(this.state.user != this.state.profile && this.state.hasChat && this._mounted)
+      return(
+        <View style={styles.chatButtonContainer}>
+          <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
+            <Text style={styles.unmatchButton}>Unmatch</Text>
           </TouchableOpacity>
         </View>
       )
@@ -113,41 +144,44 @@ export default class ProfileScreen extends React.Component {
     return(
       <View style={styles.container}>  
         <ScrollView style={{flex: height/10*9}}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
-            {
-              this.state.photoUrls.map((url) => {
-                return <Image 
-                  resizeMode='cover'
-                  source={{uri: url}}
-                  style={{width:width, height:height/2}} 
-                  key={profile.uid+"-"+url} />
-              })
-            }
+          <View style={{flex: 1, marginBottom: height/5*1.2}}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
+              {
+                this.state.photoUrls.map((url) => {
+                  return <Image 
+                    resizeMode='cover'
+                    source={{uri: url}}
+                    style={{width:width, height:height/2}} 
+                    key={profile.uid+"-"+url} />
+                })
+              }
+            </ScrollView>
+            <View style={styles.headerContainer}>
+              <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+              <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
+              <Text style={styles.subtitle}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+            </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>
+            </View>
+            <View style={styles.bioContainer}>
+              <Text style={styles.bio}>{profile.bio}</Text>
+            </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Favorite Emojis</Text>
+            </View>
+            <View style={styles.bioContainer}>
+              <Text style={styles.bio}>{profile.emojis}</Text>
+            </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Top Interests</Text>
+            </View>
+            <View style={styles.bioContainer}>
+              <Text style={styles.bio}>{profile.interests}</Text>
+            </View>
+          </View>
+          { this.unmatchTouchable(profile) }
           </ScrollView>
-          <View style={styles.headerContainer}>
-            <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-            <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-            <Text style={styles.subtitle}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>
-          </View>
-          <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{profile.bio}</Text>
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Favorite Emojis</Text>
-          </View>
-          <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{profile.emojis}</Text>
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Top Interests</Text>
-          </View>
-          <View style={styles.bioContainer}>
-            <Text style={styles.bio}>{profile.interests}</Text>
-          </View>
-        </ScrollView>
         { this.sendMessageTouchable(profile) } 
       </View>
     )
@@ -247,6 +281,19 @@ const styles = StyleSheet.create({
     color:'white', 
     fontSize:24, 
     backgroundColor: 'green',
+    borderColor: 'lightgrey', 
+    borderTopWidth: 3, 
+  },
+  unmatchButton: {
+    width: width,
+    marginTop: 100,
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    textAlign: 'center', 
+    color:'white', 
+    fontSize:24, 
+    backgroundColor: 'gray',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
   },

@@ -22,6 +22,7 @@ export default class IndexScreen extends React.Component {
   componentWillMount() {
       this.state = {
         user: this.props.screenProps.user, 
+        scrollEnabled: true,
       }
   }
 
@@ -33,6 +34,12 @@ export default class IndexScreen extends React.Component {
     }
   }
 
+  changeScrollBool(bool) {
+    if(bool != this.state.scrollEnabled)
+      this.setState({scrollEnabled: bool})
+
+    console.log('CHJaakgalkjelkfajkglk', bool)
+  }
 
   render() {
     return(
@@ -40,12 +47,13 @@ export default class IndexScreen extends React.Component {
           horizontal={true}
           loop={false}
           showsPagination={false}
-          index={1}>
+          index={1}
+          scrollEnabled={this.state.scrollEnabled}>
           <View style={this.viewStyle()}>
             <BioScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
           </View>
           <View style={this.viewStyle()}>
-            <HomeScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
+            <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.props.screenProps} navigation={this.props.navigation}/>
           </View>
           <View style={this.viewStyle()}>
             <SettingsScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>

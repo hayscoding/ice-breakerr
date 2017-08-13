@@ -27,6 +27,7 @@ export default class HomeScreen extends React.Component {
     title: 'Your Chats',
     headerLeft: null,
     gesturesEnabled: false,
+    scrollEnabled: true,
   };
 
   componentWillMount() {
@@ -35,13 +36,10 @@ export default class HomeScreen extends React.Component {
       profiles: [],
       photoUrls: [],
       loaded: false,
+      swipeoutDisabled: true,
     }
 
     this.watchChats()
-  }
-
-  componentDidUpdate() {
-    // this.watchChats()  
   }
 
   componentWillUnmount() {
@@ -62,7 +60,7 @@ export default class HomeScreen extends React.Component {
   watchChats() {
     FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
       this.setState({profiles: profiles.filter((profile) => {
-        return profile != undefined
+        return (profile != undefined  && this.state.user.rejections != undefined) ? !Object.keys(this.state.user.rejections).some((uid) => { return uid == profile.uid }) : true
       })})
 
       if(this.state.profiles != profiles)
@@ -76,8 +74,9 @@ export default class HomeScreen extends React.Component {
               return message.sender == profile.uid
             }).length
 
-            if(msgCount >= 5) 
+            if(msgCount >= 5) {
               this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
+            }
             else
               this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
           })
@@ -122,6 +121,17 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
   }
 
+  rejectProfile(profile) {
+    FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+      this.setState({user: user})
+    })
+
+    InteractionManager.runAfterInteractions(() => {
+      this.removeProfile(profile)
+    })
+  }
+
   render() {
     if(this.state.loaded) {
       return(
@@ -134,16 +144,16 @@ export default class HomeScreen extends React.Component {
                 return (
                   <TouchableOpacity onPress={() => {this.openChat(profile)}}
                   key={profile.uid+"-touchable"} >
-                    <View style={styles.match}  key={profile.uid+"-container"}>
-                      <Image
-                        resizeMode='cover'
-                        source={{uri: fbPhotoUrl}}
-                        style={[{width: size, height: size, borderRadius: size/4}]}/>  
-                      <View>   
-                        <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
-                        <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
+                      <View style={styles.match}  key={profile.uid+"-container"}>
+                        <Image
+                          resizeMode='cover'
+                          source={{uri: fbPhotoUrl}}
+                          style={[{width: size, height: size, borderRadius: size/4}]}/>  
+                        <View>   
+                          <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
+                          <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
+                        </View>
                       </View>
-                    </View>
                   </TouchableOpacity>
                 )
               })
