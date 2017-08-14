@@ -78,10 +78,14 @@ export default class HomeScreen extends React.Component {
             }).length
 
             if(msgCount >= 5) {
-              this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
+              })
             }
             else
-              this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
+              })
           })
         })
     })
@@ -90,14 +94,8 @@ export default class HomeScreen extends React.Component {
 
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-
-        if(updatedUser.rejections != undefined && this.state.user.rejection != Object.keys(updatedUser.rejections)) {
-          const newRejectionUid = Object.keys(updatedUser.rejections).filter((newUid) => {
-            if(this.state.user.rejections != undefined)
-              return !Object.keys(this.state.user.rejections).some((pastUid) => { return pastUid == newUid})
-            else
-              return newUid
-          })[0]
+        if(this.getNewRejection(updatedUser) != null) {
+          const newRejectionUid = this.getNewRejection()
 
           const index = this.state.profiles.indexOf((profile) => { return profile.uid == newRejectionUid})
           const updatedProfiles = this.state.profiles
@@ -111,6 +109,19 @@ export default class HomeScreen extends React.Component {
           
         }
       })
+  }
+
+  getNewRejection(updatedUser) {
+    if(updatedUser != undefined 
+      && 'rejections' in updatedUser 
+      && this.state.user.rejection != Object.keys(updatedUser.rejections)) {
+      return Object.keys(updatedUser.rejections).filter((newUid) => {
+        if(this.state.user.rejections != undefined)
+          return !Object.keys(this.state.user.rejections).some((pastUid) => { return pastUid == newUid})
+        else
+          return newUid
+      })[0]
+    }
   }
 
   componentWillUnmount() {
