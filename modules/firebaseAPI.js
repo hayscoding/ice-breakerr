@@ -74,9 +74,10 @@ export const getPhotoUrlsFromFbCb = (id, token, func) => {
 }
 
 export const rejectProfileFromUser = (userKey, profileKey) => {
-  var today = new Date();
+  const now = new Date();
 
-  return firebase.database().ref().child('users').child(userKey).child('rejections').update({[profileKey]:{date: today}})
+  firebase.database().ref().child('users').child(userKey).child('rejections').update({[profileKey]:{date: now}})
+  firebase.database().ref().child('users').child(profileKey).child('rejections').update({[userKey]:{date: now}})
 }
 
 export const getUser = (key) => {
@@ -222,7 +223,7 @@ export const watchChatForRecentMessage = (key, func) => {
   })
 }
 
-export const watchProfilesInChatsWithKey = (key, func) => {
+export const watchChatsWithProfilesInKey = (key, func) => {
   return firebase.database().ref().child('messages').on('value', (snap) => {
     if(snap.val() != null) {
         const profileUids = []

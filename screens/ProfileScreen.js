@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { NavigationActions } from 'react-navigation'
 import {
   StyleSheet,
   View,
@@ -85,6 +86,14 @@ export default class ProfileScreen extends React.Component {
   }
 
   rejectProfile(profile) {
+    const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Main' }),
+            ],
+            key: null
+        });
+
     Alert.alert(
       ('Delete '+profile.name.split(' ')[0]+'?'),
       'You will not be able to view their profile or messages again.',
@@ -93,6 +102,9 @@ export default class ProfileScreen extends React.Component {
           FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
           FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
             this.setState({user: user})
+          })
+          InteractionManager.runAfterInteractions(() => {
+            this.props.navigation.dispatch(resetAction);
           })
         }},
         {text: 'Cancel', onPress: () => {}, style: 'cancel'},

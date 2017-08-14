@@ -39,7 +39,10 @@ export default class HomeScreen extends React.Component {
       swipeoutDisabled: true,
     }
 
-    this.watchChats()
+    this.watchChatsAndProfiles()
+    InteractionManager.runAfterInteractions(() => {
+      this.watchUserForNewRejections()
+    })
   }
 
   componentWillUnmount() {
@@ -57,8 +60,8 @@ export default class HomeScreen extends React.Component {
       })
   }
 
-  watchChats() {
-    FirebaseAPI.watchProfilesInChatsWithKey(this.state.user.uid, (profiles) => {
+  watchChatsAndProfiles() {
+    FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
       this.setState({profiles: profiles.filter((profile) => {
         return (profile != undefined  && this.state.user.rejections != undefined) ? !Object.keys(this.state.user.rejections).some((uid) => { return uid == profile.uid }) : true
       })})
@@ -82,6 +85,36 @@ export default class HomeScreen extends React.Component {
           })
         })
     })
+
+  }
+
+  watchUserForNewRejections() {
+      FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+
+        if(updatedUser.rejections != undefined && this.state.user.rejection != Object.keys(updatedUser.rejections)) {
+          const newRejectionUid = Object.keys(updatedUser.rejections).filter((newUid) => {
+            if(this.state.user.rejections != undefined)
+              return !Object.keys(this.state.user.rejections).some((pastUid) => { return pastUid == newUid})
+            else
+              return newUid
+          })[0]
+
+          const index = this.state.profiles.indexOf((profile) => { return profile.uid == newRejectionUid})
+          const updatedProfiles = this.state.profiles
+          updatedProfiles.splice(index, 1)
+
+          if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles, user: updatedUser})
+            })
+          }
+          
+        }
+      })
+  }
+
+  componentWillUnmount() {
+    FirebaseAPI.removeWatchUser(this.state.user.uid)
   }
 
   listenLastMessage(profile) {
