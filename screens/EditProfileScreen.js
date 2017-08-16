@@ -131,11 +131,19 @@ export default class EditProfileScreen extends React.Component {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
             { this.getPhotos() }
           </ScrollView>
-          <View style={styles.headerContainer}>
-            <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
-            <Text style={styles.age}>{this.getAge(user.birthday)} years old</Text>
-            <Text style={styles.subtitle}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
-          </View>
+          <View style={styles.content} >
+            <View style={styles.headerContainer}>
+              <View style={styles.leftColumn}>
+                <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
+                <Text style={styles.age}>{this.getAge(user.birthday)} years old</Text>
+                <Text style={styles.gender}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
+              </View>
+              <View style={styles.rightColumn}>
+                <TouchableOpacity onPress={() => {this.addPhoto()}} style={{flex: 1, justifyContent: 'center',alignItems: 'center', backgroundColor: '#77a4d1', borderRadius: 15, padding: 6}}>
+                  <Text style={{fontSize: 20, color: '#edf6ff', textAlign: 'center', backgroundColor: 'transparent'}}>ADD{'\n'}PHOTO</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           <Text style={styles.title}>Express Who You Are</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='bio'
@@ -169,6 +177,7 @@ export default class EditProfileScreen extends React.Component {
               value={this.state.user.interests} />
           </View>
           <View style={styles.spacer}></View>
+          </View>
         </ScrollView>
       </View>
     )
@@ -184,15 +193,33 @@ const styles = StyleSheet.create({
     height:height,
     width:width,
     backgroundColor: '#f7fbff',
-  },  
+  },
+  content: {
+    flex: 1,
+    width: width,
+    backgroundColor: '#f7fbff'
+  },
   headerContainer: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    flexDirection: 'row',
+    paddingTop: 5,
     paddingLeft: 20,
     paddingRight: 20,
+    paddingBottom: 10,
     backgroundColor:'white',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
+    borderRadius: 10,
+  },
+  leftColumn: {
+    alignSelf: 'flex-start',
+    width: width/2,
+  },
+  rightColumn: {
+    width: width/3,
+    alignItems: 'flex-end',
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
   },
   bioContainer: {
     flex: 1,
