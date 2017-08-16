@@ -17,6 +17,8 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
 
+const size = width/8
+
 export default class EditProfileScreen extends React.Component {
   static navigationOptions = {
     title: 'Edit Profile',
@@ -85,11 +87,24 @@ export default class EditProfileScreen extends React.Component {
   getPhotos() {
     if(this.state.user.photoUrls != undefined)
       return this.state.user.photoUrls.map((url) => {
-        return <Image 
-          resizeMode='cover'
-          source={{uri: url}}
-          style={{width:width, height:height/2}} 
-          key={this.state.user.uid+"-"+url} />
+        return (
+          <View style={{flex: 1,}} key={url+"-container"}>
+            <Image 
+            resizeMode='cover'
+            source={{uri: url}}
+            style={{width:width, height:width}} 
+            key={url} />
+              <TouchableOpacity onPress={() => {}}
+              key={url+"-touchable"} style={{flex: 1, width:size*1.5, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
+                <View style={{width: size, height: size, borderRadius: 12, position: 'absolute', backgroundColor: 'rgba(255, 255, 255, 0.25)'}}>
+                  <View style={styles.removePhotoTouchable}>
+                    <Text key={url+"-remove"} style={{fontSize: size*0.8, color: 'rgba(135, 207, 255, 0.35)', textAlign: 'center', backgroundColor: 'transparent'}}>X</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+          </View>
+        )
       })
     else
       return null
@@ -246,6 +261,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
+  },
+  removePhotoTouchable: {
+    alignSelf: 'flex-start',
+    height: size, 
+    width: size, 
+    position: 'absolute',
+    borderRadius: 200,
   },
   spacer: {
     height: 40,

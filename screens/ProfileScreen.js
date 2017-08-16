@@ -166,7 +166,7 @@ export default class ProfileScreen extends React.Component {
                   return <Image 
                     resizeMode='cover'
                     source={{uri: url}}
-                    style={{width:width, height:height/2}} 
+                    style={{width:width, height:width}} 
                     key={profile.uid+"-"+url} />
                 })
               }

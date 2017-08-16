@@ -22,7 +22,7 @@ export const updateUser = (uid, key, value) => {
 export const mergeUser = (uid, token, newData) => {
   console.log('newData', newData)
 
-  console.log('EDUCATION LKFJLKASJFAKLSF', getCurrentSchool(newData.id, token, () => {}))
+  console.log('EDUCATION LKFJLKASJFAKLSF', newData)
 
   watchUserLocationDemo(uid)
 

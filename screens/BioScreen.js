@@ -152,7 +152,7 @@ export default class BioScreen extends React.Component {
                           <View style={styles.rightColumn}>
                             <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
                             key={profile.uid+"-remove"} >
-                              <Text style={{fontSize: 24, color: 'lightgrey'}}>X</Text>
+                              <Text style={{fontSize: 24, color: '#c9e9ff'}}>X</Text>
                             </TouchableOpacity>
                           </View>
                         </View>
