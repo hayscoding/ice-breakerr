@@ -24,6 +24,7 @@ export default class BioScreen extends React.Component {
   }
 
   componentDidMount() {
+    this.watchUserForUpdates()
     this._mounted = true
   }
 
@@ -56,6 +57,15 @@ export default class BioScreen extends React.Component {
           })
         })
       })
+  }
+
+  watchUserForUpdates() {
+    FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+      if(this.state.user != updatedUser)
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({user: updatedUser})
+        })
+    })
   }
 
   getProfiles() {
