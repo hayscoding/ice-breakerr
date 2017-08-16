@@ -10,7 +10,6 @@ export default class BioScreen extends React.Component {
   static navigationOptions = {
     headerLeft: null,
     gesturesEnabled: false,
-    timer: {},
   };
 
   componentWillMount() {

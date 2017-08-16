@@ -82,6 +82,13 @@ export default class ChatScreen extends Component {
     this.watchChat()
   }
 
+  componentDidMount() {
+    if(this.state.messages.length == 1)
+      Alert.alert(
+        ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
+        'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
+  }
+
   componentWillUnmount() {
     firebase.database().ref().child('messages').child(this.chatID).off()
   }

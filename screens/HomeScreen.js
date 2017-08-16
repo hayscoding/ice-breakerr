@@ -177,7 +177,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    if(this.state.loaded) {
+    if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>
           <ScrollView style={styles.recentUpdates}>
@@ -202,6 +202,23 @@ export default class HomeScreen extends React.Component {
                 )
               })
             }
+          </ScrollView>
+        </View>
+      )
+    } else if(this.state.profiles.length <= 0) {
+      return(
+        <View style={styles.container}>
+          <ScrollView style={styles.recentUpdates}>
+            <View style={styles.match}>
+              <Image
+                resizeMode='cover'
+                source={{uri: ' '}}
+                style={[{width: size, height: size, borderRadius: size/4}]}/>  
+              <View>   
+                <Text style={styles.name}>Send someone a message!</Text>
+                <Text style={styles.messagePreview}>Your chats will appear here.</Text>
+              </View>
+            </View>
           </ScrollView>
         </View>
       )

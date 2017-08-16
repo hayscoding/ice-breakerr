@@ -95,6 +95,18 @@ export default class EditProfileScreen extends React.Component {
       return null
   }
 
+  getAge(dateString) {
+    console.log(dateString)
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+  }
+
   render() {
     const user = this.state.user
 
@@ -106,7 +118,7 @@ export default class EditProfileScreen extends React.Component {
           </ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
-            <Text style={styles.age}>23 years old</Text>
+            <Text style={styles.age}>{this.getAge(user.birthday)} years old</Text>
             <Text style={styles.subtitle}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
           </View>
           <Text style={styles.title}>Express Who You Are</Text>

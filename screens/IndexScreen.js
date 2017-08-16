@@ -1,6 +1,6 @@
 import React from 'react';
 import Swiper from 'react-native-swiper'
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, Alert } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -26,6 +26,24 @@ export default class IndexScreen extends React.Component {
       }
   }
 
+  componentDidMount() {
+    // setTimeout(() => {
+    //     Alert.alert(
+    //     ('Be sure to create an interesting profile before you message!'),
+    //     'Edit your profile now?',
+    //     [
+    //       {text: 'OK', onPress: () => {
+    //         InteractionManager.runAfterInteractions(() => {
+    //            this.props.navigation.navigate('Edit', 
+    //             {user: this.state.user, cb: (user) => { this.setState({user}) }})
+    //         })
+    //       }},
+    //       {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+    //     ],
+    //     { cancelable: false }
+    //   )}, 4000)
+  }
+
   viewStyle() {
     return {
       flex: 1,
@@ -47,7 +65,7 @@ export default class IndexScreen extends React.Component {
           horizontal={true}
           loop={false}
           showsPagination={false}
-          index={1}
+          index={0}
           scrollEnabled={this.state.scrollEnabled}>
           <View style={this.viewStyle()}>
             <BioScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>

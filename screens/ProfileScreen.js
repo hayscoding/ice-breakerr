@@ -37,18 +37,21 @@ export default class ProfileScreen extends React.Component {
           uidArray.sort()
           const chatID = uidArray[0]+'-'+uidArray[1]
 
-          FirebaseAPI.getChatCb(chatID, (chat) => {
-            if(chat != null) {
-              const msgCount = Object.values(chat).filter((message) => {
-                return message.sender == profile.uid
-              }).length
+          if(this.state.profile.uid != this.state.user.uid)
+            FirebaseAPI.getChatCb(chatID, (chat) => {
+              if(chat != null) {
+                const msgCount = Object.values(chat).filter((message) => {
+                  return message.sender == profile.uid
+                }).length
 
-              if(msgCount >= 5) 
-                this.setState({profile: profile, photoUrls: profile.photoUrls})
-              else
-                this.setState({profile: profile, photoUrls: []})
-            }
-          })
+                if(msgCount >= 5) 
+                  this.setState({profile: profile, photoUrls: profile.photoUrls})
+                else
+                  this.setState({profile: profile, photoUrls: []})
+              }
+            })
+          else 
+            this.setState({photoUrls: profile.photoUrls})
         }
       })
     })
