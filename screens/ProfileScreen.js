@@ -92,7 +92,7 @@ export default class ProfileScreen extends React.Component {
     const resetAction = NavigationActions.reset({
             index: 0,
             actions: [
-                NavigationActions.navigate({ routeName: 'Main' }),
+                NavigationActions.navigate({ routeName: 'Main', params: {index: 2} }),
             ],
             key: null
         });

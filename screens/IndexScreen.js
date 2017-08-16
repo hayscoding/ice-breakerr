@@ -60,21 +60,27 @@ export default class IndexScreen extends React.Component {
   }
 
   render() {
+    let index = 0;
+    if('navigation' in this.props 
+      && 'state' in this.props.navigation 
+      && 'params' in this.props.navigation.state 
+      && 'index' in this.props.navigation.state.params)
+      index = this.props.navigation.state.params.index;
     return(
       <Swiper
           horizontal={true}
           loop={false}
           showsPagination={false}
-          index={0}
+          index={index}
           scrollEnabled={this.state.scrollEnabled}>
+          <View style={this.viewStyle()}>
+            <SettingsScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
+          </View>
           <View style={this.viewStyle()}>
             <BioScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
           </View>
           <View style={this.viewStyle()}>
             <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.props.screenProps} navigation={this.props.navigation}/>
-          </View>
-          <View style={this.viewStyle()}>
-            <SettingsScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
           </View>
       </Swiper>
     )

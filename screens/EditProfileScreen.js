@@ -95,8 +95,8 @@ export default class EditProfileScreen extends React.Component {
             style={{width:width, height:width}} 
             key={url} />
               <TouchableOpacity onPress={() => {}}
-              key={url+"-touchable"} style={{flex: 1, width:size*1.5, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
-                <View style={{width: size, height: size, borderRadius: 12, position: 'absolute', backgroundColor: 'rgba(255, 255, 255, 0.25)'}}>
+              key={url+"-touchable"} style={{flex: 1, width:size+47, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
+                <View style={{width: size, height: size, borderRadius: 100, position: 'absolute', backgroundColor: 'rgba(255, 255, 255, 0.25)'}}>
                   <View style={styles.removePhotoTouchable}>
                     <Text key={url+"-remove"} style={{fontSize: size*0.8, color: 'rgba(135, 207, 255, 0.35)', textAlign: 'center', backgroundColor: 'transparent'}}>X</Text>
                   </View>
@@ -139,7 +139,7 @@ export default class EditProfileScreen extends React.Component {
                 <Text style={styles.gender}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
               </View>
               <View style={styles.rightColumn}>
-                <TouchableOpacity onPress={() => {this.addPhoto()}} style={{flex: 1, justifyContent: 'center',alignItems: 'center', backgroundColor: '#77a4d1', borderRadius: 15, padding: 6}}>
+                <TouchableOpacity onPress={() => {this.addPhoto()}} style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#77a4d1', borderRadius: 15, padding: 6}}>
                   <Text style={{fontSize: 20, color: '#edf6ff', textAlign: 'center', backgroundColor: 'transparent'}}>ADD{'\n'}PHOTO</Text>
                 </TouchableOpacity>
               </View>
