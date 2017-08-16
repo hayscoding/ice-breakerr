@@ -22,6 +22,8 @@ export const updateUser = (uid, key, value) => {
 export const mergeUser = (uid, token, newData) => {
   console.log('newData', newData)
 
+  console.log('EDUCATION LKFJLKASJFAKLSF', getCurrentSchool(newData.id, token, () => {}))
+
   watchUserLocationDemo(uid)
 
   const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)
@@ -41,6 +43,15 @@ export const mergeUser = (uid, token, newData) => {
 
     firebaseRefAtUID.update(mergedUser)
   })  
+}
+
+export const getCurrentSchool = (id, token, func) => {
+  fetch(`https://graph.facebook.com/${id}/education?access_token=${token}`)
+    .then((response) => { 
+        response.json().then((res) => { 
+          console.log(res.data, id)
+    })
+  })
 }
 
 export const mergeUserPhotoUrls = (uid, urls) => {
