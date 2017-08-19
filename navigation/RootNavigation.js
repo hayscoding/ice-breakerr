@@ -93,16 +93,12 @@ export default class RootNavigator extends React.Component {
           const user = snap.val()
 
           if(user != null) {
-            FirebaseAPI.getPhotoUrlsFromFbCb(user.id, user.fbAuthToken, (urls) => {
-              FirebaseAPI.mergeUserPhotoUrls(user.uid, urls)
-
-              this.firebaseRef.child(user.uid).once('value').then((snap) => {
+             this.firebaseRef.child(user.uid).once('value').then((snap) => {
                 InteractionManager.runAfterInteractions(() => {
                   this.firebaseRef.child(fbAuth.uid).off('value')
                   this.setState({user: snap.val(), hasUser: true, waiting: false})
                 })
               })
-            })
           }
         }) 
       } else {                         // no user is signed in
