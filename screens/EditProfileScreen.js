@@ -51,7 +51,7 @@ export default class EditProfileScreen extends React.Component {
 
   addPhoto() {
     InteractionManager.runAfterInteractions(() => {
-      this.props.navigation.navigate('AddPhoto', {user: this.state.user})
+      this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
     })
   }
 
@@ -109,7 +109,7 @@ export default class EditProfileScreen extends React.Component {
             style={{width:width, height:width}} 
             key={url} />
               <TouchableOpacity onPress={() => {}}
-              key={url+"-touchable"} style={{flex: 1, width:size+47, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
+              key={url+"-touchable"} style={{flex: 1, width:size+34, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
                 <View style={{width: size, height: size, borderRadius: 100, position: 'absolute', backgroundColor: 'rgba(255, 255, 255, 0.25)'}}>
                   <View style={styles.removePhotoTouchable}>
                     <Text key={url+"-remove"} style={{fontSize: size*0.8, color: 'rgba(135, 207, 255, 0.35)', textAlign: 'center', backgroundColor: 'transparent'}}>X</Text>
