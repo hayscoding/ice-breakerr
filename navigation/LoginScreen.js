@@ -48,6 +48,14 @@ export default class Login extends React.Component {
 
 	        FirebaseAPI.mergeUser(await user.uid, await token, await response.json())
 	        	.then(() => console.log('merge success'), () => this.showError('Could not add you to database'))
+
+	       	FirebaseAPI.getUserCb(await user.uid, (currentUser) => {
+		       	if(currentUser.createdDate == undefined || currentUser.createdDate == null){
+  					const now = new Date();
+
+		       		FirebaseAPI.updateUser(currentUser.uid, 'createdDate', now)
+		       	}
+	       	})
 		} else {
 			this.displayError('Facebook login failed')
 		}

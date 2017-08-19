@@ -41,6 +41,12 @@ export default class EditProfileScreen extends React.Component {
     this._mounted = false
   }
 
+  addPhoto() {
+    InteractionManager.runAfterInteractions(() => {
+      this.props.navigation.navigate('AddPhoto', {user: this.state.user})
+    })
+  }
+
   setBio(bio) {
     FirebaseAPI.updateUser(this.state.user.uid, 'bio', bio)
 
@@ -139,7 +145,7 @@ export default class EditProfileScreen extends React.Component {
                 <Text style={styles.gender}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
               </View>
               <View style={styles.rightColumn}>
-                <TouchableOpacity onPress={() => {this.addPhoto()}} style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#77a4d1', borderRadius: 15, padding: 6}}>
+                <TouchableOpacity onPress={() => {this.addPhoto()}} style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#b1c7dd', borderRadius: 15, padding: 6}}>
                   <Text style={{fontSize: 20, color: '#edf6ff', textAlign: 'center', backgroundColor: 'transparent'}}>ADD{'\n'}PHOTO</Text>
                 </TouchableOpacity>
               </View>

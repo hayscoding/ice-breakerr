@@ -22,8 +22,6 @@ export const updateUser = (uid, key, value) => {
 export const mergeUser = (uid, token, newData) => {
   console.log('newData', newData)
 
-  console.log('EDUCATION LKFJLKASJFAKLSF', newData)
-
   watchUserLocationDemo(uid)
 
   const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)

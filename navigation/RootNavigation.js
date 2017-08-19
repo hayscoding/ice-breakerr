@@ -12,6 +12,7 @@ import LoadingScreen from './LoadingScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import ChatScreen from '../screens/ChatScreen'
 import EditProfileScreen from '../screens/EditProfileScreen'
+import AddPhotoScreen from '../screens/AddPhotoScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -28,7 +29,10 @@ const RootStackNavigator = StackNavigator(
     },
     Edit: {
       screen: EditProfileScreen,
-    }
+    },
+    AddPhoto: {
+      screen: AddPhotoScreen,
+    },
   },
   {
     navigationOptions: () => ({
