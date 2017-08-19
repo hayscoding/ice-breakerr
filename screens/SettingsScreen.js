@@ -27,7 +27,9 @@ export default class SettingsScreen extends React.Component {
 
 
   showProfile(profile) {
-    this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+    InteractionManager.runAfterInteractions(() => {
+      this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+    })
   }
 
   logout() {

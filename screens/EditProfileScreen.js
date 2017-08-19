@@ -11,6 +11,7 @@ import {
   ScrollView,
   TextInput,
   findNodeHandle,
+  Alert,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -53,6 +54,33 @@ export default class EditProfileScreen extends React.Component {
     InteractionManager.runAfterInteractions(() => {
       this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
     })
+  }
+
+  removePhoto(url) {
+    Alert.alert(
+        ('Remove this picture from your public profile?'),
+        'It will no longer be shown in your photo collection.',
+        [
+          {text: 'OK', onPress: () => {
+            const updatedPhotoUrls = this.state.user.photoUrls
+            const index = updatedPhotoUrls.indexOf(url)
+
+            updatedPhotoUrls.splice(index, 1)
+
+            InteractionManager.runAfterInteractions(() => {
+              FirebaseAPI.updateUser(this.state.user.uid, 'photoUrls', updatedPhotoUrls)
+
+              FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+                InteractionManager.runAfterInteractions(() => {
+                    this.setState({user: user})
+                })
+              })
+            })
+          }},
+          {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+        ],
+        { cancelable: false }
+      )
   }
 
   setBio(bio) {
@@ -108,7 +136,7 @@ export default class EditProfileScreen extends React.Component {
             source={{uri: url}}
             style={{width:width, height:width}} 
             key={url} />
-              <TouchableOpacity onPress={() => {}}
+              <TouchableOpacity onPress={() => { this.removePhoto(url) }}
               key={url+"-touchable"} style={{flex: 1, width:size+34, height: size, position: 'absolute', alignSelf: 'flex-end', marginTop: (width-size*1.5)}}>
                 <View style={{width: size, height: size, borderRadius: 100, position: 'absolute', backgroundColor: 'rgba(255, 255, 255, 0.25)'}}>
                   <View style={styles.removePhotoTouchable}>
