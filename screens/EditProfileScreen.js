@@ -30,6 +30,14 @@ export default class EditProfileScreen extends React.Component {
     }
 
     this._mounted = false
+
+    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+      if(this.state.user != user) {
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({user: user})
+        })
+      }
+    })
   }
 
   componentDidMount() {
