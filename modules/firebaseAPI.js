@@ -82,6 +82,29 @@ export const getPhotoUrlsFromFbCb = (id, token, func) => {
   })
 }
 
+export const getAllPhotoUrlsFromFbCb = (id, token, func) => { 
+  fetch(`https://graph.facebook.com/${id}/albums?access_token=${token}`)
+    .then((response) => { 
+        response.json().then((res) => { 
+          const album = res.data.filter((album) => {
+            if(album.name == 'Mobile Uploads')
+              return album
+          })
+
+        if(album[0] != null)
+          fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
+            .then((response) => {
+              response.json().then((res) => {
+                func(res.data.map((photo) => {
+                  return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
+                }))
+              })
+          })
+        else
+          func([])
+    })
+  })
+}
 export const rejectProfileFromUser = (userKey, profileKey) => {
   const now = new Date();
 
