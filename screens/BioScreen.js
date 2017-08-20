@@ -145,36 +145,38 @@ export default class BioScreen extends React.Component {
     if(this.state.profiles.length > 0)
       return (
         <View style={styles.container}>
-          <ScrollView>
-          {
-            this.state.profiles.map((profile) => {
-              return (
-                  <View style={styles.match}  key={profile.uid+"-container"}>
-                    <TouchableOpacity onPress={() => {this.showProfile(profile)}}
-                    key={profile.uid+"-touchable"} >
-                      <View style={styles.content} >
-                        <View style={styles.headerContainer}>
-                          <View style={styles.leftColumn}>
-                            <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                            <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                            <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.profileList}>
+            {
+              this.state.profiles.map((profile) => {
+                return (
+                    <View style={styles.match}  key={profile.uid+"-container"}>
+                      <TouchableOpacity onPress={() => {this.showProfile(profile)}}
+                      key={profile.uid+"-touchable"} >
+                        <View style={styles.content} >
+                          <View style={styles.headerContainer}>
+                            <View style={styles.leftColumn}>
+                              <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                              <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
+                              <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                            </View>
+                            <View style={styles.rightColumn}>
+                              <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
+                              key={profile.uid+"-remove"} >
+                                <Text style={{fontSize: 24, color: '#c9e9ff'}}>X</Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
-                          <View style={styles.rightColumn}>
-                            <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
-                            key={profile.uid+"-remove"} >
-                              <Text style={{fontSize: 24, color: '#c9e9ff'}}>X</Text>
-                            </TouchableOpacity>
+                          <View style={styles.bioContainer}>
+                            <Text style={styles.bio}>{profile.bio}</Text>
                           </View>
                         </View>
-                        <View style={styles.bioContainer}>
-                          <Text style={styles.bio}>{profile.bio}</Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-              )
-            })
-          }
+                      </TouchableOpacity>
+                    </View>
+                )
+              })
+            }
+            </View>
           </ScrollView>
         </View>
       );
@@ -190,6 +192,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: width,
+    height: height,
+    backgroundColor: '#f7fbff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileList: {
+    flex: 1,
+    marginBottom: matchHeight/3,
     backgroundColor: '#f7fbff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -214,6 +224,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   match: {
+    flex: 1,
     width: width,
     justifyContent: 'center', 
     alignItems: 'center',

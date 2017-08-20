@@ -26,6 +26,10 @@ export default class IndexScreen extends React.Component {
       }
   }
 
+  componentWillUnmount() {
+    FirebaseAPI.removeWatchUser(this.state.user.uid)
+  }
+
   componentDidMount() {
     // setTimeout(() => {
     //     Alert.alert(
@@ -55,8 +59,6 @@ export default class IndexScreen extends React.Component {
   changeScrollBool(bool) {
     if(bool != this.state.scrollEnabled)
       this.setState({scrollEnabled: bool})
-
-    console.log('CHJaakgalkjelkfajkglk', bool)
   }
 
   render() {
@@ -66,6 +68,7 @@ export default class IndexScreen extends React.Component {
       && 'params' in this.props.navigation.state 
       && 'index' in this.props.navigation.state.params)
       index = this.props.navigation.state.params.index;
+
     return(
       <Swiper
           horizontal={true}
@@ -74,13 +77,13 @@ export default class IndexScreen extends React.Component {
           index={index}
           scrollEnabled={this.state.scrollEnabled}>
           <View style={this.viewStyle()}>
-            <SettingsScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
+            <SettingsScreen screenProps={this.state} navigation={this.props.navigation}/>
           </View>
           <View style={this.viewStyle()}>
-            <BioScreen screenProps={this.props.screenProps} navigation={this.props.navigation}/>
+            <BioScreen screenProps={this.state} navigation={this.props.navigation}/>
           </View>
           <View style={this.viewStyle()}>
-            <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.props.screenProps} navigation={this.props.navigation}/>
+            <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.state} navigation={this.props.navigation}/>
           </View>
       </Swiper>
     )
@@ -89,7 +92,9 @@ export default class IndexScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    width: width,
+    height: height,
   },
   view: {
     flex: 1,

@@ -183,7 +183,7 @@ export default class HomeScreen extends React.Component {
           <ScrollView style={styles.recentUpdates}>
             {
               this.state.profiles.map((profile) => {
-                const fbPhotoUrl = this.state.photoUrls.some((urlObj) => { return urlObj.uid == profile.uid }) ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
+                const fbPhotoUrl = 'photoUrls' in profile ? this.state.profiles.find((user) => { return user.uid == profile.uid }).photoUrls[0] : ' '
                 
                 return (
                   <TouchableOpacity onPress={() => {this.openChat(profile)}}

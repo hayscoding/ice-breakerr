@@ -98,11 +98,6 @@ export default class ChatScreen extends Component {
     //   this.setState({mounted: false})
   }
 
-  getFbImageUrl(profile) {
-    const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
-    return fbImageUrl
-  }
-
   watchChat() {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')

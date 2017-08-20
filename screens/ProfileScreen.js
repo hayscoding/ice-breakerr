@@ -44,7 +44,7 @@ export default class ProfileScreen extends React.Component {
                   return message.sender == profile.uid
                 }).length
 
-                if(msgCount >= 5) 
+                if(msgCount >= 4) 
                   this.setState({profile: profile, photoUrls: profile.photoUrls})
                 else
                   this.setState({profile: profile, photoUrls: []})
@@ -162,13 +162,13 @@ export default class ProfileScreen extends React.Component {
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
               {
-                this.state.photoUrls.map((url) => {
+                'photoUrls' in this.state.user ? this.state.photoUrls.map((url) => {
                   return <Image 
                     resizeMode='cover'
                     source={{uri: url}}
                     style={{width:width, height:width}} 
                     key={profile.uid+"-"+url} />
-                })
+                }) : null
               }
             </ScrollView>
             <View style={styles.headerContainer}>

@@ -25,6 +25,20 @@ export default class SettingsScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.watchUserForChanges()
+  }
+
+
+  watchUserForChanges() {
+    if(this.state.user != null)
+      FirebaseAPI.watchUser(this.state.user.uid, (user) => {
+        if(user != this.state.user)
+          InteractionManager.runAfterInteractions(() => {
+            this.setState({user})
+          })
+      })
+  }
 
   showProfile(profile) {
     InteractionManager.runAfterInteractions(() => {
@@ -53,7 +67,7 @@ export default class SettingsScreen extends React.Component {
           <TouchableOpacity onPress={() => {this.showProfile(this.state.user)}} >
             <Image
               resizeMode='cover'
-              source={{uri: `https://graph.facebook.com/${this.state.user.id}/picture?height=${height}`}}
+              source={{uri: 'photoUrls' in this.state.user ? this.state.user.photoUrls[0] : ' '}}
               style={[{width: size, height: size, borderRadius: size/2}]}/> 
           </TouchableOpacity>
           <Text style={styles.name}>{this.state.user.name.split(' ')[0]}</Text>
@@ -70,8 +84,10 @@ export default class SettingsScreen extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity style={styles.bottomOptionContainer} onPress={() => {this.logout()}}>
-          <Text style={styles.logout}>LOGOUT</Text>
+        <TouchableOpacity style={{flex: 1}} onPress={() => {this.logout()}}>
+          <View style={styles.bottomOptionContainer}>
+              <Text style={styles.logout}>LOGOUT</Text>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -82,11 +98,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f7fbff',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   columnContainer: {
-    flex: 1,
+    width: width,
+    height: width/4*2,
     marginBottom: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
