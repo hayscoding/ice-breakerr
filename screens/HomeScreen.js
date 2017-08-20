@@ -77,15 +77,18 @@ export default class HomeScreen extends React.Component {
               return message.sender == profile.uid
             }).length
 
+            console.log(profile.name, msgCount)
+
             if(msgCount >= 5) {
               InteractionManager.runAfterInteractions(() => {
                 this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
               })
-            }
-            else
+            } else {
               InteractionManager.runAfterInteractions(() => {
                 this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
               })
+            }
+              
           })
         })
     })
@@ -183,7 +186,7 @@ export default class HomeScreen extends React.Component {
           <ScrollView style={styles.recentUpdates}>
             {
               this.state.profiles.map((profile) => {
-                const fbPhotoUrl = 'photoUrls' in profile ? this.state.profiles.find((user) => { return user.uid == profile.uid }).photoUrls[0] : ' '
+                const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
                 
                 return (
                   <TouchableOpacity onPress={() => {this.openChat(profile)}}
