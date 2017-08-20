@@ -51,9 +51,12 @@ export default class EditProfileScreen extends React.Component {
   }
 
   addPhoto() {
-    InteractionManager.runAfterInteractions(() => {
-      this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
-    })
+    if('photoUrls' in this.state.user && this.state.user.photoUrls.length >= 6)
+      Alert.alert('You cannot add more than 6 pictures to your profile.')
+    else
+      InteractionManager.runAfterInteractions(() => {
+        this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
+      })
   }
 
   removePhoto(url) {

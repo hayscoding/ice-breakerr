@@ -81,7 +81,7 @@ export default class HomeScreen extends React.Component {
 
             if(msgCount >= 5) {
               InteractionManager.runAfterInteractions(() => {
-                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: `https://graph.facebook.com/${profile.id}/picture?height=${height}`}], loaded: true})
+                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: profile.photoUrls[0]}], loaded: true})
               })
             } else {
               InteractionManager.runAfterInteractions(() => {

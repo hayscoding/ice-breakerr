@@ -75,7 +75,7 @@ export default class SettingsScreen extends React.Component {
         <View style={styles.columnContainer}>
           <View style={styles.leftColumn}>
              <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
-              <Text style={styles.option}>CONTACT SUPPORT</Text>
+              <Text style={styles.option}>CHANGE OPTIONS</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.rightColumn}>
