@@ -13,6 +13,7 @@ import ProfileScreen from '../screens/ProfileScreen'
 import ChatScreen from '../screens/ChatScreen'
 import EditProfileScreen from '../screens/EditProfileScreen'
 import AddPhotoScreen from '../screens/AddPhotoScreen'
+import ReferralScreen from '../screens/ReferralScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -33,6 +34,9 @@ const RootStackNavigator = StackNavigator(
     AddPhoto: {
       screen: AddPhotoScreen,
     },
+    Referral: {
+      screen: ReferralScreen,
+    }
   },
   {
     navigationOptions: () => ({

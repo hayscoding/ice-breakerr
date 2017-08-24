@@ -46,6 +46,11 @@ export default class SettingsScreen extends React.Component {
     })
   }
 
+  referral() {
+    this.props.navigation.navigate('Referral', 
+      {user: this.state.user, cb: (user) => { this.setState({user}) }})
+  }
+
   logout() {
     FirebaseAPI.logoutUser().then(
       () => console.log('signout successful'),
@@ -57,7 +62,7 @@ export default class SettingsScreen extends React.Component {
 
   editProfile() {
     this.props.navigation.navigate('Edit', 
-      {user: this.state.user, func: (user) => { this.setState({user}) }})
+      {user: this.state.user, cb: (user) => { this.setState({user}) }})
   }
 
   render() {
@@ -84,9 +89,14 @@ export default class SettingsScreen extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
+        <TouchableOpacity style={{flex: 1}} onPress={() => {this.referral()}}>
+          <View style={styles.bottomOptionContainer}>
+              <Text style={styles.logout}>Refer A Friend</Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity style={{flex: 1}} onPress={() => {this.logout()}}>
           <View style={styles.bottomOptionContainer}>
-              <Text style={styles.logout}>LOGOUT</Text>
+              <Text style={styles.logout}>Logout</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
   },
   columnContainer: {
     width: width,
-    height: width/4*2,
+    height: (width/8)+50,
     marginBottom: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -112,14 +122,14 @@ const styles = StyleSheet.create({
   leftColumn: {
     flex: 1,
     width: width/4,
-    height: width/4,
+    height: width/8,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   rightColumn: {
     flex: 1,
     width: width/4,
-    height: width/4,
+    height: width/8,
     justifyContent: 'space-around',
     alignItems: 'center',
     borderLeftWidth: 1,
@@ -138,7 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width/4,
-    height: width/4,
+    height: width/8,
   },
   profileContainer: {
     width: width,
@@ -159,22 +169,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   logout: {
+    flex: 1,
     fontSize: 20, 
+    paddingTop: 5,
+    paddingBottom: 5,
     color: '#2B2B2B',
     alignSelf: 'center',
     textAlign: 'center',
   },
   bottomOptionContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: width,
-    height: height/13,
-    backgroundColor: 'white',
+    height: width/8,
     borderTopWidth: 1,
     borderColor: 'lightgrey',
-    shadowColor: '#000000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 5, 
-    shadowOpacity: 0.1,
   },
 });

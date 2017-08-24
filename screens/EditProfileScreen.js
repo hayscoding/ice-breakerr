@@ -203,9 +203,8 @@ export default class EditProfileScreen extends React.Component {
           <View style={styles.bioContainer}>
             <TextInput ref='emojis'
               style={styles.bio} 
-              returnKeyType='done'
               multiline={true}
-              blurOnSubmit={true}
+              blurOnSubmit={false}
               onChangeText={(text) => this.setEmojis(text)}
               onFocus={this.textInputFocused.bind(this, 'emojis')}
               value={this.state.user.emojis} />
@@ -214,9 +213,8 @@ export default class EditProfileScreen extends React.Component {
           <View style={styles.bioContainer}>
             <TextInput ref='interests'
               style={styles.bio} 
-              returnKeyType='done'
               multiline={true}
-              blurOnSubmit={true}
+              blurOnSubmit={false}
               onChangeText={(text) => this.setInterests(text)}
               onFocus={this.textInputFocused.bind(this, 'interests')}
               value={this.state.user.interests} />
