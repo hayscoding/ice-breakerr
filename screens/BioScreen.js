@@ -31,6 +31,9 @@ export default class BioScreen extends React.Component {
 
   componentWillUpdate() {
     this._mounted = false
+
+    // if(this.state.profiles.length > 0)
+      // this.watchProfiles()
   }
 
   componentWillUnmount() {
@@ -70,24 +73,32 @@ export default class BioScreen extends React.Component {
   }
 
   getProfiles() {
-    FirebaseAPI.watchForNewProfiles(this.state.user, (newProfile) => {
-      if(this.state.profiles.length < 4)
-        InteractionManager.runAfterInteractions(() => {
-          updatedProfiles = this.state.profiles
+    FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+      FirebaseAPI.watchForNewProfiles(this.state.user, (newProfile) => {
+        if(this.state.profiles.length < 4)
+          InteractionManager.runAfterInteractions(() => {
+            updatedProfiles = this.state.profiles
 
-          if(this.state.user.uid != newProfile.uid)
-            updatedProfiles.push(newProfile)
+            if(this.state.user.uid != newProfile.uid &&
+              !chattedProfiles.some((chattedProfile) => { return chattedProfile.uid == newProfile.uid }) &&
+              (!('rejections' in this.state.user) ||
+              !Object.keys(this.state.user.rejections).some((uid) => { return uid == newProfile.uid }))) {
+                  updatedProfiles.push(newProfile)
+            }
 
-          this.setState({profiles: updatedProfiles})
-          this.getDistancesFromUser()
-        })
+            console.log(this.state.user)
+
+            this.setState({profiles: updatedProfiles})
+            this.getDistancesFromUser()
+          })
+      })
     })
   }
 
     getDistancesFromUser() {
       this.state.profiles.map((profile) => {
         FirebaseAPI.getDistanceFromUser(profile.uid, this.state.user.uid, (distanceKilometers) => {
-          const distanceMiles = distanceKilometers * 0.621371
+          const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
 
           this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
         })

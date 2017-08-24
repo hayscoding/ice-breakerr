@@ -24,6 +24,7 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
+      distance: ' ',
       photoUrls: [],
       hasChat: false,
       startedChat: false,
@@ -63,6 +64,8 @@ export default class ProfileScreen extends React.Component {
     //Set this true so no warning appears if component unmounts during process
     this._mounted = true
 
+    this.getDistanceFromUser()
+
     if(this.state.user != this.state.profile)
       FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
         if(this._mounted)
@@ -74,6 +77,14 @@ export default class ProfileScreen extends React.Component {
 
   componentWillUnmount() {
     this._mounted = false;
+  }
+
+  getDistanceFromUser(profile) {
+    FirebaseAPI.getDistanceFromUser(this.state.profile.uid, this.state.user.uid, (distanceKilometers) => {
+      const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
+
+      this.setState({distance: distanceMiles})
+    })
   }
 
   getAge(dateString) {
@@ -155,7 +166,13 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     const profile = this.props.navigation.state.params.profile
+    let distance = ' '
 
+    if(this.state.distance != ' ')
+      distance =  this.state.distance
+    else
+      distance = 'NA'
+    
     return(
       <View style={styles.container}>  
         <ScrollView style={{flex: height/10*9}}>
@@ -175,6 +192,7 @@ export default class ProfileScreen extends React.Component {
               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
               <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+              <Text style={styles.gender}>{this.state.distance} miles away</Text>
             </View>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>
