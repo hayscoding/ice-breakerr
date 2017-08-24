@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, Alert, } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -151,17 +151,28 @@ export default class BioScreen extends React.Component {
   }
 
   removeProfile(profile) {
-    const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
-    const updatedProfiles = this.state.profiles
+    Alert.alert(
+      ('Delete '+profile.name.split(' ')[0]+'?'),
+      'You will not be able to view their profile or messages again.',
+      [
+        {text: 'OK', onPress: () => {
+          const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
+          const updatedProfiles = this.state.profiles
 
-    FirebaseAPI.removeWatchUser(profile.uid)
+          FirebaseAPI.removeWatchUser(profile.uid)
 
-    updatedProfiles.splice(index, 1)
+          updatedProfiles.splice(index, 1)
 
-    this.setState({profiles: updatedProfiles})
-    InteractionManager.runAfterInteractions(() => {
-      this.getProfiles()                
-    })
+          this.setState({profiles: updatedProfiles})
+          InteractionManager.runAfterInteractions(() => {
+            this.getProfiles()                
+          })
+        }},
+        {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+      ],
+      { cancelable: false }
+    )
+    
   }
 
   rejectProfile(profile) {
