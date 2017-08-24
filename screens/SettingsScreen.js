@@ -57,7 +57,7 @@ export default class SettingsScreen extends React.Component {
 
   editProfile() {
     this.props.navigation.navigate('Edit', 
-      {user: this.state.user, cb: (user) => { this.setState({user}) }})
+      {user: this.state.user, func: (user) => { this.setState({user}) }})
   }
 
   render() {

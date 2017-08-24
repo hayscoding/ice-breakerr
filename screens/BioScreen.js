@@ -172,9 +172,16 @@ export default class BioScreen extends React.Component {
             <View style={styles.profileList}>
             {
               this.state.profiles.map((profile) => {
-                console.log(profile.name, )
+                let distance = ' '
+
+                if(this.state.distances.some((disObj) => { return disObj.uid == profile.uid }))
+                  distance =  this.state.distances.find((disObj) => { return disObj.uid == profile.uid }).distance
+                else
+                  distance = 'NA'
+              
+
                 return (
-                    <View style={styles.match}  key={profile.uid+"-container"}>
+                    <View style={styles.match} key={profile.uid+"-container"}>
                       <TouchableOpacity onPress={() => {this.showProfile(profile)}}
                       key={profile.uid+"-touchable"} >
                         <View style={styles.content} >
@@ -183,7 +190,7 @@ export default class BioScreen extends React.Component {
                               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                               <Text style={styles.gender}>
-                              {this.state.distances.find((disObj) => { return disObj.uid == profile.uid })}
+                              {distance} miles away
                               </Text>
                             </View>
                             <View style={styles.rightColumn}>
