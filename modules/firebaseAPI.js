@@ -300,11 +300,11 @@ export const removeWatchUser = (key) => {
   firebase.database().ref().child('users/'+key).off()
 }
 
-export const watchForNewProfiles = (user, func) => {
+export const storeProfileLocation = (profile, func) => {
   const firebaseRef = firebase.database().ref()
   const geoFire = new GeoFire(firebaseRef.child('geoData/'))
 
-  geoFire.get(user.uid).then(location => {    
+  geoFire.get(profile.uid).then(location => {    
     const geoQuery = geoFire.query({
       center: location,
       radius: 3000 //user.maxDistance
@@ -313,16 +313,6 @@ export const watchForNewProfiles = (user, func) => {
     geoQuery.on("ready", (res) => { // loaded geodata
       geoQuery.cancel()
     })
-
-    geoQuery.on("key_entered", (key, location, distance) => {
-      // console.log(key + " entered query at " + location + " (" + distance + " km from center)");
-      getUser(key).then((entry) => {
-        if(entry != null) {
-          func(entry)
-        }   
-      })
-     
-    }) 
   }) 
 }
 

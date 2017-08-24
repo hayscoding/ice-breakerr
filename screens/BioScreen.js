@@ -74,24 +74,48 @@ export default class BioScreen extends React.Component {
 
   getProfiles() {
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-      FirebaseAPI.watchForNewProfiles(this.state.user, (newProfile) => {
-        if(this.state.profiles.length < 4)
-          InteractionManager.runAfterInteractions(() => {
-            updatedProfiles = this.state.profiles
+      FirebaseAPI.getAllUsers((users) => {
+      FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+        //Filter out the current user from the other individuals
+        this.setState({profiles: users.filter((user) => {
+          return user.uid != this.state.user.uid 
+          }).filter((user) => { //Filter profiles already in chat with user
+            return !(chattedProfiles.some((profile) => {
+              return profile.uid == user.uid
+              }))
+          }).filter((user) => { //Filter rejected profiles
+            if(this.state.user.rejections != undefined)
+              return !Object.keys(this.state.user.rejections).some((uid) => {
+                return uid == user.uid
+              })
+            else
+              return true
 
-            if(this.state.user.uid != newProfile.uid &&
-              !chattedProfiles.some((chattedProfile) => { return chattedProfile.uid == newProfile.uid }) &&
-              (!('rejections' in this.state.user) ||
-              !Object.keys(this.state.user.rejections).some((uid) => { return uid == newProfile.uid }))) {
-                  updatedProfiles.push(newProfile)
-            }
+          }).slice(0, 4) //only show 4 profiles
+        })
 
-            console.log(this.state.user)
-
-            this.setState({profiles: updatedProfiles})
-            this.getDistancesFromUser()
-          })
+      this.getDistancesFromUser()
+      this.watchProfiles()
       })
+    })
+      // FirebaseAPI.watchForNewProfilesGeo(this.state.user, (newProfile) => {
+      //   if(this.state.profiles.length < 4)
+      //     InteractionManager.runAfterInteractions(() => {
+      //       updatedProfiles = this.state.profiles
+
+      //       if(this.state.user.uid != newProfile.uid &&
+      //         !chattedProfiles.some((chattedProfile) => { return chattedProfile.uid == newProfile.uid }) &&
+      //         (!('rejections' in this.state.user) ||
+      //         !Object.keys(this.state.user.rejections).some((uid) => { return uid == newProfile.uid }))) {
+      //             updatedProfiles.push(newProfile)
+      //       }
+
+      //       console.log(this.state.user)
+
+      //       this.setState({profiles: updatedProfiles})
+      //       this.getDistancesFromUser()
+      //     })
+      // })
     })
   }
 
@@ -104,29 +128,7 @@ export default class BioScreen extends React.Component {
         })
       })
     }
-    // FirebaseAPI.getAllUsers((users) => {
-    //     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-    //       //Filter out the current user from the other individuals
-    //       this.setState({profiles: users.filter((user) => {
-    //         return user.uid != this.state.user.uid 
-    //         }).filter((user) => { //Filter profiles already in chat with user
-    //           return !(chattedProfiles.some((profile) => {
-    //             return profile.uid == user.uid
-    //             }))
-    //         }).filter((user) => { //Filter rejected profiles
-    //           if(this.state.user.rejections != undefined)
-    //             return !Object.keys(this.state.user.rejections).some((uid) => {
-    //               return uid == user.uid
-    //             })
-    //           else
-    //             return true
-
-    //         }).slice(0, 4) //only show 4 profiles
-    //       })
-
-    //     this.watchProfiles()
-    //     })
-    //   })
+    // 
 
   getAge(dateString) {
     console.log(dateString)
