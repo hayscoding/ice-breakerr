@@ -16,6 +16,7 @@ export default class BioScreen extends React.Component {
       this.state = {
         user: this.props.screenProps.user, 
         profiles: [],
+        distances: [],
       }
 
       this.getProfiles()
@@ -69,30 +70,52 @@ export default class BioScreen extends React.Component {
   }
 
   getProfiles() {
-    FirebaseAPI.getAllUsers((users) => {
-        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-          //Filter out the current user from the other individuals
-          this.setState({profiles: users.filter((user) => {
-            return user.uid != this.state.user.uid 
-            }).filter((user) => { //Filter profiles already in chat with user
-              return !(chattedProfiles.some((profile) => {
-                return profile.uid == user.uid
-                }))
-            }).filter((user) => { //Filter rejected profiles
-              if(this.state.user.rejections != undefined)
-                return !Object.keys(this.state.user.rejections).some((uid) => {
-                  return uid == user.uid
-                })
-              else
-                return true
+    FirebaseAPI.watchForNewProfiles(this.state.user, (newProfile) => {
+      if(this.state.profiles.length < 4)
+        InteractionManager.runAfterInteractions(() => {
+          updatedProfiles = this.state.profiles
 
-            }).slice(0, 4) //only show 4 profiles
-          })
+          if(this.state.user.uid != newProfile.uid)
+            updatedProfiles.push(newProfile)
 
-        this.watchProfiles()
+          this.setState({profiles: updatedProfiles})
+          this.getDistancesFromUser()
+        })
+    })
+  }
+
+    getDistancesFromUser() {
+      this.state.profiles.map((profile) => {
+        FirebaseAPI.getDistanceFromUser(profile.uid, this.state.user.uid, (distanceKilometers) => {
+          const distanceMiles = distanceKilometers * 0.621371
+
+          this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
         })
       })
-  }
+    }
+    // FirebaseAPI.getAllUsers((users) => {
+    //     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+    //       //Filter out the current user from the other individuals
+    //       this.setState({profiles: users.filter((user) => {
+    //         return user.uid != this.state.user.uid 
+    //         }).filter((user) => { //Filter profiles already in chat with user
+    //           return !(chattedProfiles.some((profile) => {
+    //             return profile.uid == user.uid
+    //             }))
+    //         }).filter((user) => { //Filter rejected profiles
+    //           if(this.state.user.rejections != undefined)
+    //             return !Object.keys(this.state.user.rejections).some((uid) => {
+    //               return uid == user.uid
+    //             })
+    //           else
+    //             return true
+
+    //         }).slice(0, 4) //only show 4 profiles
+    //       })
+
+    //     this.watchProfiles()
+    //     })
+    //   })
 
   getAge(dateString) {
     console.log(dateString)
@@ -149,6 +172,7 @@ export default class BioScreen extends React.Component {
             <View style={styles.profileList}>
             {
               this.state.profiles.map((profile) => {
+                console.log(profile.name, )
                 return (
                     <View style={styles.match}  key={profile.uid+"-container"}>
                       <TouchableOpacity onPress={() => {this.showProfile(profile)}}
@@ -158,7 +182,9 @@ export default class BioScreen extends React.Component {
                             <View style={styles.leftColumn}>
                               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                              <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
+                              <Text style={styles.gender}>
+                              {this.state.distances.find((disObj) => { return disObj.uid == profile.uid })}
+                              </Text>
                             </View>
                             <View style={styles.rightColumn}>
                               <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
