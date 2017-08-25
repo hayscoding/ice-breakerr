@@ -2,6 +2,8 @@ import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, Alert, } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
+import TimerMixin from 'react-timer-mixin';
+
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
@@ -17,9 +19,10 @@ export default class BioScreen extends React.Component {
         user: this.props.screenProps.user, 
         profiles: [],
         distances: [],
+        timing: false,
       }
 
-      this.getProfiles()
+      this.updateProfilesOnTimer()
 
       this._mounted = false
   }
@@ -31,13 +34,19 @@ export default class BioScreen extends React.Component {
 
   componentWillUpdate() {
     this._mounted = false
-
-    // if(this.state.profiles.length > 0)
-      // this.watchProfiles()
   }
+
 
   componentWillUnmount() {
     // this.stopWatchingUsers()
+  }
+
+  updateProfilesOnTimer() {
+    this.getProfiles()
+
+    TimerMixin.setTimeout(() => {
+        this.updateProfilesOnTimer()
+    }, 5000)
   }
 
   watchProfiles() {
@@ -81,27 +90,36 @@ export default class BioScreen extends React.Component {
 
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
       FirebaseAPI.getAllUsers((users) => {
-      FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-        //Filter out the current user from the other individuals
-        this.setState({profiles: users.filter((user) => {
-          return user.uid != this.state.user.uid 
-          }).filter((user) => { //Filter profiles already in chat with user
-            return !(chattedProfiles.some((profile) => {
-              return profile.uid == user.uid
-              }))
-          }).filter((user) => { //Filter rejected profiles
-            if(this.state.user.rejections != undefined)
-              return !Object.keys(this.state.user.rejections).some((uid) => {
-                return uid == user.uid
-              })
-            else
-              return true
+        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+          //Filter out the current user from the other individuals
+          const newProfiles = users.filter((user) => {
+            return user.uid != this.state.user.uid 
+            }).filter((user) => { //Filter profiles already in current state
+              if(this.state.profiles.length != 0)
+                return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
+              else
+                return true
+            }).filter((user) => { //Filter profiles already in chat with user
+              return !(chattedProfiles.some((profile) => {
+                return profile.uid == user.uid
+                }))
+            }).filter((user) => { //Filter  profiles rejected by user
+              if(this.state.user.rejections != undefined)
+                return !Object.keys(this.state.user.rejections).some((uid) => {
+                  return uid == user.uid
+                })
+              else
+                return true
+            }).slice(0, profileSlots - this.state.profiles.length)
 
-          }).slice(0, profileSlots) //only show the assigned number of profiles
+          const updatedProfiles = this.state.profiles.concat(newProfiles)
+
+          if(updatedProfiles != this.state.profiles)
+            this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
         })
 
-      this.getDistancesFromUser()
-      this.watchProfiles()
+        this.getDistancesFromUser()
+        this.watchProfiles()
       })
     })
       // FirebaseAPI.watchForNewProfilesGeo(this.state.user, (newProfile) => {
@@ -122,7 +140,6 @@ export default class BioScreen extends React.Component {
       //       this.getDistancesFromUser()
       //     })
       // })
-    })
   }
 
     getDistancesFromUser() {
@@ -245,7 +262,31 @@ export default class BioScreen extends React.Component {
         </View>
       );
     else
-      return <View></View>
+      return (
+        <View style={styles.container}>
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.profileList}>
+              <View style={styles.match}>
+                <TouchableOpacity onPress={() => {}}>
+                  <View style={styles.content} >
+                    <View style={styles.headerContainer}>
+                      <View style={styles.leftColumn}>
+                        <Text style={styles.name}>Finding People Near You...</Text>
+                        <Text style={styles.gender}>Wait here, or check back later.</Text>
+                      </View>
+                      <View style={styles.rightColumn}>
+                      </View>
+                    </View>
+                    <View style={styles.bioContainer}>
+                      <Text style={styles.bio}>You'll get new people to connect with soon!</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      );
   }
 }
 
