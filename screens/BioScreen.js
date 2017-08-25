@@ -25,6 +25,7 @@ export default class BioScreen extends React.Component {
       this.updateProfilesOnTimer()
 
       this._mounted = false
+      this._navigating = false
   }
 
   componentDidMount() {
@@ -92,7 +93,7 @@ export default class BioScreen extends React.Component {
       FirebaseAPI.getAllUsers((users) => {
         FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
           //Filter out the current user from the other individuals
-          const newProfiles = users.filter((user) => {
+          const newProfiles = users.filter((user) => { 
             return user.uid != this.state.user.uid 
             }).filter((user) => { //Filter profiles already in current state
               if(this.state.profiles.length != 0)
@@ -167,7 +168,14 @@ export default class BioScreen extends React.Component {
 
 
   showProfile(profile) {
-    this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+    if(!this._navigating) {
+      this._navigating = true
+      this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+
+      setTimeout(() => {
+        this._navigating = false
+      }, 500)
+    }
   }
 
   getFbImageUrl(profile) {
@@ -176,43 +184,41 @@ export default class BioScreen extends React.Component {
   }
 
   removeProfile(profile) {
+    const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
+    const updatedProfiles = this.state.profiles
+
+    FirebaseAPI.removeWatchUser(profile.uid)
+
+    updatedProfiles.splice(index, 1)
+
+    this.setState({profiles: updatedProfiles})
+    InteractionManager.runAfterInteractions(() => {
+      this.getProfiles()                
+    })
+  }
+
+  rejectProfile(profile) {
     Alert.alert(
       ('Delete '+profile.name.split(' ')[0]+'?'),
       'You will not be able to view their profile or messages again.',
       [
         {text: 'OK', onPress: () => {
-          const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
-          const updatedProfiles = this.state.profiles
+          FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+          FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+            this.setState({user: user})
+          })
 
-          FirebaseAPI.removeWatchUser(profile.uid)
-
-          updatedProfiles.splice(index, 1)
-
-          this.setState({profiles: updatedProfiles})
           InteractionManager.runAfterInteractions(() => {
-            this.getProfiles()                
+            this.removeProfile(profile)
           })
         }},
         {text: 'Cancel', onPress: () => {}, style: 'cancel'},
       ],
-      { cancelable: false }
-    )
-    
-  }
-
-  rejectProfile(profile) {
-    FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
-    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-      this.setState({user: user})
-    })
-
-    InteractionManager.runAfterInteractions(() => {
-      this.removeProfile(profile)
-    })
+      { cancelable: false })
   }
 
   render() {
-    if(this.state.profiles.length > 0)
+    if(this.state.profiles.length > 0) {
       return (
         <View style={styles.container}>
           <ScrollView style={{flex: 1}}>
@@ -261,7 +267,7 @@ export default class BioScreen extends React.Component {
           </ScrollView>
         </View>
       );
-    else
+    } else
       return (
         <View style={styles.container}>
           <ScrollView style={{flex: 1}}>

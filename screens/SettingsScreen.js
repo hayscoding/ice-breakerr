@@ -23,6 +23,8 @@ export default class SettingsScreen extends React.Component {
     this.state = {
       user: this.props.screenProps.user, 
     }
+
+    this._navigating = false
   }
 
   componentDidMount() {
@@ -42,13 +44,29 @@ export default class SettingsScreen extends React.Component {
 
   showProfile(profile) {
     InteractionManager.runAfterInteractions(() => {
-      this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+      if(!this._navigating) {
+        this._navigating = true
+
+        this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+        
+        setTimeout(() => {
+          this._navigating = false
+        }, 500)
+      }
     })
   }
 
   referral() {
-    this.props.navigation.navigate('Referral', 
-      {user: this.state.user, cb: (user) => { this.setState({user}) }})
+    if(!this._navigating) {
+      this._navigating = true
+
+      this.props.navigation.navigate('Referral', 
+        {user: this.state.user, cb: (user) => { this.setState({user}) }})
+
+      setTimeout(() => {
+        this._navigating = false
+      }, 500)
+    }
   }
 
   logout() {
@@ -61,8 +79,17 @@ export default class SettingsScreen extends React.Component {
   }
 
   editProfile() {
-    this.props.navigation.navigate('Edit', 
-      {user: this.state.user, cb: (user) => { this.setState({user}) }})
+    if(!this._navigating) {
+      this._navigating = true
+
+      this.props.navigation.navigate('Edit', 
+        {user: this.state.user, cb: (user) => { this.setState({user}) }})
+
+      setTimeout(() => {
+        this._navigating = false
+      }, 500)
+    }
+
   }
 
   render() {

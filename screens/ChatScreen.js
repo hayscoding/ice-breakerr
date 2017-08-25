@@ -54,7 +54,17 @@ export default class ChatScreen extends Component {
       return({
         title: `${navigation.state.params.profile.name.split(' ')[0]}`,
         headerRight: (<Button title='Info'
-            onPress={() => {navigation.navigate('Profile', {profile: navigation.state.params.profile, user: navigation.state.params.user})}} />)
+            onPress={() => {
+              if(!this._navigating) {
+                this._navigating = true
+
+                navigation.navigate('Profile', {profile: navigation.state.params.profile, user: navigation.state.params.user})
+
+                setTimeout(() => {
+                  this._navigating = false
+                }, 1000)
+              }
+        }} />)
       })
     else
       return({
@@ -83,10 +93,10 @@ export default class ChatScreen extends Component {
   }
 
   componentDidMount() {
-    if(this.state.messages.length == 1)
-      Alert.alert(
-        ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
-        'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
+    // if(this.state.messages.length == 1)
+    //   Alert.alert(
+    //     ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
+    //     'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
   }
 
   componentWillUnmount() {

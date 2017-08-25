@@ -31,6 +31,7 @@ export default class EditProfileScreen extends React.Component {
     }
 
     this._mounted = false
+    this._navigating = false
 
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       if(this.state.user != user) {
@@ -55,7 +56,16 @@ export default class EditProfileScreen extends React.Component {
       Alert.alert('You cannot add more than 6 pictures to your profile.')
     else
       InteractionManager.runAfterInteractions(() => {
-        this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
+        if(!this._navigating) {
+          this._navigating = true
+
+          this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
+
+          setTimeout(() => {
+            this._navigating = false
+          }, 1000)
+        }
+
       })
   }
 

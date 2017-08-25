@@ -43,6 +43,8 @@ export default class HomeScreen extends React.Component {
     InteractionManager.runAfterInteractions(() => {
       this.watchUserForNewRejections()
     })
+
+    this._navigating = false
   }
 
   componentWillUnmount() {
@@ -165,7 +167,17 @@ export default class HomeScreen extends React.Component {
   }
 
   openChat(profile) {
-    this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
+    InteractionManager.runAfterInteractions(() => {
+      if(!this._navigating) {
+        this._navigating = true
+
+        this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
+      }
+    })
+
+    setTimeout(() => {
+      this._navigating = false
+    }, 1000)
   }
 
   rejectProfile(profile) {
