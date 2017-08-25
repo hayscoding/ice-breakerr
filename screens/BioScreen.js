@@ -29,21 +29,26 @@ export default class BioScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.watchUserForUpdates()
     this._mounted = true
+    this.watchUserForUpdates()
   }
 
   componentWillUpdate() {
     this._mounted = false
   }
 
+  componentDidUpdate() {
+    this._mounted = true
+  }
 
   componentWillUnmount() {
-    // this.stopWatchingUsers()
+    this._mounted = false
+    this.stopWatchingUsers()
   }
 
   updateProfilesOnTimer() {
-    this.getProfiles()
+    if(this._mounted)
+      this.getProfiles()
 
     TimerMixin.setTimeout(() => {
         this.updateProfilesOnTimer()
@@ -71,6 +76,15 @@ export default class BioScreen extends React.Component {
           })
         })
       })
+  }
+
+  stopWatchingUsers() {
+    this.state.profiles.forEach((profile) => { 
+      FirebaseAPI.removeWatchUser(profile.uid)
+    })
+
+    FirebaseAPI.removeWatchUser(this.state.user.uid)
+    FirebaseAPI.removeWatchForChat()
   }
 
   watchUserForUpdates() {
@@ -144,13 +158,14 @@ export default class BioScreen extends React.Component {
   }
 
     getDistancesFromUser() {
-      this.state.profiles.map((profile) => {
-        FirebaseAPI.getDistanceFromUser(profile.uid, this.state.user.uid, (distanceKilometers) => {
-          const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
+      if(this._mounted)
+        this.state.profiles.map((profile) => {
+          FirebaseAPI.getDistanceFromUser(profile.uid, this.state.user.uid, (distanceKilometers) => {
+            const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
 
-          this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
+            this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
+          })
         })
-      })
     }
     // 
 
