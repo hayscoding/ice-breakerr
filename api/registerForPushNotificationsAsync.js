@@ -1,9 +1,10 @@
 import { Permissions, Notifications } from 'expo';
+import * as FirebaseAPI from '../modules/firebaseAPI';
 
 // Example server, implemented in Rails: https://git.io/vKHKv
 const PUSH_ENDPOINT = 'https://exponent-push-server.herokuapp.com/tokens';
 
-export default (async function registerForPushNotificationsAsync() {
+export default (async function registerForPushNotificationsAsync(uid) {
   // Android remote notification permissions are granted during the app
   // install, so this will only ask on iOS
   let { status } = await Permissions.askAsync(Permissions.REMOTE_NOTIFICATIONS);
@@ -15,6 +16,8 @@ export default (async function registerForPushNotificationsAsync() {
 
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExponentPushTokenAsync();
+
+  // FirebaseAPI.updateUser(uid, "pushToken", token)
 
   // POST the token to our backend so we can use it to send pushes from there
   return fetch(PUSH_ENDPOINT, {

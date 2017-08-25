@@ -166,12 +166,15 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     const profile = this.props.navigation.state.params.profile
-    let distance = ' '
+    let milesAway = ' '
 
-    if(this.state.distance != ' ')
-      distance =  this.state.distance
+    if(this.state.distance != ' ') {
+      milesAway = this.state.distance
+
+      milesAway = milesAway != 1 ? (milesAway+' miles away') : (milesAway+' mile away') //Keep proper grammer for 1 mile away
+    }
     else
-      distance = 'NA'
+      milesAway = 'Finding location...'
     
     return(
       <View style={styles.container}>  
@@ -192,7 +195,7 @@ export default class ProfileScreen extends React.Component {
               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
               <Text style={styles.gender}>{profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1)}</Text>
-              <Text style={styles.gender}>{this.state.distance} miles away</Text>
+              <Text style={styles.gender}>{milesAway}</Text>
             </View>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>

@@ -202,12 +202,15 @@ export default class BioScreen extends React.Component {
             <View style={styles.profileList}>
             {
               this.state.profiles.map((profile) => {
-                let distance = ' '
+                let milesAway = ' '
 
-                if(this.state.distances.some((disObj) => { return disObj.uid == profile.uid }))
-                  distance =  this.state.distances.find((disObj) => { return disObj.uid == profile.uid }).distance
+                if(this.state.distances.some((disObj) => { return disObj.uid == profile.uid })) {
+                  milesAway = this.state.distances.find((disObj) => { return disObj.uid == profile.uid }).distance
+
+                  milesAway = milesAway != 1 ? (milesAway+' miles away') : (milesAway+' mile away') //Keep proper grammer for 1 mile away
+                }
                 else
-                  distance = 'NA'
+                  milesAway = 'Finding location...'
               
 
                 return (
@@ -219,9 +222,7 @@ export default class BioScreen extends React.Component {
                             <View style={styles.leftColumn}>
                               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                              <Text style={styles.gender}>
-                              {distance} miles away
-                              </Text>
+                              <Text style={styles.gender}>{milesAway}</Text>
                             </View>
                             <View style={styles.rightColumn}>
                               <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}

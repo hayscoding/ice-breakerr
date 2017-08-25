@@ -75,6 +75,7 @@ export default class RootNavigator extends React.Component {
       user: {},
       hasUser: false,
       waiting: true,
+      registeredToken: false,
     }
 
     this.firebaseRef = firebase.database().ref('users')
@@ -82,8 +83,13 @@ export default class RootNavigator extends React.Component {
     // this.setState({waiting: true})
   }
 
-  componentDidMount() {
-    this._notificationSubscription = this._registerForPushNotifications();
+  componentDidUpdate() {
+    if(this.state.hasUser && !this.state.registeredToken) {
+      this.setState({registeredToken: true})
+      InteractionManager.runAfterInteractions(() => {
+        this._notificationSubscription = this._registerForPushNotifications();
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -130,7 +136,7 @@ export default class RootNavigator extends React.Component {
     // You can comment the following line out if you want to stop receiving
     // a notification every time you open the app. Check out the source
     // for this function in api/registerForPushNotificationsAsync.js
-    registerForPushNotificationsAsync();
+    registerForPushNotificationsAsync(this.state.user.uid);
 
     // Watch for incoming notifications
     this._notificationSubscription = Notifications.addListener(

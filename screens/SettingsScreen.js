@@ -66,6 +66,13 @@ export default class SettingsScreen extends React.Component {
   }
 
   render() {
+    let editProfileStyle = styles.optionContainer
+
+    if(this.state.user.bio == '' || 
+      this.state.user.emojis == '' || 
+      this.state.user.interests == '')
+      editProfileStyle = styles.greenOptionContainer
+
     return (
       <View style={styles.container}>
         <View style={styles.profileContainer}>
@@ -80,11 +87,11 @@ export default class SettingsScreen extends React.Component {
         <View style={styles.columnContainer}>
           <View style={styles.leftColumn}>
              <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
-              <Text style={styles.option}>CHANGE OPTIONS</Text>
+              <Text style={styles.option}>GET A COFFEE DATE</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.rightColumn}>
-            <TouchableOpacity style={styles.optionContainer} onPress={() => {this.editProfile()}}>
+            <TouchableOpacity style={editProfileStyle} onPress={() => {this.editProfile()}}>
               <Text style={styles.option}>EDIT PROFILE</Text>
             </TouchableOpacity>
           </View>
@@ -122,14 +129,14 @@ const styles = StyleSheet.create({
   leftColumn: {
     flex: 1,
     width: width/4,
-    height: width/8,
+    height: width/5,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   rightColumn: {
     flex: 1,
     width: width/4,
-    height: width/8,
+    height: width/5,
     justifyContent: 'space-around',
     alignItems: 'center',
     borderLeftWidth: 1,
@@ -148,7 +155,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width/4,
-    height: width/8,
+    height: width/5,
+  },
+  greenOptionContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width/4,
+    height: width/5,
+    backgroundColor: 'lightgreen',
+    borderRadius: 25,
   },
   profileContainer: {
     width: width,
@@ -169,10 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   logout: {
-    flex: 1,
-    fontSize: 20, 
-    paddingTop: 5,
-    paddingBottom: 5,
+    fontSize: 24, 
     color: '#2B2B2B',
     alignSelf: 'center',
     textAlign: 'center',
@@ -182,8 +194,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width,
-    height: width/8,
+    paddingTop: width/14,
+    paddingBottom: width/14,
     borderTopWidth: 1,
     borderColor: 'lightgrey',
+    backgroundColor: 'white',
   },
 });
