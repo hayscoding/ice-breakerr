@@ -32,8 +32,6 @@ export default class ReferralScreen extends React.Component {
       referral: {phoneNumber: '', name: '', confirmed: false},
     }
 
-    this._mounted = false
-
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       if(this.state.user != user) {
         InteractionManager.runAfterInteractions(() => {
@@ -43,57 +41,16 @@ export default class ReferralScreen extends React.Component {
     })
   }
 
-  componentDidMount() {
-    //Set this true so no warning appears if component unmounts during process
-    this._mounted = true
-  }
-
-  componentWillUnmount() {
-    this._mounted = false
-  }
-
-  addPhoto() {
-    if('photoUrls' in this.state.user && this.state.user.photoUrls.length >= 6)
-      Alert.alert('You cannot add more than 6 pictures to your profile.')
-    else
-      InteractionManager.runAfterInteractions(() => {
-        this.props.navigation.navigate('AddPhoto', {user: this.state.user, cb: (user) => { this.setState({user}) }} )
-      })
-  }
-
-  removePhoto(url) {
-    Alert.alert(
-        ('Remove this picture from your public profile?'),
-        'It will no longer be shown in your photo collection.',
-        [
-          {text: 'OK', onPress: () => {
-            const updatedPhotoUrls = this.state.user.photoUrls
-            const index = updatedPhotoUrls.indexOf(url)
-
-            updatedPhotoUrls.splice(index, 1)
-
-            InteractionManager.runAfterInteractions(() => {
-              FirebaseAPI.updateUser(this.state.user.uid, 'photoUrls', updatedPhotoUrls)
-
-              FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-                InteractionManager.runAfterInteractions(() => {
-                    this.setState({user: user})
-                })
-              })
-            })
-          }},
-          {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-        ],
-        { cancelable: false }
-      )
-  }
-
   setPhoneNumber(text) {
-    this.setState({referral: {phoneNumber: text, name: this.state.referral.name, confirmed: false}})
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({referral: {phoneNumber: text, name: this.state.referral.name, confirmed: false}})
+    })
   }
 
   setName(text) {
-    this.setState({referral: {phoneNumber: this.state.referral.phoneNumber, name: text, confirmed: false}})
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({referral: {phoneNumber: this.state.referral.phoneNumber, name: text, confirmed: false}})
+    })
   }
 
 
@@ -115,11 +72,7 @@ export default class ReferralScreen extends React.Component {
 }
 
   submitReferral() {
-    const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-                NavigationActions.navigate({ routeName: 'Main', params: {index: 0} }),
-            ],
+    const backAction = NavigationActions.back({
             key: null
         });
 
@@ -137,7 +90,7 @@ export default class ReferralScreen extends React.Component {
         "We'll send them an invite soon. Once they join, you'll be able to view an extra profile in the center screen.")
 
       InteractionManager.runAfterInteractions(() => {
-        this.props.navigation.dispatch(resetAction);
+        this.props.navigation.dispatch(backAction);
       }) 
     } else
       Alert.alert("Please enter a valid phone number.")

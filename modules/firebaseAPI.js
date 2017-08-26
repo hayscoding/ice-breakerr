@@ -105,6 +105,7 @@ export const getAllPhotoUrlsFromFbCb = (id, token, func) => {
     })
   })
 }
+
 export const rejectProfileFromUser = (userKey, profileKey) => {
   const now = new Date();
 

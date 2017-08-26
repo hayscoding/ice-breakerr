@@ -26,10 +26,6 @@ export default class IndexScreen extends React.Component {
       }
   }
 
-  componentWillUnmount() {
-    FirebaseAPI.removeWatchUser(this.state.user.uid)
-  }
-
   componentDidMount() {
     // setTimeout(() => {
     //     Alert.alert(

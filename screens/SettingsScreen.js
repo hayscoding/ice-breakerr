@@ -28,16 +28,21 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentDidMount() {
+    this._navigating = false
+
     this.watchUserForChanges()
   }
 
+  componentWillUnmount() {
+    FirebaseAPI.removeWatchUser(this.state.user.uid)
+  }
 
   watchUserForChanges() {
     if(this.state.user != null)
       FirebaseAPI.watchUser(this.state.user.uid, (user) => {
         if(user != this.state.user)
           InteractionManager.runAfterInteractions(() => {
-            this.setState({user})
+            this.setState({user: user})
           })
       })
   }
@@ -73,9 +78,6 @@ export default class SettingsScreen extends React.Component {
     FirebaseAPI.logoutUser().then(
       () => console.log('signout successful'),
       () => console.log('signout not successful'))
-  }
-
-  updateUser(user) {
   }
 
   editProfile() {

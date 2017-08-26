@@ -28,6 +28,8 @@ export default class BioScreen extends React.Component {
 
   componentDidMount() {
     this._mounted = true
+    this._navigating = false
+    
     this.updateProfilesIfZero()
     this.watchUserForUpdates()
   }
@@ -89,8 +91,6 @@ export default class BioScreen extends React.Component {
 
           FirebaseAPI.watchForNewChat(this.state.user.uid, profile.uid, (hasChat) => {
             if(hasChat) {
-              console.log('pepepejeklsdjfklajfskl')
-              FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
               this.removeProfile(profile)
             }
           })

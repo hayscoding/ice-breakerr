@@ -37,16 +37,20 @@ export default class HomeScreen extends React.Component {
       photoUrls: [],
       loaded: false,
     }
+  }
 
+  componentDidMount() {
     this.watchChatsAndProfiles()
     InteractionManager.runAfterInteractions(() => {
       this.watchUserForNewRejections()
     })
 
     this._navigating = false
+    console.log('DID MOUNT homescreen')
   }
 
   componentWillUnmount() {
+    console.log('unmounting homescreen')
     FirebaseAPI.turnOffChatListener()
 
     if(this.state.profiles.length > 0)
@@ -63,10 +67,14 @@ export default class HomeScreen extends React.Component {
 
   watchChatsAndProfiles() {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
-      this.setState({profiles: profiles.filter((profile) => {
-        return (profile != undefined  && this.state.user.rejections != undefined) ? !Object.keys(this.state.user.rejections).some((uid) => { return uid == profile.uid }) : true
-      }), 
+      console.log('UPDATEING PROFILES')
+      FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
+        this.setState({profiles: profiles.filter((profile) => {
+        return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
+        }), 
         loaded: true })
+      })
+
       InteractionManager.runAfterInteractions(() => {
         this.listenProfileUrls()
       })
@@ -77,9 +85,13 @@ export default class HomeScreen extends React.Component {
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
         if(this.getNewRejection(updatedUser) != null) {
-          const newRejectionUid = this.getNewRejection()
+          const newRejectionUid = this.getNewRejection(updatedUser)
+          const newRejectedProfile = this.state.profiles.find((profile) => {
+             return profile.uid == newRejectionUid
+          })
 
-          const index = this.state.profiles.indexOf((profile) => { return profile.uid == newRejectionUid})
+          const index = this.state.profiles.indexOf(newRejectedProfile)
+          // console.log('mypenileindex is huge', index)
           if(index != -1) {
             const updatedProfiles = this.state.profiles
             updatedProfiles.splice(index, 1)
@@ -230,17 +242,6 @@ export default class HomeScreen extends React.Component {
     setTimeout(() => {
       this._navigating = false
     }, 1000)
-  }
-
-  rejectProfile(profile) {
-    FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
-    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-      this.setState({user: user})
-    })
-
-    InteractionManager.runAfterInteractions(() => {
-      this.removeProfile(profile)
-    })
   }
 
   render() {

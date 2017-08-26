@@ -100,11 +100,7 @@ export default class ProfileScreen extends React.Component {
   }
 
   rejectProfile(profile) {
-    const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-                NavigationActions.navigate({ routeName: 'Main', params: {index: 2} }),
-            ],
+    const backAction = NavigationActions.back({
             key: null
         });
 
@@ -119,8 +115,12 @@ export default class ProfileScreen extends React.Component {
               this.setState({user: user})
             })
           })
+
           InteractionManager.runAfterInteractions(() => {
-            this.props.navigation.dispatch(resetAction);
+            this.props.navigation.dispatch(backAction);
+            InteractionManager.runAfterInteractions(() => {
+              this.props.navigation.dispatch(backAction);
+            })
           })
         }},
         {text: 'Cancel', onPress: () => {}, style: 'cancel'},
