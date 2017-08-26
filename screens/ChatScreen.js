@@ -26,31 +26,12 @@ const size = 50;
 export default class ChatScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     //Sort uid concatenation in order of greatness so every user links to the same chat
-    const uidArray = [navigation.state.params.user.uid, navigation.state.params.profile.uid]
-    uidArray.sort()
-    this.chatID = uidArray[0]+'-'+uidArray[1]
-
-    let messages = []
-
-    firebase.database().ref().child('messages').child(this.chatID)
-      .orderByChild('createdAt')
-      .once('value', (snap) => {
-
-      snap.forEach((child) => {
-        const date = moment(child.val().createdAt).format()
-        messages.push({
-          text: child.val().text,
-          _id: child.key,
-          createdAt: date,
-          user: {
-            _id: child.val().sender,
-            name: child.val().name
-          }
-        })
-      });
-    })
-
-    if(messages.length > 0)
+    if('newChat' in navigation.state.params && navigation.state.params.newChat == true)
+      return({
+        title: `${navigation.state.params.profile.name.split(' ')[0]}`,
+        headerRight: null,
+      })
+    else
       return({
         title: `${navigation.state.params.profile.name.split(' ')[0]}`,
         headerRight: (<Button title='Info'
@@ -65,11 +46,6 @@ export default class ChatScreen extends Component {
                 }, 1000)
               }
         }} />)
-      })
-    else
-      return({
-        title: `${navigation.state.params.profile.name.split(' ')[0]}`,
-        headerRight: null,
       })
   };
 

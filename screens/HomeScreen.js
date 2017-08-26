@@ -36,7 +36,6 @@ export default class HomeScreen extends React.Component {
       profiles: [],
       photoUrls: [],
       loaded: false,
-      swipeoutDisabled: true,
     }
 
     this.watchChatsAndProfiles()
@@ -66,33 +65,11 @@ export default class HomeScreen extends React.Component {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
       this.setState({profiles: profiles.filter((profile) => {
         return (profile != undefined  && this.state.user.rejections != undefined) ? !Object.keys(this.state.user.rejections).some((uid) => { return uid == profile.uid }) : true
-      })})
-
-      if(this.state.profiles != profiles)
-        this.state.profiles.forEach((profile) => {
-          const uidArray = [profile.uid, this.state.user.uid]
-          uidArray.sort()
-          const chatID = uidArray[0]+'-'+uidArray[1]
-
-          FirebaseAPI.getChatCb(chatID, (chat) => {
-            const msgCount = Object.values(chat).filter((message) => {
-              return message.sender == profile.uid
-            }).length
-
-            console.log(profile.name, msgCount)
-
-            if(msgCount >= 5) {
-              InteractionManager.runAfterInteractions(() => {
-                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: profile.photoUrls[0]}], loaded: true})
-              })
-            } else {
-              InteractionManager.runAfterInteractions(() => {
-                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}], loaded: true})
-              })
-            }
-              
-          })
-        })
+      }), 
+        loaded: true })
+      InteractionManager.runAfterInteractions(() => {
+        this.listenProfileUrls()
+      })
     })
 
   }
@@ -103,15 +80,16 @@ export default class HomeScreen extends React.Component {
           const newRejectionUid = this.getNewRejection()
 
           const index = this.state.profiles.indexOf((profile) => { return profile.uid == newRejectionUid})
-          const updatedProfiles = this.state.profiles
-          updatedProfiles.splice(index, 1)
+          if(index != -1) {
+            const updatedProfiles = this.state.profiles
+            updatedProfiles.splice(index, 1)
 
-          if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({profiles: updatedProfiles, user: updatedUser})
-            })
+            if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({profiles: updatedProfiles, user: updatedUser})
+              })
+            }
           }
-          
         }
       })
   }
@@ -127,10 +105,6 @@ export default class HomeScreen extends React.Component {
           return newUid
       })[0]
     }
-  }
-
-  componentWillUnmount() {
-    FirebaseAPI.removeWatchUser(this.state.user.uid)
   }
 
   listenLastMessage(profile) {
@@ -160,10 +134,84 @@ export default class HomeScreen extends React.Component {
 
         messages.reverse()
 
-        recentMessage = messages[0]   
+        recentMessage = messages[0]
     })
 
     return recentMessage.text != undefined ? recentMessage.text : ' '
+  }
+
+  listenProfileUrls() {
+      this.state.profiles.forEach((profile) => {
+        const uidArray = [profile.uid, this.state.user.uid]
+        uidArray.sort()
+        const chatID = uidArray[0]+'-'+uidArray[1]
+
+        firebase.database().ref().child('messages').child(chatID)
+          .orderByChild('createdAt')
+          .on('value', (snap) => {
+
+            console.log('called nigga')
+            let messages = []
+
+            snap.forEach((child) => {
+              const date = moment(child.val().createdAt).format()
+              messages.push({
+                text: child.val().text,
+                _id: child.key,
+                createdAt: date,
+                user: {
+                  _id: child.val().sender,
+                  name: child.val().name
+                }
+              })
+            });
+
+            const msgCount = messages.filter((msg) => {
+              return msg.user._id == profile.uid
+            }).length
+            console.log(profile.name, msgCount)
+
+            if(this.state.profilesUrls != [] && this.state.photoUrls.some((urlObj) => {
+              return urlObj.uid == profile.uid
+            })) {
+              const profileUrlObj = this.state.photoUrls.find((urlObj) => {
+                return urlObj.uid == profile.uid
+              })
+              const index = this.state.photoUrls.indexOf(profileUrlObj)
+              const updatedPhotoUrls = this.state.photoUrls
+
+              if(msgCount >= 5) {
+                const newUrl = profile.photoUrls[0]
+
+                updatedPhotoUrls[index].url = newUrl
+
+                if(updatedPhotoUrls[index] != profileUrlObj)
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({photoUrls: updatedPhotoUrls})
+                  })
+              } else {
+                const newUrl = ' '
+
+                updatedPhotoUrls[index].url = newUrl
+
+                if(updatedPhotoUrls[index] != profileUrlObj)
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({photoUrls: updatedPhotoUrls})
+                  })
+              } 
+            } else {
+              if(msgCount >= 5) {
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: profile.photoUrls[0]}]})
+                })
+              } else {
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}]})
+                })
+              } 
+            }
+        })
+    })
   }
 
   openChat(profile) {
@@ -192,6 +240,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    console.log(this.state.loaded, this.state.profiles.length)
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>
@@ -220,7 +269,7 @@ export default class HomeScreen extends React.Component {
           </ScrollView>
         </View>
       )
-    } else if(this.state.profiles.length <= 0) {
+    } else {
       return(
         <View style={styles.container}>
           <ScrollView style={styles.recentUpdates}>
@@ -237,8 +286,7 @@ export default class HomeScreen extends React.Component {
           </ScrollView>
         </View>
       )
-    } else
-      return(<View></View>)
+    }
   }
 }
 

@@ -245,6 +245,14 @@ export const watchForNewChat = (userKey, profileKey, func) => {
   })
 }
 
+export const watchChat = (key, func) => {
+  firebase.database().ref().child('messages').child(key).on('value', (snap) => {
+      if(snap.val() != null) {
+        func(snap.val())
+      } 
+  })
+}
+
 export const removeWatchForChat = () => {
   firebase.database().ref().child('messages').off()
 }

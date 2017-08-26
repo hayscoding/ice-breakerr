@@ -45,13 +45,13 @@ export default class ProfileScreen extends React.Component {
                   return message.sender == profile.uid
                 }).length
 
-                if(msgCount >= 4) 
+                if(msgCount >= 5 && this._mounted) 
                   this.setState({profile: profile, photoUrls: profile.photoUrls})
-                else
+                else if(this._mounted)
                   this.setState({profile: profile, photoUrls: []})
               }
             })
-          else 
+          else if(this._mounted)
             this.setState({photoUrls: profile.photoUrls})
         }
       })
@@ -161,7 +161,7 @@ export default class ProfileScreen extends React.Component {
         })
     })
 
-    this.props.navigation.navigate('Chat', {profile: this.state.profile, user: this.state.user})
+    this.props.navigation.navigate('Chat', {profile: this.state.profile, user: this.state.user, newChat: true})
   }
 
   render() {

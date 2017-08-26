@@ -22,37 +22,45 @@ export default class BioScreen extends React.Component {
         timing: false,
       }
 
-      this.updateProfilesOnTimer()
-
       this._mounted = false
       this._navigating = false
   }
 
   componentDidMount() {
     this._mounted = true
+    this.updateProfilesIfZero()
     this.watchUserForUpdates()
   }
 
   componentWillUpdate() {
-    this._mounted = false
   }
 
   componentDidUpdate() {
-    this._mounted = true
+    InteractionManager.runAfterInteractions(() => {
+        this.getDistancesFromUser()
+    })
+
+    this.updateProfilesIfZero()
   }
 
   componentWillUnmount() {
     this._mounted = false
-    this.stopWatchingUsers()
+    console.log('UNMOUNTEDDDD')
+    // this.stopWatchingUsers()
   }
 
-  updateProfilesOnTimer() {
-    if(this._mounted)
+  updateProfilesIfZero() {
+    if(this.state.profiles.length == 0) {
       this.getProfiles()
 
-    TimerMixin.setTimeout(() => {
-        this.updateProfilesOnTimer()
-    }, 5000)
+      InteractionManager.runAfterInteractions(() => {
+        if(this.state.profiles.length == 0)
+          TimerMixin.setTimeout(() => { //Search for new profiles every 15 secs
+            this.updateProfilesIfZero()
+          }, 10000)
+      })
+      
+    }
   }
 
   watchProfiles() {
@@ -66,7 +74,9 @@ export default class BioScreen extends React.Component {
 
             updatedProfiles[index] = updatedProfile
 
-            this.setState({profiles: updatedProfiles})
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles})
+            })
           })
 
           FirebaseAPI.watchForNewChat(this.state.user.uid, profile.uid, (hasChat) => {
@@ -83,7 +93,6 @@ export default class BioScreen extends React.Component {
       FirebaseAPI.removeWatchUser(profile.uid)
     })
 
-    FirebaseAPI.removeWatchUser(this.state.user.uid)
     FirebaseAPI.removeWatchForChat()
   }
 
@@ -106,8 +115,7 @@ export default class BioScreen extends React.Component {
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
       FirebaseAPI.getAllUsers((users) => {
         FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-          //Filter out the current user from the other individuals
-          const newProfiles = users.filter((user) => { 
+          const newProfiles = users.filter((user) => { //Filter the current user from the other individuals
             return user.uid != this.state.user.uid 
             }).filter((user) => { //Filter profiles already in current state
               if(this.state.profiles.length != 0)
@@ -132,29 +140,10 @@ export default class BioScreen extends React.Component {
           if(updatedProfiles != this.state.profiles)
             this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
         })
-
-        this.getDistancesFromUser()
-        this.watchProfiles()
       })
+      
+      this.watchProfiles()
     })
-      // FirebaseAPI.watchForNewProfilesGeo(this.state.user, (newProfile) => {
-      //   if(this.state.profiles.length < 4)
-      //     InteractionManager.runAfterInteractions(() => {
-      //       updatedProfiles = this.state.profiles
-
-      //       if(this.state.user.uid != newProfile.uid &&
-      //         !chattedProfiles.some((chattedProfile) => { return chattedProfile.uid == newProfile.uid }) &&
-      //         (!('rejections' in this.state.user) ||
-      //         !Object.keys(this.state.user.rejections).some((uid) => { return uid == newProfile.uid }))) {
-      //             updatedProfiles.push(newProfile)
-      //       }
-
-      //       console.log(this.state.user)
-
-      //       this.setState({profiles: updatedProfiles})
-      //       this.getDistancesFromUser()
-      //     })
-      // })
   }
 
     getDistancesFromUser() {
@@ -163,11 +152,11 @@ export default class BioScreen extends React.Component {
           FirebaseAPI.getDistanceFromUser(profile.uid, this.state.user.uid, (distanceKilometers) => {
             const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
 
-            this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
+            if(!this.state.distances.some((distObj) => { return distObj.uid == profile.uid }))
+              this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
           })
         })
     }
-    // 
 
   getAge(dateString) {
     console.log(dateString)
@@ -206,8 +195,8 @@ export default class BioScreen extends React.Component {
 
     updatedProfiles.splice(index, 1)
 
-    this.setState({profiles: updatedProfiles})
     InteractionManager.runAfterInteractions(() => {
+      this.setState({profiles: updatedProfiles})
       this.getProfiles()                
     })
   }
@@ -233,6 +222,7 @@ export default class BioScreen extends React.Component {
   }
 
   render() {
+    console.log('RENDNDFKNLKFJEFKJLKEJFLKFJEKJFLKEJFKLJFLKEJFKFJEK')
     if(this.state.profiles.length > 0) {
       return (
         <View style={styles.container}>
