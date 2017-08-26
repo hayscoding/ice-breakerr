@@ -78,12 +78,7 @@ export default class ChatScreen extends Component {
   componentWillUnmount() {
     firebase.database().ref().child('messages').child(this.chatID).off()
   }
-
-  componentWillUpdate() {
-    // if(this.state.mounted)
-    //   this.setState({mounted: false})
-  }
-
+  
   watchChat() {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')

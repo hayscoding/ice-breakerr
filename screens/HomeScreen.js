@@ -181,7 +181,7 @@ export default class HomeScreen extends React.Component {
               const updatedPhotoUrls = this.state.photoUrls
 
               if(msgCount >= 5) {
-                const newUrl = profile.photoUrls[0]
+                const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
 
                 updatedPhotoUrls[index].url = newUrl
 
@@ -201,12 +201,16 @@ export default class HomeScreen extends React.Component {
               } 
             } else {
               if(msgCount >= 5) {
+                const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
+
                 InteractionManager.runAfterInteractions(() => {
-                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: profile.photoUrls[0]}]})
+                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
                 })
               } else {
+                const newUrl =  ' '
+
                 InteractionManager.runAfterInteractions(() => {
-                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: ' '}]})
+                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
                 })
               } 
             }

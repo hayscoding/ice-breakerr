@@ -239,7 +239,6 @@ export const watchForNewChat = (userKey, profileKey, func) => {
           }
         })
 
-
         func(hasChat)
       } 
   })

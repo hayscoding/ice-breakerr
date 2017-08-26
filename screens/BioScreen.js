@@ -46,7 +46,7 @@ export default class BioScreen extends React.Component {
   componentWillUnmount() {
     this._mounted = false
     console.log('UNMOUNTEDDDD')
-    // this.stopWatchingUsers()
+    this.stopWatchingUsers()
   }
 
   updateProfilesIfZero() {
@@ -81,6 +81,8 @@ export default class BioScreen extends React.Component {
 
           FirebaseAPI.watchForNewChat(this.state.user.uid, profile.uid, (hasChat) => {
             if(hasChat) {
+              console.log('pepepejeklsdjfklajfskl')
+              FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
               this.removeProfile(profile)
             }
           })
@@ -139,10 +141,10 @@ export default class BioScreen extends React.Component {
 
           if(updatedProfiles != this.state.profiles)
             this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
+
+          this.watchProfiles()
         })
       })
-      
-      this.watchProfiles()
     })
   }
 

@@ -48,7 +48,7 @@ export default class ProfileScreen extends React.Component {
                 if(msgCount >= 5 && this._mounted) 
                   this.setState({profile: profile, photoUrls: profile.photoUrls})
                 else if(this._mounted)
-                  this.setState({profile: profile, photoUrls: []})
+                  this.setState({profile: profile, photoUrls: null})
               }
             })
           else if(this._mounted)
@@ -69,10 +69,10 @@ export default class ProfileScreen extends React.Component {
     if(this.state.user != this.state.profile)
       FirebaseAPI.checkForChat(this.state.user.uid, this.state.profile.uid, (outcome) => {
         if(this._mounted)
-          this.setState({hasChat: outcome})
+            this.setState({hasChat: outcome})
       })
     else if(this._mounted)
-      this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
+        this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
   }
 
   componentWillUnmount() {
@@ -115,7 +115,9 @@ export default class ProfileScreen extends React.Component {
         {text: 'OK', onPress: () => {
           FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
           FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-            this.setState({user: user})
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({user: user})
+            })
           })
           InteractionManager.runAfterInteractions(() => {
             this.props.navigation.dispatch(resetAction);
@@ -180,9 +182,12 @@ export default class ProfileScreen extends React.Component {
       <View style={styles.container}>  
         <ScrollView style={{flex: height/10*9}}>
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled> 
+            {
+              console.log('penis', this.state.photoUrls)
+            }     
               {
-                'photoUrls' in this.state.user ? this.state.photoUrls.map((url) => {
+                this.state.photoUrls != null ? this.state.photoUrls.map((url) => {
                   return <Image 
                     resizeMode='cover'
                     source={{uri: url}}
