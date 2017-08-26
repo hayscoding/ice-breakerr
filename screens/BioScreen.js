@@ -51,15 +51,23 @@ export default class BioScreen extends React.Component {
 
   updateProfilesIfZero() {
     if(this.state.profiles.length == 0) {
-      this.getProfiles()
+      if(!this.state.isTiming) {  //Keeps recursion in check to prevent accelerating recalls
+        this.getProfiles()
 
-      InteractionManager.runAfterInteractions(() => {
-        if(this.state.profiles.length == 0)
-          TimerMixin.setTimeout(() => { //Search for new profiles every 15 secs
-            this.updateProfilesIfZero()
-          }, 10000)
-      })
-      
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({isTiming: true})
+        })
+
+        InteractionManager.runAfterInteractions(() => {
+          if(this.state.profiles.length == 0)
+            setTimeout(() => { //Search for new profiles every 15 secs
+              this.updateProfilesIfZero()
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({isTiming: false})
+              })
+            }, 7000)
+        }) 
+      }
     }
   }
 
