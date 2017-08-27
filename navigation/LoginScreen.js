@@ -49,41 +49,11 @@ export default class Login extends React.Component {
 
 	        FirebaseAPI.mergeUser(await user.uid, await token, await response.json())
 	        	.then(() => console.log('merge success'), () => this.showError('Could not add you to database'))
-
-	        this.checkForUser()
-
-	       	FirebaseAPI.getUserCb(await user.uid, (currentUser) => {
-		       	if(currentUser.createdDate == undefined || currentUser.createdDate == null){
-  					const now = new Date();
-
-	                InteractionManager.runAfterInteractions(() => {
-		       			FirebaseAPI.updateUser(currentUser.uid, 'createdDate', now)
-		       		})
-		       	}
-	       	})
 		} else {
 			this.displayError('Facebook login failed')
 		}
     }
-
-    checkForUser() {
-	    firebase.auth().onAuthStateChanged(fbAuth => {
-	    	const firebaseRef = firebase.database().ref('users')
-	    	
-	      	if (fbAuth) {     // user is signed in and is found in db
-		        firebaseRef.child(fbAuth.uid).on('value', snap => {
-		          const user = snap.val()
-
-		          if(user != null && user.createdDate == undefined || user.createdDate == null) {
-		            FirebaseAPI.getPhotoUrlsFromFbCb(user.id, user.fbAuthToken, (urls) => {
-		              FirebaseAPI.mergeUserPhotoUrls(user.uid, urls)
-		            })
-		          }
-		        }) 
-		      }
-		    })
-	}
-
+    
     render() {
 	    return (
 	      <View style={styles.container}>

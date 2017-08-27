@@ -24,6 +24,28 @@ export default class IndexScreen extends React.Component {
         user: this.props.screenProps.user, 
         scrollEnabled: true,
       }
+
+      if(!('createdDate' in this.state.user)) {
+          const now = new Date();
+
+          InteractionManager.runAfterInteractions(() => {
+            FirebaseAPI.updateUser(this.state.user.uid, 'createdDate', now)
+          })
+
+          InteractionManager.runAfterInteractions(() => {
+            FirebaseAPI.getPhotoUrlsFromFbCb(this.state.user.id, this.state.user.fbAuthToken, (urls) => {
+              FirebaseAPI.mergeUserPhotoUrls(this.state.user.uid, urls)
+            })
+          })
+
+          InteractionManager.runAfterInteractions(() => {
+            FirebaseAPI.getUserCb(this.state.user.uid, (currentUser) => {
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({user: currentUser})
+              })
+            })
+          })
+      }
   }
 
   componentDidMount() {
