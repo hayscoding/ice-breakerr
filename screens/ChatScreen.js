@@ -75,6 +75,12 @@ export default class ChatScreen extends Component {
     //     'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
   }
 
+  componentDidUpdate() {
+    if(this.state.messages.length == 1 && 'cb' in this.props.navigation.state.params) {
+      this.props.navigation.state.params.cb(true)
+    }
+  }
+
   componentWillUnmount() {
     firebase.database().ref().child('messages').child(this.chatID).off()
   }
@@ -83,9 +89,7 @@ export default class ChatScreen extends Component {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')
       .on('value', (snap) => {
-      if(this.state.mounted)
-        this.setState({mounted: false})
-
+        
       let messages = []
       snap.forEach((child) => {
         const date = moment(child.val().createdAt).format()

@@ -156,14 +156,16 @@ export default class ProfileScreen extends React.Component {
   }
 
   startChat(profile) {
-    FirebaseAPI.watchForNewChat(this.state.user.uid, this.state.profile.uid, (hasChat) => {
-      if(this.state.hasChat != hasChat)
-        InteractionManager.runAfterInteractions(() => {
-          this.setState({hasChat: hasChat})
-        })
-    })
+    const sentMessage = (hasChat) => {
+      this.setState({hasChat: hasChat})
+    }
 
-    this.props.navigation.navigate('Chat', {profile: this.state.profile, user: this.state.user, newChat: true})
+    this.props.navigation.navigate('Chat', {profile: this.state.profile, 
+                                            user: this.state.user, 
+                                            newChat: true,
+                                            cb: (hasChat) => {
+                                              this.setState({hasChat: hasChat})
+                                            }})
   }
 
   render() {
