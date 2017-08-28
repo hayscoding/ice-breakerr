@@ -21,15 +21,15 @@ const {height, width} = Dimensions.get('window');
 
 const size = width/8
 
-export default class ReferralScreen extends React.Component {
+export default class GetADateScreen extends React.Component {
   static navigationOptions = {
-    title: 'Refer A Friend',
+    title: 'Get A Date',
   };
 
   componentWillMount() {
     this.state = {
       user: this.props.navigation.state.params.user, 
-      referral: {phoneNumber: '', name: '', confirmed: false},
+      coffeeDateInfo: {phoneNumber: '', submitDate: '', confirmed: false},
     }
 
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
@@ -43,16 +43,9 @@ export default class ReferralScreen extends React.Component {
 
   setPhoneNumber(text) {
     InteractionManager.runAfterInteractions(() => {
-      this.setState({referral: {phoneNumber: text, name: this.state.referral.name, confirmed: false}})
+      this.setState({coffeeDateInfo: {phoneNumber: text, confirmed: false, submitDate: ''}})
     })
   }
-
-  setName(text) {
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({referral: {phoneNumber: this.state.referral.phoneNumber, name: text, confirmed: false}})
-    })
-  }
-
 
   // Scroll a component into view. Just pass the component ref string.
   textInputFocused(refName) {
@@ -71,23 +64,26 @@ export default class ReferralScreen extends React.Component {
     return re.test(text);
 }
 
-  submitReferral() {
+  submitInfo() {
     const backAction = NavigationActions.back({
             key: null
         });
 
-    if(this.validatePhoneNumber(this.state.referral.phoneNumber)) {
-      const updatedReferrals = 'referrals' in this.state.user ? this.state.user.referrals : []
-      updatedReferrals.push(this.state.referral)
-      const updatedUser = this.state.user
-      updatedUser.referrals = updatedReferrals
+    if(this.validatePhoneNumber(this.state.coffeeDateInfo.phoneNumber)) {
+      const coffeeDateInfo = this.state.coffeeDateInfo
+      const now = new Date()
 
-      FirebaseAPI.updateUser(this.state.user.uid, 'referrals', updatedReferrals)
+      coffeeDateInfo.submitDate = now
+
+      const updatedUser = this.state.user
+      updatedUser.coffeeDateInfo = coffeeDateInfo
+
+      FirebaseAPI.updateUser(this.state.user.uid, 'coffeeDateInfo', coffeeDateInfo)
 
       this.props.navigation.state.params.cb(updatedUser)
 
-      Alert.alert("Thank you for referring Ice Breaker.", 
-        "We'll send them an invite soon. Once they join, you'll be able to view an extra profile in the center screen.")
+      Alert.alert("Thank you for showing interest in getting a coffee date.", 
+        "We'll send you an invite soon. You'll be able to get a coffee date within a few months.")
 
       InteractionManager.runAfterInteractions(() => {
         this.props.navigation.dispatch(backAction);
@@ -99,8 +95,8 @@ export default class ReferralScreen extends React.Component {
   submitTouchable() {
       return(
         <View style={styles.chatButtonContainer}>
-          <TouchableOpacity onPress={() => {this.submitReferral()}} >
-            <Text style={styles.chatButton}>Submit</Text>
+          <TouchableOpacity onPress={() => {this.submitInfo()}} >
+            <Text style={styles.chatButton}>Submit </Text>
           </TouchableOpacity>
         </View>
       )
@@ -115,12 +111,13 @@ export default class ReferralScreen extends React.Component {
           <View style={styles.content} >
             <View style={styles.headerContainer}>
               <View style={styles.leftColumn}>
-                <Text style={styles.name}>Refer A Friend</Text>
-                <Text style={styles.age}>You'll gain 1 more profile slot at center screen.{'\n'}
-                  At least one referral must accept offer.</Text>
+                <Text style={styles.name}>Get a Coffee Date</Text>
+                <Text style={styles.age}>You'll get a mutual, hand-matched, guaranteed coffee date within a few months.{'\n'}{'\n'}
+                We will match you with someone doing the same thing, and schedule the time and place.{'\n'}{'\n'}
+                We'll text you when we have a match.</Text>
               </View>
             </View>
-          <Text style={styles.title}>Enter Their Phone Number</Text>
+          <Text style={styles.title}>Enter Your Phone Number</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='phoneNumber'
               style={styles.bio} 
@@ -129,17 +126,7 @@ export default class ReferralScreen extends React.Component {
               blurOnSubmit={false}
               onChangeText={(text) => this.setPhoneNumber(text)}
               onFocus={this.textInputFocused.bind(this, 'phoneNumber')}
-              value={this.state.referral.phoneNumber} />
-          </View>
-          <Text style={styles.title}>Enter Their Name (Optional)</Text>
-          <View style={styles.bioContainer}>
-            <TextInput ref='name'
-              style={styles.bio} 
-              multiline={true}
-              blurOnSubmit={false}
-              onChangeText={(text) => this.setName(text)}
-              onFocus={this.textInputFocused.bind(this, 'name')}
-              value={this.state.referral.name} />
+              value={this.state.coffeeDateInfo.phoneNumber} />
           </View>
           <View style={styles.spacer}></View>
           </View>
@@ -229,6 +216,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 3,
     color: 'gray',
+    paddingRight: 10,
   },
   subtitle: {
     fontSize:15,

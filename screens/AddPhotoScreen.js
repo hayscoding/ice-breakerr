@@ -69,44 +69,54 @@ export default class ProfileScreen extends React.Component {
   }
 
   render() {
+    if(this.state.photoUrls.length != 0)
+      return(
+        <View style={styles.container}>  
+          <ScrollView style={{flex: 1}}>
+            <View style={{flex: 1, width: width}}>
+            {
+              this.state.photoUrls.map((url) => {
+                const index = this.state.photoUrls.indexOf(url)
 
-    return(
-      <View style={styles.container}>  
-        <ScrollView style={{flex: 1}}>
-          <View style={{flex: 1, width: width}}>
-          {
-            this.state.photoUrls.map((url) => {
-              const index = this.state.photoUrls.indexOf(url)
-
-              if(index % 3 == 0) 
-                return (
-                  <View style={{flex: 1, flexDirection: 'row', width: width, height: width/3, justifyContent: 'space-between'}}
-                  key={url+'view-row'}> 
-                  {
-                    this.state.photoUrls.slice(index, index+3).map((url) => {
-                      return (
-                        <TouchableOpacity onPress={() => {this.addPhoto(url)}}
-                          key={url+'touchable'}>
-                          <View style={{flex: 1, flexDirection: 'row', width: size, height: size, justifyContent: 'space-between'}}
-                          key={url+'single-view'}> 
-                            <Image 
-                            resizeMode='cover'
-                            source={{uri: url}}
-                            style={{width:size, height:size}} 
-                            key={url+'image'} />
-                          </View>
-                        </TouchableOpacity>
-                      ) 
-                    })
-                  }
-                </View>
-                )
-            })
-          }
-          </View>
-        </ScrollView>
-      </View>
-    )
+                if(index % 3 == 0) 
+                  return (
+                    <View style={{flex: 1, flexDirection: 'row', width: width, height: width/3, justifyContent: 'space-between'}}
+                    key={url+'view-row'}> 
+                    {
+                      this.state.photoUrls.slice(index, index+3).map((url) => {
+                        return (
+                          <TouchableOpacity onPress={() => {this.addPhoto(url)}}
+                            key={url+'touchable'}>
+                            <View style={{flex: 1, flexDirection: 'row', width: size, height: size, justifyContent: 'space-between'}}
+                            key={url+'single-view'}> 
+                              <Image 
+                              resizeMode='cover'
+                              source={{uri: url}}
+                              style={{width:size, height:size}} 
+                              key={url+'image'} />
+                            </View>
+                          </TouchableOpacity>
+                        ) 
+                      })
+                    }
+                  </View>
+                  )
+              })
+            }
+            </View>
+          </ScrollView>
+        </View>
+      )
+    else
+      return(
+        <View style={styles.container}>  
+          <ScrollView style={{flex: 1}}>
+            <View style={{flex: 1, width: width, paddingLeft: 20, paddingRight: 20, paddingTop: 10,}}>
+              <Text style={styles.name}>There are no photos in your "Mobile Uploads" album on Facebook to use for Ice Breaker.</Text>
+            </View>
+          </ScrollView>
+        </View>
+      )
   }
 }
         

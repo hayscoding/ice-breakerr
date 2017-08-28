@@ -14,6 +14,7 @@ import ChatScreen from '../screens/ChatScreen'
 import EditProfileScreen from '../screens/EditProfileScreen'
 import AddPhotoScreen from '../screens/AddPhotoScreen'
 import ReferralScreen from '../screens/ReferralScreen'
+import GetADateScreen from '../screens/GetADateScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -36,7 +37,10 @@ const RootStackNavigator = StackNavigator(
     },
     Referral: {
       screen: ReferralScreen,
-    }
+    },
+    GetADate: {
+      screen: GetADateScreen,
+    },
   },
   {
     navigationOptions: () => ({

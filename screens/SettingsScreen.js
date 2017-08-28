@@ -56,7 +56,21 @@ export default class SettingsScreen extends React.Component {
         
         setTimeout(() => {
           this._navigating = false
-        }, 500)
+        }, 1000)
+      }
+    })
+  }
+
+  showGetADate() {
+    InteractionManager.runAfterInteractions(() => {
+      if(!this._navigating) {
+        this._navigating = true
+
+        this.props.navigation.navigate('GetADate', {user: this.state.user, cb: (user) => { this.setState({user})} })
+        
+        setTimeout(() => {
+          this._navigating = false
+        }, 1000)
       }
     })
   }
@@ -66,7 +80,7 @@ export default class SettingsScreen extends React.Component {
       this._navigating = true
 
       this.props.navigation.navigate('Referral', 
-        {user: this.state.user, cb: (user) => { this.setState({user}) }})
+        {user: this.state.user, cb: (user) => { this.setState({user})} })
 
       setTimeout(() => {
         this._navigating = false
@@ -115,7 +129,7 @@ export default class SettingsScreen extends React.Component {
         </View> 
         <View style={styles.columnContainer}>
           <View style={styles.leftColumn}>
-             <TouchableOpacity style={styles.optionContainer} onPress={() => {}}>
+             <TouchableOpacity style={styles.optionContainer} onPress={() => {this.showGetADate()}}>
               <Text style={styles.option}>GET A COFFEE DATE</Text>
             </TouchableOpacity>
           </View>
