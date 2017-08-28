@@ -30,8 +30,9 @@ export default class ProfileScreen extends React.Component {
       startedChat: false,
     }
 
-    FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
 
+
+    FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
       InteractionManager.runAfterInteractions(() => {
         if(this._mounted) {
           const uidArray = [profile.uid, this.state.user.uid]
@@ -46,16 +47,23 @@ export default class ProfileScreen extends React.Component {
                 }).length
 
                 if(msgCount >= 5 && this._mounted) 
-                  this.setState({profile: profile, photoUrls: profile.photoUrls})
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({profile: profile, photoUrls: profile.photoUrls})
+                  })            
                 else if(this._mounted)
-                  this.setState({profile: profile, photoUrls: null})
+                  InteractionManager.runAfterInteractions(() => {
+                    console.log('KNAWLEDGE', profile)
+                    this.setState({profile: profile, photoUrls: null})
+                  })            
               }
             })
           else if(this._mounted)
-            this.setState({photoUrls: profile.photoUrls})
-        }
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profile: profile, photoUrls: profile.photoUrls})
+            })            
+          }
+        })
       })
-    })
 
     this._mounted = false
   }
@@ -73,6 +81,7 @@ export default class ProfileScreen extends React.Component {
       })
     else if(this._mounted)
         this.setState({hasChat: true})  //set true so user cannot chat themself and others in chat
+
   }
 
   componentWillUnmount() {
@@ -169,7 +178,7 @@ export default class ProfileScreen extends React.Component {
   }
 
   render() {
-    const profile = this.props.navigation.state.params.profile
+    const profile = this.state.profile
     let milesAway = ' '
 
     if(this.state.distance != ' ') {
@@ -185,9 +194,6 @@ export default class ProfileScreen extends React.Component {
         <ScrollView style={{flex: height/10*9}}>
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled> 
-            {
-              console.log('penis', this.state.photoUrls)
-            }     
               {
                 this.state.photoUrls != null ? this.state.photoUrls.map((url) => {
                   return <Image 
