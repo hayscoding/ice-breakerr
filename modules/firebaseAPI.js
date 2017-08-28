@@ -1,7 +1,8 @@
-import * as firebase from 'firebase';
+import * as firebase from 'firebase'
 import GeoFire from 'geofire'
 import * as _ from 'lodash'
-import Exponent from 'expo';
+import Exponent from 'expo'
+import { Alert, } from 'react-native'
 
 export const loginUser = (accessToken) => {
     const provider = firebase.auth.FacebookAuthProvider //declare fb provider
@@ -19,10 +20,33 @@ export const updateUser = (uid, key, value) => {
     .update({[key]:value})
 }
 
+export async function getLocationAsync(key) {
+  const { Location, Permissions } = Expo;
+  const { status } = await Permissions.askAsync(Permissions.LOCATION);
+  if (status === 'granted') {
+    return watchUserLocation(key);
+  } else {
+    console.log('Location permission not granted');
+  }
+}
+
+ export async function alertIfRemoteNotificationsDisabledAsync(func) {
+  const { Permissions } = Expo;
+  const { status } = await Permissions.getAsync(Permissions.LOCATION);
+  if (status !== 'granted') {
+    Alert.alert('Please Enable Location Services.', 
+      'Go to Settings -> Ice Breaker -> Location then select "While Using the App."');
+
+    func(false)
+  } else {
+    func(true)
+  }
+}
+
 export const mergeUser = (uid, token, newData) => {
   console.log('newData', newData)
 
-  watchUserLocationDemo(uid)
+  getLocationAsync(uid)
 
   const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)
 

@@ -20,10 +20,17 @@ export default class BioScreen extends React.Component {
         profiles: [],
         distances: [],
         timing: false,
+        locationEnabled: false,
       }
 
       this._mounted = false
       this._navigating = false
+
+      InteractionManager.runAfterInteractions(() => {
+        FirebaseAPI.alertIfRemoteNotificationsDisabledAsync((bool) => {
+          this.setState({ locationEnabled: bool })
+        })
+      })
   }
 
   componentDidMount() {
@@ -32,9 +39,6 @@ export default class BioScreen extends React.Component {
     
     this.updateProfilesIfZero()
     this.watchUserForUpdates()
-  }
-
-  componentWillUpdate() {
   }
 
   componentDidUpdate() {
@@ -192,6 +196,16 @@ export default class BioScreen extends React.Component {
     }
   }
 
+  askToEnableLocation() {
+    InteractionManager.runAfterInteractions(() => {
+      InteractionManager.runAfterInteractions(() => {
+        FirebaseAPI.alertIfRemoteNotificationsDisabledAsync((bool) => {
+          this.setState({ locationEnabled: bool })
+        })
+      }) 
+    })
+  }
+
   getFbImageUrl(profile) {
     const fbImageUrl = `https://graph.facebook.com/${profile.id}/picture?height=${height}`
     return fbImageUrl
@@ -233,7 +247,7 @@ export default class BioScreen extends React.Component {
 
   render() {
     console.log('RENDNDFKNLKFJEFKJLKEJFLKFJEKJFLKEJFKLJFLKEJFKFJEK')
-    if(this.state.profiles.length > 0) {
+    if(this.state.profiles.length > 0 && this.state.locationEnabled) {
       return (
         <View style={styles.container}>
           <ScrollView style={{flex: 1}}>
@@ -278,6 +292,32 @@ export default class BioScreen extends React.Component {
                 )
               })
             }
+            </View>
+          </ScrollView>
+        </View>
+      );
+    } else if(!this.state.locationEnabled) {
+      return (
+        <View style={styles.container}>
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.profileList}>
+              <View style={styles.match}>
+                <TouchableOpacity onPress={() => { this.askToEnableLocation() }}>
+                  <View style={styles.content} >
+                    <View style={styles.headerContainer}>
+                      <View style={styles.leftColumn}>
+                        <Text style={styles.name}>Enable Location Services.</Text>
+                        <Text style={styles.gender}>We'll find you profiles afterwards.</Text>
+                      </View>
+                      <View style={styles.rightColumn}>
+                      </View>
+                    </View>
+                    <View style={styles.bioContainer}>
+                      <Text style={styles.bio}>We can't find new profiles near you if location services aren't enabled.</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
         </View>
