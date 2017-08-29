@@ -27,7 +27,6 @@ export default class HomeScreen extends React.Component {
     title: 'Your Chats',
     headerLeft: null,
     gesturesEnabled: false,
-    scrollEnabled: true,
   };
 
   componentWillMount() {

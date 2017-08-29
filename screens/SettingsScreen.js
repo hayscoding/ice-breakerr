@@ -17,6 +17,8 @@ const size = 225;
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
     title: 'Settings',
+    headerLeft: null,
+    gesturesEnabled: false,
   };
 
   componentWillMount() {
@@ -149,6 +151,7 @@ export default class SettingsScreen extends React.Component {
               <Text style={styles.logout}>Logout</Text>
           </View>
         </TouchableOpacity>
+        <View style={styles.spacer}></View>
       </View>
     );
   }
@@ -163,23 +166,24 @@ const styles = StyleSheet.create({
   },
   columnContainer: {
     width: width,
-    height: (width/8)+50,
-    marginBottom: 50,
+    height: (width/6)+70, 
+    paddingTop: 10,
+    paddingBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   leftColumn: {
     flex: 1,
     width: width/4,
-    height: width/5,
+    height: width/6,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   rightColumn: {
     flex: 1,
     width: width/4,
-    height: width/5,
+    height: width/6,
     justifyContent: 'space-around',
     alignItems: 'center',
     borderLeftWidth: 1,
@@ -198,13 +202,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width/4,
-    height: width/5,
+    height: width/6,
   },
   greenOptionContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     width: width/4,
-    height: width/5,
+    height: width/6,
     backgroundColor: 'lightgreen',
     borderRadius: 25,
   },
@@ -237,10 +241,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: width,
-    paddingTop: width/14,
-    paddingBottom: width/14,
+    height:width/7,
     borderTopWidth: 1,
     borderColor: 'lightgrey',
     backgroundColor: 'white',
+  },
+  spacer: {
+    flex: 1,
+    height: 10,
+    backgroundColor: 'lightgrey',
   },
 });

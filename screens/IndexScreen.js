@@ -16,7 +16,6 @@ export default class IndexScreen extends React.Component {
     title: 'Ice Breaker',
     headerLeft: null,
     gesturesEnabled: false,
-    timer: {},
   };
 
   componentWillMount() {
@@ -91,7 +90,14 @@ export default class IndexScreen extends React.Component {
       <Swiper
           horizontal={true}
           loop={false}
-          showsPagination={false}
+          showsPagination={true}
+          paginationStyle={{
+            height: width/7,
+            bottom: 0,
+            backgroundColor: '#efefef',
+            borderTopWidth: 1,
+            borderColor: 'lightgrey',
+          }}
           index={index}
           scrollEnabled={this.state.scrollEnabled}>
           <View style={this.viewStyle()}>
