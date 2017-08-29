@@ -193,7 +193,7 @@ export default class ProfileScreen extends React.Component {
       <View style={styles.container}>  
         <ScrollView style={{flex: height/10*9}}>
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled> 
+            <ScrollView horizontal indicatorStyle={'white'} scrollEventThrottle={10} pagingEnabled> 
               {
                 this.state.photoUrls != null ? this.state.photoUrls.map((url) => {
                   return <Image 

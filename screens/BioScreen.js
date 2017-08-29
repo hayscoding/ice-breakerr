@@ -53,6 +53,7 @@ export default class BioScreen extends React.Component {
     this._mounted = false
     console.log('UNMOUNTEDDDD')
     this.stopWatchingUsers()
+    FirebaseAPI.removeWatchUser(this.state.user.uid)
   }
 
   updateProfilesIfZero() {
@@ -152,7 +153,9 @@ export default class BioScreen extends React.Component {
           const updatedProfiles = this.state.profiles.concat(newProfiles)
 
           if(updatedProfiles != this.state.profiles)
-            this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
+            })
 
           this.watchProfiles()
         })
@@ -167,7 +170,9 @@ export default class BioScreen extends React.Component {
             const distanceMiles = Math.round(distanceKilometers * 0.621371) + 1
 
             if(!this.state.distances.some((distObj) => { return distObj.uid == profile.uid }))
-              this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({distances: [...this.state.distances, {uid: profile.uid, distance: distanceMiles}]})
+              })
           })
         })
     }

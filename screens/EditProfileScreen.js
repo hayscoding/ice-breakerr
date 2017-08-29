@@ -183,7 +183,7 @@ export default class EditProfileScreen extends React.Component {
     return(
       <View style={styles.container}>  
         <ScrollView ref='scrollView'>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEventThrottle={10} pagingEnabled>      
+          <ScrollView horizontal indicatorStyle={'white'} scrollEventThrottle={10} pagingEnabled>      
             { this.getPhotos() }
           </ScrollView>
           <View style={styles.content} >
