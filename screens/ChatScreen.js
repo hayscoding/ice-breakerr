@@ -84,12 +84,27 @@ export default class ChatScreen extends Component {
   componentWillUnmount() {
     firebase.database().ref().child('messages').child(this.chatID).off()
   }
-  
+
   watchChat() {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')
       .on('value', (snap) => {
-        
+      
+      let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
+      snap.forEach((child) => {
+        const date = moment(child.val().createdAt).format()
+        precountMsgs.push({
+          user: {
+            _id: child.val().sender,
+          }
+        })
+      });
+
+      const canShowAvatar = precountMsgs.filter((msg) => {
+              return msg.user._id == this.state.profile.uid
+            }).length >= 5 ? true : false
+      const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
+
       let messages = []
       snap.forEach((child) => {
         const date = moment(child.val().createdAt).format()
@@ -99,19 +114,35 @@ export default class ChatScreen extends Component {
           createdAt: date,
           user: {
             _id: child.val().sender,
-            name: child.val().name
+            name: child.val().name,
+            avatar: avatarUrl,
           }
         })
       });
       messages.reverse()
 
-      if(messages != this.state.messages)
-        this.setState({messages: messages})      
+
+      if(messages != this.state.messages) {
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({messages: messages})      
+        })
+      }
     })
   }
 
+  showProfile() {
+    if(!this._navigating) {
+      this._navigating = true
+
+      this.props.navigation.navigate('Profile', {profile: this.state.profile, user: this.state.user})
+
+      setTimeout(() => {
+        this._navigating = false
+      }, 1000)
+    }
+  }
+
   onSend(message) {
-    // if(!this.state.reachedMax) {
     firebase.database().ref().child('messages').child(this.chatID)
       .push({
         text: message[0].text,
@@ -134,6 +165,7 @@ export default class ChatScreen extends Component {
             <GiftedChat
               messages={this.state.messages}
               onSend={(m) => this.onSend(m)}
+              onPressAvatar={() => {this.showProfile()}}
               renderTime={() => {}}
               user={{
                 _id: this.state.user.uid,

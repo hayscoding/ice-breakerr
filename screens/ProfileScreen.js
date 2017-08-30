@@ -30,8 +30,6 @@ export default class ProfileScreen extends React.Component {
       startedChat: false,
     }
 
-
-
     FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
       InteractionManager.runAfterInteractions(() => {
         if(this._mounted) {
@@ -152,7 +150,7 @@ export default class ProfileScreen extends React.Component {
   }
 
   unmatchTouchable(profile) {
-    if(this.state.user != this.state.profile && this.state.hasChat && this._mounted)
+    if(this.state.user.uid != this.state.profile.uid && this.state.hasChat && this._mounted)
       return(
         <View style={styles.chatButtonContainer}>
           <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
