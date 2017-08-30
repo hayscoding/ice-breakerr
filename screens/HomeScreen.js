@@ -308,9 +308,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   messagePreview: {
+    flex: 1,
+    width: (width/1.5)+30,
+    height: 28,
     color: 'gray',
     fontSize: 12,
     paddingLeft: 15,
+    marginRight: 15,
     paddingTop: 2,
     textAlign: 'left',
   },
