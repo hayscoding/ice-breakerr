@@ -17,7 +17,7 @@ export default (async function registerForPushNotificationsAsync(uid) {
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExponentPushTokenAsync();
 
-  // FirebaseAPI.updateUser(uid, "pushToken", token)
+  FirebaseAPI.updateUser(uid, "pushToken", token)
 
   // POST the token to our backend so we can use it to send pushes from there
   return fetch(PUSH_ENDPOINT, {

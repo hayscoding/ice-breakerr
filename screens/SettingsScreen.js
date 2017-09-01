@@ -11,6 +11,8 @@ import {
 import { ExpoConfigView } from '@expo/samples';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
+import * as ServerAPI from '../modules/serverAPI'
+
 const {height, width} = Dimensions.get('window');
 const size = 225;
 

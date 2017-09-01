@@ -33,7 +33,7 @@ export default class IndexScreen extends React.Component {
 
           InteractionManager.runAfterInteractions(() => {
             FirebaseAPI.getPhotoUrlsFromFbCb(this.state.user.id, this.state.user.fbAuthToken, (urls) => {
-              FirebaseAPI.mergeUserPhotoUrls(this.state.user.uid, urls)
+              FirebaseAPI.mergeUserPhotoUrls(this.state.user.uid, urls.slice(0,6))
             })
           })
 

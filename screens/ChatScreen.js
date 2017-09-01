@@ -20,6 +20,8 @@ import { GiftedChat } from 'react-native-gifted-chat'
 import * as firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
+import * as ServerAPI from '../modules/serverAPI'
+
 const {height, width} = Dimensions.get('window');
 const size = 50;
 
@@ -150,6 +152,8 @@ export default class ChatScreen extends Component {
         sender: message[0].user._id,
         name: this.state.user.name 
       })
+
+    // ServerAPI.postMessageNotificationToUid(message[0].user._id, this.state.profile.uid, message[0].text)
   }
 
   render() {
