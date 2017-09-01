@@ -24,9 +24,16 @@ export async function getLocationAsync(key) {
   const { Location, Permissions } = Expo;
   const { status } = await Permissions.askAsync(Permissions.LOCATION);
   if (status === 'granted') {
-    return watchUserLocation(key);
+    watchUserLocation(key);
+
+    return true
   } else {
+     Alert.alert('Please Enable Location Services.', 
+      'Go to Settings -> Ice Breaker -> Location then select "While Using the App."');
+
     console.log('Location permission not granted');
+
+    return false
   }
 }
 
@@ -34,9 +41,6 @@ export async function getLocationAsync(key) {
   const { Permissions } = Expo;
   const { status } = await Permissions.getAsync(Permissions.LOCATION);
   if (status !== 'granted') {
-    Alert.alert('Please Enable Location Services.', 
-      'Go to Settings -> Ice Breaker -> Location then select "While Using the App."');
-
     func(false)
   } else {
     func(true)
@@ -45,8 +49,6 @@ export async function getLocationAsync(key) {
 
 export const mergeUser = (uid, token, newData) => {
   console.log('newData', newData)
-
-  getLocationAsync(uid)
 
   const firebaseRefAtUID = firebase.database().ref().child('users').child(uid)
 

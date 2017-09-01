@@ -28,8 +28,14 @@ export default class BioScreen extends React.Component {
       this._navigating = false
 
       InteractionManager.runAfterInteractions(() => {
-        FirebaseAPI.alertIfRemoteNotificationsDisabledAsync((bool) => {
-          this.setState({ locationEnabled: bool })
+        InteractionManager.runAfterInteractions(() => {
+          if(!this.state.locationEnabled) {
+            const gotLocation = FirebaseAPI.getLocationAsync(this.state.user.uid)
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({ locationEnabled: gotLocation})
+            })
+          }
         })
       })
   }

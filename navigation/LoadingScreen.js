@@ -53,7 +53,8 @@ export default class LoadingScreen extends React.Component {
 
   componentWillUnmount() {
     //Stops listening to onAuthStateChanged() so unmounted updates do not occur
-    this.state.unsubscribe()
+    if(this.state.unsubscribe != '')
+      this.state.unsubscribe()
   }
 
   render() {

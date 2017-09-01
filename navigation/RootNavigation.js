@@ -129,8 +129,9 @@ export default class RootNavigator extends React.Component {
         </View>
       )
     else
-      if(this.state.hasUser)
+      if(this.state.hasUser && this.state.registeredToken){
         return <RootStackNavigator screenProps={{user: this.state.user}}/>;
+      }
       else
         return <LoginNavigator />
   }
