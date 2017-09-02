@@ -153,7 +153,9 @@ export default class ChatScreen extends Component {
         name: this.state.user.name 
       })
 
-    // ServerAPI.postMessageNotificationToUid(message[0].user._id, this.state.profile.uid, message[0].text)
+    const pushToken = 'pushToken' in this.state.profile ? this.state.profile.pushToken : 'No push token'
+
+    ServerAPI.postMessageNotificationToUid(this.state.user.name.split(' ')[0], pushToken, message[0].text)
   }
 
   render() {

@@ -8,7 +8,6 @@ import {
   Image, 
   View,
   } from 'react-native';
-import { ExpoConfigView } from '@expo/samples';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 import * as ServerAPI from '../modules/serverAPI'
