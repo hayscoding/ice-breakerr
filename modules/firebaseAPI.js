@@ -29,7 +29,7 @@ export async function getLocationAsync(key) {
     return true
   } else {
      Alert.alert('Please Enable Location Services.', 
-      'Go to Settings -> Ice Breaker -> Location then select "While Using the App."');
+      'Go to Settings -> Ice Breakerr -> Location then select "While Using the App."');
 
     console.log('Location permission not granted');
 

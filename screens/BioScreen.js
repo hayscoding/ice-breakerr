@@ -10,7 +10,7 @@ const {height, width} = Dimensions.get('window');
 
 export default class BioScreen extends React.Component {
   static navigationOptions = {
-    title: 'Ice Breaker',
+    title: 'Ice Breakerr',
     headerLeft: null,
     gesturesEnabled: false,
   };

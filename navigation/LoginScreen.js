@@ -22,7 +22,7 @@ const size = width*1.45
 
 export default class Login extends React.Component {
 	static navigationOptions = {
-	    title: 'Ice Breaker',
+	    title: 'Ice Breakerr',
 	    headerLeft: null,
 	    gesturesEnabled: false,
 	  };
