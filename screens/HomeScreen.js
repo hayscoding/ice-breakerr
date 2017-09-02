@@ -72,10 +72,10 @@ export default class HomeScreen extends React.Component {
         return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
         }), 
         loaded: true })
-      })
 
-      InteractionManager.runAfterInteractions(() => {
-        this.listenProfileUrls()
+        InteractionManager.runAfterInteractions(() => {
+          this.listenProfileUrls()
+        })
       })
     })
 
@@ -160,8 +160,6 @@ export default class HomeScreen extends React.Component {
         firebase.database().ref().child('messages').child(chatID)
           .orderByChild('createdAt')
           .on('value', (snap) => {
-
-            console.log('called nigga')
             let messages = []
 
             snap.forEach((child) => {
