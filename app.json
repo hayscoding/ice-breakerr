@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ice-breaker",
-    "description": "No description",
+    "name": "Ice Breakerr",
+    "description": "A mobile dating app which focuses on building an emotional connection before any pictures are shown.",
     "slug": "ice-breaker",
     "privacy": "public",
     "sdkVersion": "18.0.0",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
     "icon": "./assets/icons/app-icon.png",
@@ -21,6 +21,7 @@
       "assetExts": ["ttf"]
     },
     "ios": {
+      "bundleIdentifier": "city.icebreaker.exp",
       "supportsTablet": false
     }
   }
