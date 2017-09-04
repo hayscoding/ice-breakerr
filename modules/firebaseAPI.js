@@ -103,7 +103,7 @@ export const getPhotoUrlsFromFbCb = (id, token, func) => {
               })
           })
         else
-          func([])
+          func(['http://i.imgur.com/HNfWmVu.jpg'])
     })
   })
 }
