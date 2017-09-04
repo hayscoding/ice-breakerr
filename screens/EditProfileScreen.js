@@ -169,7 +169,7 @@ export default class EditProfileScreen extends React.Component {
   }
 
   getAge(dateString) {
-    console.log(dateString)
+    // console.log(dateString)
     var today = new Date();
     var birthDate = new Date(dateString);
     var age = today.getFullYear() - birthDate.getFullYear();

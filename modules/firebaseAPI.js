@@ -342,7 +342,7 @@ export const watchUser = (key, func) => {
 }
 
 export const removeWatchUser = (key) => {
-  firebase.database().ref().child('users/'+key).off()
+  firebase.database().ref().child('users').child(key).off()
 }
 
 export const storeProfileLocation = (profile, func) => {

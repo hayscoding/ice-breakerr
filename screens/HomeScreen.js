@@ -178,7 +178,7 @@ export default class HomeScreen extends React.Component {
             const msgCount = messages.filter((msg) => {
               return msg.user._id == profile.uid
             }).length
-            console.log(profile.name, msgCount)
+            // console.log(profile.name, msgCount)
 
             if(this.state.profilesUrls != [] && this.state.photoUrls.some((urlObj) => {
               return urlObj.uid == profile.uid
@@ -242,7 +242,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    console.log(this.state.loaded, this.state.profiles.length)
+    // console.log(this.state.loaded, this.state.profiles.length)
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>

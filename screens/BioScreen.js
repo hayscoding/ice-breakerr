@@ -99,6 +99,21 @@ export default class BioScreen extends React.Component {
             InteractionManager.runAfterInteractions(() => {
               this.setState({profiles: updatedProfiles})
             })
+
+            InteractionManager.runAfterInteractions(() => {
+              console.log('updatedProfile', updatedProfile)
+              const didRejectUser = 'rejections' in updatedProfile ? Object.keys(updatedProfile.rejections).some((uid) => {
+                  return uid == this.state.user.uid
+                }) : false
+
+              if(didRejectUser) {
+                FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+                  this.setState({user: user})
+                })
+                
+                this.removeProfile(updatedProfile)
+              }
+            })
           })
 
           FirebaseAPI.watchForNewChat(this.state.user.uid, profile.uid, (hasChat) => {
@@ -120,10 +135,9 @@ export default class BioScreen extends React.Component {
 
   watchUserForUpdates() {
     FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-      if(this.state.user != updatedUser)
-        InteractionManager.runAfterInteractions(() => {
+      InteractionManager.runAfterInteractions(() => {
           this.setState({user: updatedUser})
-        })
+      })
     })
   }
 
