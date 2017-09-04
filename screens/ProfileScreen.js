@@ -136,6 +136,41 @@ export default class ProfileScreen extends React.Component {
     )
   }
 
+  reportProfile(profile) {
+    const backAction = NavigationActions.back({
+            key: null
+        });
+
+    Alert.alert(
+      ('Report '+profile.name.split(' ')[0]+'?'),
+      'The Ice Breakerr team will review their profile and you will not be able to view their profile or messages again.',
+      [
+        {text: 'OK', onPress: () => {
+          FirebaseAPI.reportProfileFromUser(this.state.user.uid, profile.uid)
+          FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
+
+          FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({user: user})
+            })
+          })
+
+          if('cb' in this.props.navigation.state.params)
+            this.props.navigation.state.params.cb(profile)
+
+          InteractionManager.runAfterInteractions(() => {
+            this.props.navigation.dispatch(backAction);
+            InteractionManager.runAfterInteractions(() => {
+              this.props.navigation.dispatch(backAction);
+            })
+          })
+        }},
+        {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+      ],
+      { cancelable: false }
+    )
+  }
+
   sendMessageTouchable(profile) {
     if(!this.state.hasChat && this._mounted)
       return(
@@ -155,6 +190,19 @@ export default class ProfileScreen extends React.Component {
         <View style={styles.chatButtonContainer}>
           <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
             <Text style={styles.unmatchButton}>Unmatch</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    else
+      return null
+  }
+
+  reportTouchable(profile) {
+    if(this.state.user.uid != this.state.profile.uid && this._mounted)
+      return(
+        <View style={styles.chatButtonContainer}>
+          <TouchableOpacity onPress={() => {this.reportProfile(profile)}} >
+            <Text style={styles.reportButton}>Report</Text>
           </TouchableOpacity>
         </View>
       )
@@ -228,6 +276,8 @@ export default class ProfileScreen extends React.Component {
             </View>
           </View>
           { this.unmatchTouchable(profile) }
+          <View style={styles.chatButtonContainer}></View>
+          { this.reportTouchable(profile) }
           </ScrollView>
         { this.sendMessageTouchable(profile) } 
       </View>
@@ -347,6 +397,19 @@ const styles = StyleSheet.create({
     color:'white', 
     fontSize:24, 
     backgroundColor: 'gray',
+    borderColor: 'lightgrey', 
+    borderTopWidth: 3, 
+  },
+  reportButton: {
+    width: width,
+    marginTop: 100,
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    textAlign: 'center', 
+    color:'white', 
+    fontSize:24, 
+    backgroundColor: 'lightgrey',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
   },

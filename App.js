@@ -10,8 +10,8 @@ import * as firebase from 'firebase'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBSfQ2Ux-vZWAcpmjdhCL47Gh7q0HBIpag",
+  authDomain: "ice-breaker-ad9a9.firebaseapp.com",
   databaseURL: "https://ice-breaker-ad9a9.firebaseio.com",
-  storageBucket: "ice-breaker-ad9a9.appspot.com",
 } 
 
 firebase.initializeApp(firebaseConfig)

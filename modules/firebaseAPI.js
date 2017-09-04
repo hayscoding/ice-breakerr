@@ -132,6 +132,13 @@ export const getAllPhotoUrlsFromFbCb = (id, token, func) => {
   })
 }
 
+export const reportProfileFromUser = (userKey, profileKey) => {
+  const now = new Date();
+
+  firebase.database().ref().child('users').child(userKey).child('reports').update({[profileKey]:{reportFrom: userKey, date: now}})
+  firebase.database().ref().child('users').child(profileKey).child('reports').update({[userKey]:{reportFrom: userKey, date: now}})
+}
+
 export const rejectProfileFromUser = (userKey, profileKey) => {
   const now = new Date();
 

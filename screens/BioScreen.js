@@ -196,11 +196,18 @@ export default class BioScreen extends React.Component {
     return age;
   }
 
-
   showProfile(profile) {
     if(!this._navigating) {
       this._navigating = true
-      this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user})
+      this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user, cb: (profile) => {
+        FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+          this.setState({user: user})
+        })
+
+        InteractionManager.runAfterInteractions(() => {
+          this.removeProfile(profile)
+        })
+      }})
 
       setTimeout(() => {
         this._navigating = false
