@@ -70,30 +70,33 @@ export default class EditProfileScreen extends React.Component {
   }
 
   removePhoto(url) {
-    Alert.alert(
-        ('Remove this picture from your public profile?'),
-        'It will no longer be shown in your photo collection.',
-        [
-          {text: 'OK', onPress: () => {
-            const updatedPhotoUrls = this.state.user.photoUrls
-            const index = updatedPhotoUrls.indexOf(url)
+    if(this.state.user.photoUrls.length > 1)
+      Alert.alert(
+          ('Remove this picture from your public profile?'),
+          'It will no longer be shown in your photo collection.',
+          [
+            {text: 'OK', onPress: () => {
+              const updatedPhotoUrls = this.state.user.photoUrls
+              const index = updatedPhotoUrls.indexOf(url)
 
-            updatedPhotoUrls.splice(index, 1)
+              updatedPhotoUrls.splice(index, 1)
 
-            InteractionManager.runAfterInteractions(() => {
-              FirebaseAPI.updateUser(this.state.user.uid, 'photoUrls', updatedPhotoUrls)
+              InteractionManager.runAfterInteractions(() => {
+                FirebaseAPI.updateUser(this.state.user.uid, 'photoUrls', updatedPhotoUrls)
 
-              FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-                InteractionManager.runAfterInteractions(() => {
-                    this.setState({user: user})
+                FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+                  InteractionManager.runAfterInteractions(() => {
+                      this.setState({user: user})
+                  })
                 })
               })
-            })
-          }},
-          {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-        ],
-        { cancelable: false }
-      )
+            }},
+            {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+          ],
+          { cancelable: false }
+        )
+    else
+      Alert.alert('You must have at least 1 photo in your profile.')
   }
 
   setBio(bio) {
