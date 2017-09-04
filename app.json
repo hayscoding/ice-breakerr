@@ -5,7 +5,7 @@
     "slug": "ice-breaker",
     "privacy": "public",
     "sdkVersion": "18.0.0",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
     "icon": "./assets/icons/app-icon.png",
@@ -22,7 +22,7 @@
     },
     "ios": {
       "bundleIdentifier": "city.icebreaker.exp",
-      "supportsTablet": false
+      "supportsTablet": true
     }
   }
 }
