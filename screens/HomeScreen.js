@@ -40,9 +40,7 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.watchChatsAndProfiles()
-    InteractionManager.runAfterInteractions(() => {
       this.watchUserForNewRejections()
-    })
 
     this._navigating = false
     console.log('DID MOUNT homescreen')
@@ -83,6 +81,7 @@ export default class HomeScreen extends React.Component {
 
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+        console.log('IS THIS EVEN GETTING CALLED')
         if(this.getNewRejection(updatedUser) != null) {
           const newRejectionUid = this.getNewRejection(updatedUser)
           const newRejectedProfile = this.state.profiles.find((profile) => {

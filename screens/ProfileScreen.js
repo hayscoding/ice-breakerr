@@ -117,8 +117,9 @@ export default class ProfileScreen extends React.Component {
       [
         {text: 'OK', onPress: () => {
           FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
-          FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-            InteractionManager.runAfterInteractions(() => {
+
+          InteractionManager.runAfterInteractions(() => {
+            FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
               this.setState({user: user})
             })
           })
@@ -187,11 +188,11 @@ export default class ProfileScreen extends React.Component {
   unmatchTouchable(profile) {
     if(this.state.user.uid != this.state.profile.uid && this.state.hasChat && this._mounted)
       return(
-        <View style={styles.chatButtonContainer}>
-          <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
-            <Text style={styles.unmatchButton}>Unmatch</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
+          <View style={styles.chatButtonContainer}>
+              <Text style={styles.unmatchButton}>Unmatch</Text>
+          </View>
+        </TouchableOpacity>
       )
     else
       return null
@@ -200,11 +201,11 @@ export default class ProfileScreen extends React.Component {
   reportTouchable(profile) {
     if(this.state.user.uid != this.state.profile.uid && this._mounted)
       return(
-        <View style={styles.chatButtonContainer}>
-          <TouchableOpacity onPress={() => {this.reportProfile(profile)}} >
+        <TouchableOpacity onPress={() => {this.reportProfile(profile)}} >
+          <View style={styles.chatButtonContainer}>
             <Text style={styles.reportButton}>Report</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       )
     else
       return null
@@ -237,7 +238,7 @@ export default class ProfileScreen extends React.Component {
     
     return(
       <View style={styles.container}>  
-        <ScrollView style={{flex: height/10*9}}>
+        <ScrollView style={{height: height/10*9}}>
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
             <ScrollView horizontal indicatorStyle={'white'} scrollEventThrottle={10} pagingEnabled> 
               {
@@ -275,9 +276,9 @@ export default class ProfileScreen extends React.Component {
               <Text style={styles.bio}>{profile.interests}</Text>
             </View>
           </View>
+          { this.reportTouchable(profile) }
           { this.unmatchTouchable(profile) }
           <View style={styles.chatButtonContainer}></View>
-          { this.reportTouchable(profile) }
           </ScrollView>
         { this.sendMessageTouchable(profile) } 
       </View>
@@ -371,6 +372,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   chatButtonContainer: {
+    flex: 1,
     height: height/10, 
     justifyContent: 'flex-end', 
     alignItems: 'center'

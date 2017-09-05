@@ -337,6 +337,7 @@ export const getAllUsers = (func) => {
 
 export const watchUser = (key, func) => {
   firebase.database().ref().child('users/'+key).on('value', (snap) => {
+    console.log('called watch user for:', key)
     func(snap.val())
   })
 }
