@@ -5,7 +5,7 @@
     "slug": "ice-breaker",
     "privacy": "public",
     "sdkVersion": "18.0.0",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
     "icon": "./assets/icons/app-icon.png",
