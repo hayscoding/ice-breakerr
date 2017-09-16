@@ -116,23 +116,33 @@ export const getAllPhotoUrlsFromFbCb = (id, token, func) => {
               return album
           })
 
-        const album = [].concat.apply([], albums);
-
-        console.log('ALBUMDFKLDJFLKSJFLKDJ', album)
-
-        if(album[0] != null)
-          fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
-            .then((response) => {
-              response.json().then((res) => {
-                func(res.data.map((photo) => {
-                  return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
-                }))
-              })
+        if(albums[0] != null)
+          getAllPhotosFromAlbums(albums, 0, [], token, (photos) => {
+            func(photos)
           })
         else
           func([])
     })
   })
+}
+
+//utilizes recursion to pull all photos from the api w nested calllbacks
+export const getAllPhotosFromAlbums = (albums, index, prevPhotos, token, func) => {
+  if(index < albums.length) {
+    fetch(`https://graph.facebook.com/${albums[index].id}/photos?access_token=${token}`)
+      .then((response) => {
+        response.json().then((res) => {
+          const curPhotos = res.data.map((photo) => {
+            return `https://graph.facebook.com/${photo.id}/picture?access_token=${token}`
+          })
+          const allPhotos = prevPhotos.concat(curPhotos)
+
+          getAllPhotosFromAlbums(albums, index+1, allPhotos, token, func)
+        })
+      })
+  } else {
+    func(prevPhotos)
+  }
 }
 
 export const reportProfileFromUser = (userKey, profileKey) => {
