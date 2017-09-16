@@ -112,10 +112,13 @@ export const getAllPhotoUrlsFromFbCb = (id, token, func) => {
   fetch(`https://graph.facebook.com/${id}/albums?access_token=${token}`)
     .then((response) => { 
         response.json().then((res) => { 
-          const album = res.data.filter((album) => {
-            if(album.name == 'Mobile Uploads')
+          const albums = res.data.map((album) => {
               return album
           })
+
+        const album = [].concat.apply([], albums);
+
+        console.log('ALBUMDFKLDJFLKSJFLKDJ', album)
 
         if(album[0] != null)
           fetch(`https://graph.facebook.com/${album[0].id}/photos?access_token=${token}`)
