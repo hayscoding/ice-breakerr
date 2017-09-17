@@ -7,6 +7,7 @@ import TimerMixin from 'react-timer-mixin';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
+const size = width/6
 
 export default class BioScreen extends React.Component {
   static navigationOptions = {
@@ -305,9 +306,17 @@ export default class BioScreen extends React.Component {
                         <View style={styles.content} >
                           <View style={styles.headerContainer}>
                             <View style={styles.leftColumn}>
-                              <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
-                              <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-                              <Text style={styles.gender}>{milesAway}</Text>
+                              <View style={{flex: 1, justifyContent: 'center', alignItems: 'flex-start'}}>
+                                <Image
+                                  resizeMode='cover'
+                                  source={{uri: profile.gifUrl != "" ? profile.gifUrl : ' '}}
+                                  style={[{width: size, height: size, borderRadius: size/2}]}/> 
+                              </View>
+                              <View>
+                                <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                                <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
+                                <Text style={styles.gender}>{milesAway}</Text>
+                              </View>
                             </View>
                             <View style={styles.rightColumn}>
                               <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
@@ -462,6 +471,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   leftColumn: {
+    flexDirection: 'row',
     alignSelf: 'flex-start',
     width: matchWidth/2,
   },
