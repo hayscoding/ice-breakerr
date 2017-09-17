@@ -251,14 +251,14 @@ export default class ProfileScreen extends React.Component {
                 }) : null
               }
               {
-                () => {
+                (() => {
                   if(this.state.profile.gifUrl != "")
                     return <Image 
                       resizeMode='cover'
                       source={{uri: this.state.profile.gifUrl}}
                       style={{width:width, height:width}} 
                       key={profile.uid+"-gifUrl"} />
-                }
+                })()
               }
             </ScrollView>
             <View style={styles.headerContainer}>
