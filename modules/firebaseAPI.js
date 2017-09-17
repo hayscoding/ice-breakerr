@@ -15,6 +15,12 @@ export const logoutUser = () => {
   return firebase.auth().signOut()
 }
 
+export const getImgurClientId = (func) => {
+  firebase.database().ref().once("value").then((snap) => {
+    func(snap.val().imgurClientId)
+  })
+}
+
 export const updateUser = (uid, key, value) => {
   firebase.database().ref().child('users').child(uid)
     .update({[key]:value})
@@ -58,6 +64,7 @@ export const mergeUser = (uid, token, newData) => {
         uid: uid,
         fbAuthToken: token,
         photoUrls: [],
+        gifUrl: '',
         bio: '',
         emojis: '',
         interests: '',

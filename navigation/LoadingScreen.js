@@ -34,23 +34,21 @@ export default class LoadingScreen extends React.Component {
 
   componentDidMount() {
     //set unsubscribe as the output of the function so listener can be destroyed later
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({unsubscribe: firebase.auth().onAuthStateChanged(fbAuth => {
-          if (fbAuth) {     // user is signed in and is found in db
-            this.firebaseRef.child(fbAuth.uid).on('value', snap => {
-              const user = snap.val()
-              if (user != null) {
-                InteractionManager.runAfterInteractions(() => {
-                  this.props.navigation.goBack()
-                })  
-              }
-            }) 
-          } else {                         // no user is signed in
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({needsLogin: true})
-            })  
-          }
-        })
+    this.setState({unsubscribe: firebase.auth().onAuthStateChanged(fbAuth => {
+        if (fbAuth) {     // user is signed in and is found in db
+          this.firebaseRef.child(fbAuth.uid).on('value', snap => {
+            const user = snap.val()
+            if (user != null) {
+              InteractionManager.runAfterInteractions(() => {
+                this.props.navigation.goBack()
+              })  
+            }
+          }) 
+        } else {                         // no user is signed in
+          InteractionManager.runAfterInteractions(() => {
+            this.setState({needsLogin: true})
+          })  
+        }
       })
     })
   }

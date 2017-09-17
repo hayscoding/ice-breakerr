@@ -125,7 +125,7 @@ export default class SettingsScreen extends React.Component {
           <TouchableOpacity onPress={() => {this.showProfile(this.state.user)}} >
             <Image
               resizeMode='cover'
-              source={{uri: 'photoUrls' in this.state.user ? this.state.user.photoUrls[0] : ' '}}
+              source={{uri: this.state.user.gifUrl != "" ? this.state.user.gifUrl : 'photoUrls' in this.state.user ? this.state.user.photoUrls[0] : ' '}}
               style={[{width: size, height: size, borderRadius: size/2}]}/> 
           </TouchableOpacity>
           <Text style={styles.name}>{this.state.user.name.split(' ')[0]}</Text>
@@ -134,6 +134,11 @@ export default class SettingsScreen extends React.Component {
           <View style={styles.leftColumn}>
              <TouchableOpacity style={styles.optionContainer} onPress={() => {this.showGetADate()}}>
               <Text style={styles.option}>GET A COFFEE DATE</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.centerColumn}>
+             <TouchableOpacity style={styles.optionContainer} onPress={() => {this.showGetADate()}}>
+              <Text style={styles.option}>CHANGE GIF</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.rightColumn}>
@@ -180,6 +185,15 @@ const styles = StyleSheet.create({
     height: width/6,
     justifyContent: 'space-around',
     alignItems: 'center',
+  },
+  centerColumn: {
+    flex: 1,
+    width: width/4,
+    height: width/6,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderLeftWidth: 1,
+    borderColor: 'lightgrey',
   },
   rightColumn: {
     flex: 1,
