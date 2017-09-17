@@ -7,7 +7,7 @@ import TimerMixin from 'react-timer-mixin';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
-const size = width/6
+const size = width/5
 
 export default class BioScreen extends React.Component {
   static navigationOptions = {
