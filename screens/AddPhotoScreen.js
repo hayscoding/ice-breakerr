@@ -112,7 +112,7 @@ export default class ProfileScreen extends React.Component {
         <View style={styles.container}>  
           <ScrollView style={{flex: 1}}>
             <View style={{flex: 1, width: width, paddingLeft: 20, paddingRight: 20, paddingTop: 10,}}>
-              <Text style={styles.name}>There are no photos in your "Mobile Uploads" album on Facebook to use for Ice Breaker.</Text>
+              <Text style={styles.name}>There are no photos in your albums on Facebook to use for Ice Breaker.</Text>
             </View>
           </ScrollView>
         </View>
