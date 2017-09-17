@@ -250,11 +250,16 @@ export default class ProfileScreen extends React.Component {
                     key={profile.uid+"-"+url} />
                 }) : null
               }
-              <Image 
-                resizeMode='cover'
-                source={{uri: this.state.profile.gifUrl}}
-                style={{width:width, height:width}} 
-                key={profile.uid+"-gifUrl"} />
+              {
+                () => {
+                  if(this.state.profile.gifUrl != "")
+                    return <Image 
+                      resizeMode='cover'
+                      source={{uri: this.state.profile.gifUrl}}
+                      style={{width:width, height:width}} 
+                      key={profile.uid+"-gifUrl"} />
+                }
+              }
             </ScrollView>
             <View style={styles.headerContainer}>
               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
