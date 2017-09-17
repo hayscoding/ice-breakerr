@@ -213,15 +213,15 @@ export default class ProfileScreen extends React.Component {
 
   startChat(profile) {
     this.props.navigation.navigate('Chat', {profile: this.state.profile, 
-                                            user: this.state.user, 
-                                            newChat: true,
-                                            cb: (hasChat) => {
-                                                Alert.alert(
-                                                  ('Thanks for starting a chat with '+this.state.profile.name.split(' ')[0]+'.'),
-                                                  'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
+      user: this.state.user, 
+      newChat: true,
+      cb: (hasChat) => {
+          Alert.alert(
+            ('Thanks for starting a chat with '+this.state.profile.name.split(' ')[0]+'.'),
+            'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
 
-                                              this.setState({hasChat: hasChat})
-                                            }})
+        this.setState({hasChat: hasChat})
+      }})
   }
 
   render() {
@@ -250,6 +250,11 @@ export default class ProfileScreen extends React.Component {
                     key={profile.uid+"-"+url} />
                 }) : null
               }
+              <Image 
+                resizeMode='cover'
+                source={{uri: this.state.profile.gifUrl}}
+                style={{width:width, height:width}} 
+                key={profile.uid+"-gifUrl"} />
             </ScrollView>
             <View style={styles.headerContainer}>
               <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
