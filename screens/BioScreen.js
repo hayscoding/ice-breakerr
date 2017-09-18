@@ -312,17 +312,11 @@ export default class BioScreen extends React.Component {
                                   source={{uri: profile.gifUrl != "" ? profile.gifUrl : ' '}}
                                   style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2}]}/> 
                               </View>
-                              <View>
+                              <View style={{flex: 3, justifyContent: 'flex-start'}}>
                                 <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
                                 <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                                 <Text style={styles.gender}>{milesAway}</Text>
                               </View>
-                            </View>
-                            <View style={styles.rightColumn}>
-                              <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}
-                              key={profile.uid+"-remove"} >
-                                <Text style={{fontSize: 24, color: '#c9e9ff'}}>X</Text>
-                              </TouchableOpacity>
                             </View>
                           </View>
                           <View style={styles.bioContainer}>
@@ -471,12 +465,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   leftColumn: {
+    flex: 1,
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    width: matchWidth/2,
+    width: matchWidth,
   },
   rightColumn: {
-    width: matchWidth/3,
+    width: matchWidth/5,
     alignItems: 'flex-end',
     marginLeft: 10,
     marginRight: 10,
