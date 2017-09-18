@@ -7,7 +7,7 @@ import TimerMixin from 'react-timer-mixin';
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
-const size = width/5
+const size = width/5.5
 
 export default class BioScreen extends React.Component {
   static navigationOptions = {
@@ -306,11 +306,11 @@ export default class BioScreen extends React.Component {
                         <View style={styles.content} >
                           <View style={styles.headerContainer}>
                             <View style={styles.leftColumn}>
-                              <View style={{flex: 1, justifyContent: 'center', alignItems: 'flex-start'}}>
+                              <View style={{flex: 1, justifyContent: 'space-around', alignItems: 'flex-start'}}>
                                 <Image
                                   resizeMode='cover'
                                   source={{uri: profile.gifUrl != "" ? profile.gifUrl : ' '}}
-                                  style={[{width: size, height: size, borderRadius: size/2}]}/> 
+                                  style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2}]}/> 
                               </View>
                               <View>
                                 <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
