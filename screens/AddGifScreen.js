@@ -11,45 +11,39 @@ import {
   Icon,
   ScrollView,
   Alert,
+  TextInput,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
-
 import firebase from 'firebase'
 
 const {height, width} = Dimensions.get('window');
 const size = (width/3-2)
 
-export default class AddPhotoScreen extends React.Component {
+export default class AddGifScreen extends React.Component {
   componentWillMount() {
     this.state = {
       user: this.props.navigation.state.params.user, 
+      searchTerm: '',
       photoUrls: [],
     }
 
-    FirebaseAPI.getAllPhotoUrlsFromFbCb(this.state.user.id, this.state.user.fbAuthToken, (photoUrls) => {
-      unusedPhotoUrls = photoUrls.filter((newUrl) => { return 'photoUrls' in this.state.user ? !this.state.user.photoUrls.some((oldUrl) => {
-        return newUrl == oldUrl
-      }) : true})
-
+    FirebaseAPI.getImgurGifs('popular', (gifs) => {
       InteractionManager.runAfterInteractions(() => {
-        this.setState({photoUrls: unusedPhotoUrls})
+        this.setState({photoUrls: gifs})
       })
     })
   }
 
-  addPhoto(url) {
+  addGif(url) {
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-      updatedPhotoUrls = user.photoUrls != undefined ? user.photoUrls : []
-      updatedPhotoUrls.push(url)
-
       Alert.alert(
         ('Display this picture on your public profile?'),
         'It will be added to the end of your photo collection.',
         [
           {text: 'OK', onPress: () => {
             InteractionManager.runAfterInteractions(() => {
-              FirebaseAPI.updateUser(this.state.user.uid, 'photoUrls', updatedPhotoUrls)
+              FirebaseAPI.updateUser(this.state.user.uid, 'gifUrl', url)
             })
 
             InteractionManager.runAfterInteractions(() => {
@@ -68,10 +62,30 @@ export default class AddPhotoScreen extends React.Component {
     })
   }
 
+  submitSearchText() {
+    FirebaseAPI.getImgurGifs(this.state.searchTerm, (gifs) => {
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({photoUrls: gifs})
+      })
+    })
+  }
+
   render() {
     if(this.state.photoUrls.length != 0)
       return(
         <View style={styles.container}>  
+          <View style={styles.bioContainer}>
+              <TextInput 
+                style={styles.bio} 
+                placeholder="Search"
+                returnKeyType="done"
+                blurOnSubmit={true}
+                onChangeText={(text) => this.setState({searchTerm: text})}
+                onSubmitEditing={() => {
+                  this.submitSearchText()
+                }}
+                value={this.state.searchTerm}/>
+            </View>
           <ScrollView style={{flex: 1}}>
             <View style={{flex: 1, width: width}}>
             {
@@ -85,7 +99,7 @@ export default class AddPhotoScreen extends React.Component {
                     {
                       this.state.photoUrls.slice(index, index+3).map((url) => {
                         return (
-                          <TouchableOpacity onPress={() => {this.addPhoto(url)}}
+                          <TouchableOpacity onPress={() => {this.addGif(url)}}
                             key={url+'touchable'}>
                             <View style={{flex: 1, flexDirection: 'row', width: size, height: size, justifyContent: 'space-between'}}
                             key={url+'single-view'}> 
@@ -112,7 +126,7 @@ export default class AddPhotoScreen extends React.Component {
         <View style={styles.container}>  
           <ScrollView style={{flex: 1}}>
             <View style={{flex: 1, width: width, paddingLeft: 20, paddingRight: 20, paddingTop: 10,}}>
-              <Text style={styles.name}>There are no photos in your albums on Facebook to use for Ice Breaker.</Text>
+              <Text style={styles.name}>There are no photos that match your search.</Text>
             </View>
           </ScrollView>
         </View>
@@ -143,8 +157,8 @@ const styles = StyleSheet.create({
     backgroundColor:'#f7fbff',
   },
   bioContainer: {
-    flex: 1,
     width: width,
+    height: 40,
     alignSelf: 'center',
     justifyContent: 'flex-start',
     borderTopWidth: 1,
@@ -154,12 +168,12 @@ const styles = StyleSheet.create({
   bio: {
     flex: 1,
     width: width,
+    height: 38,
+    lineHeight: 28,
     alignSelf: 'flex-start',
-    paddingTop: 10,
-    paddingBottom: 40,
     paddingLeft: 20,
     paddingRight: 20,
-    fontSize:18,
+    fontSize:26,
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',

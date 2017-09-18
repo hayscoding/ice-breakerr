@@ -108,7 +108,19 @@ export default class SettingsScreen extends React.Component {
         this._navigating = false
       }, 500)
     }
+  }
 
+  changeGif() {
+    if(!this._navigating) {
+      this._navigating = true
+
+      this.props.navigation.navigate('AddGif', 
+        {user: this.state.user, cb: (user) => { this.setState({user}) }})
+
+      setTimeout(() => {
+        this._navigating = false
+      }, 500)
+    }
   }
 
   render() {
@@ -137,7 +149,7 @@ export default class SettingsScreen extends React.Component {
             </TouchableOpacity>
           </View>
           <View style={styles.centerColumn}>
-             <TouchableOpacity style={styles.optionContainer} onPress={() => {this.showGetADate()}}>
+             <TouchableOpacity style={styles.optionContainer} onPress={() => {this.changeGif()}}>
               <Text style={styles.option}>CHANGE GIF</Text>
             </TouchableOpacity>
           </View>

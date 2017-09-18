@@ -21,6 +21,31 @@ export const getImgurClientId = (func) => {
   })
 }
 
+export const getImgurGifs = (searchTerm, func) => {
+  getImgurClientId((imgurClientId) => {
+    let request = {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Client-ID ' + imgurClientId
+        }  
+    }  
+
+    fetch('https://api.imgur.com/3/gallery/search/top/?q='+searchTerm+'&q_type=anigif&q_size_px=small', request).then((response) => {
+      response.json().then((res) => {
+        gifUrls = res.data.filter((item) => {
+          return item.size <= 2000000
+        }).map((item) => {
+            return item.link;
+        })
+
+        gifUrls.length = 18
+
+        func(gifUrls)
+      })
+    })
+  })
+}
+
 export const updateUser = (uid, key, value) => {
   firebase.database().ref().child('users').child(uid)
     .update({[key]:value})

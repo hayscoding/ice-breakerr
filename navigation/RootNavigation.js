@@ -15,6 +15,7 @@ import EditProfileScreen from '../screens/EditProfileScreen'
 import AddPhotoScreen from '../screens/AddPhotoScreen'
 import ReferralScreen from '../screens/ReferralScreen'
 import GetADateScreen from '../screens/GetADateScreen'
+import AddGifScreen from '../screens/AddGifScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -31,6 +32,9 @@ const RootStackNavigator = StackNavigator(
     },
     Edit: {
       screen: EditProfileScreen,
+    },
+    AddGif:{
+      screen: AddGifScreen,
     },
     AddPhoto: {
       screen: AddPhotoScreen,

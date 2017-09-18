@@ -224,7 +224,7 @@ export default class ProfileScreen extends React.Component {
       }})
   }
 
-  render() {
+  render() {    
     const profile = this.state.profile
     let milesAway = ' '
 

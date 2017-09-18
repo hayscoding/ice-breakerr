@@ -27,9 +27,7 @@ export default class LoadingScreen extends React.Component {
 
   componentDidUpdate() {
     if(this.state.needsLogin)
-      InteractionManager.runAfterInteractions(() => {
         this.props.navigation.navigate('Login')
-      })
   }
 
   componentDidMount() {
