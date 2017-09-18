@@ -71,7 +71,17 @@ export default class AddGifScreen extends React.Component {
   }
 
   render() {
-    if(this.state.photoUrls.length != 0)
+    if(this.state.photoUrls.length == 0) 
+      return(
+        <View style={styles.container}>  
+          <ScrollView style={{flex: 1}}>
+            <View style={{flex: 1, width: width, paddingLeft: 20, paddingRight: 20, paddingTop: 10,}}>
+              <Text style={styles.name}>Loading...</Text>
+            </View>
+          </ScrollView>
+        </View>
+      )
+    else if(this.state.photoUrls[0] != undefined)
       return(
         <View style={styles.container}>  
           <View style={styles.bioContainer}>
@@ -124,13 +134,25 @@ export default class AddGifScreen extends React.Component {
     else
       return(
         <View style={styles.container}>  
+          <View style={styles.bioContainer}>
+            <TextInput 
+              style={styles.bio} 
+              placeholder="Search"
+              returnKeyType="done"
+              blurOnSubmit={true}
+              onChangeText={(text) => this.setState({searchTerm: text})}
+              onSubmitEditing={() => {
+                this.submitSearchText()
+              }}
+              value={this.state.searchTerm}/>
+          </View>
           <ScrollView style={{flex: 1}}>
             <View style={{flex: 1, width: width, paddingLeft: 20, paddingRight: 20, paddingTop: 10,}}>
               <Text style={styles.name}>There are no photos that match your search.</Text>
             </View>
           </ScrollView>
         </View>
-      )
+      ) 
   }
 }
         
