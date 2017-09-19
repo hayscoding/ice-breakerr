@@ -191,6 +191,13 @@ export const rejectProfileFromUser = (userKey, profileKey) => {
   firebase.database().ref().child('users').child(profileKey).child('rejections').update({[userKey]:{date: now}})
 }
 
+export const likeProfileFromUser = (userKey, profileKey) => {
+  const now = new Date();
+
+  firebase.database().ref().child('users').child(userKey).child('likes').update({[profileKey]:{date: now}})
+  firebase.database().ref().child('users').child(profileKey).child('likes').update({[userKey]:{date: now}})
+}
+
 export const getUser = (key) => {
   return firebase.database().ref().child('users').child(key).once('value')
     .then((snap) => snap.val())

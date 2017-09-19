@@ -324,6 +324,33 @@ export default class BioScreen extends React.Component {
                           </View>
                         </View>
                       </TouchableOpacity>
+                      {
+                        (() => {
+                          if(this.state.profiles.indexOf(profile) == 0)
+                            return (
+                              <View style={styles.decisionContainer}>
+                                <TouchableOpacity onPress={() => {}}>
+                                  <View style={styles.leftButton}>
+                                      <Text style={styles.decisionButton}>Like</Text>
+                                  </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {}}>
+                                  <View style={styles.rightButton}>
+                                      <Text style={styles.decisionButton}>Reject</Text>
+                                  </View>
+                                </TouchableOpacity>
+                              </View>
+                            )
+                        })()
+                      }
+                      {
+                        (() => {
+                          if(this.state.profiles.indexOf(profile) == 0)
+                            return (
+                              <View style={styles.decisionLine}></View>
+                            )
+                        })()
+                      }
                     </View>
                 )
               })
@@ -453,6 +480,39 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingBottom: 10,
   },
+  decisionContainer: {
+    flex: 1,
+    width: matchWidth,
+    height: matchHeight/4,
+    flexDirection: 'row',
+    marginTop: 10,
+    paddingBottom: 10,
+    justifyContent: 'space-around',
+  },
+  decisionLine: {
+    flex: 1,
+    width: matchWidth,
+    height: 10,
+    overflow: 'hidden',
+    borderBottomWidth: 1,
+    borderColor: 'lightgrey',
+  },
+  leftButton: {
+    width: matchWidth/2.1,
+    height: matchHeight/4.2,
+    alignSelf: 'flex-start',
+    borderRadius: 30,
+    backgroundColor: 'green',
+    overflow: 'hidden',
+  },
+  rightButton: {
+    width: matchWidth/2.1,
+    height: matchHeight/4.2,
+    alignSelf: 'flex-end',
+    borderRadius: 30,
+    backgroundColor: 'red',
+    overflow: 'hidden',
+  },
   headerContainer: {
     flexDirection: 'row',
     paddingTop: 5,
@@ -463,6 +523,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
     borderRadius: 10,
+  },
+  decisionButton: {
+    textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontSize: matchHeight/7.5,
+    color: 'white',
   },
   leftColumn: {
     flex: 1,
