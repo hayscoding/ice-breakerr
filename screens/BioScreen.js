@@ -336,7 +336,7 @@ export default class BioScreen extends React.Component {
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => {}}>
                                   <View style={styles.rightButton}>
-                                      <Text style={styles.decisionButton}>Reject</Text>
+                                      <Text style={styles.decisionButton}>Pass</Text>
                                   </View>
                                 </TouchableOpacity>
                               </View>
