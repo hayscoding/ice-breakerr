@@ -286,6 +286,10 @@ export default class BioScreen extends React.Component {
 
   likeProfile(profile) {
     FirebaseAPI.likeProfileFromUser(this.state.user.uid, profile.uid)
+    FirebaseAPI.checkForMatch(this.state.user.uid, profile.uid, (hasMatch) => {
+      console.log("hasMatch", hasMatch)
+    })
+
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       InteractionManager.runAfterInteractions(() => {
         this.setState({user: user})

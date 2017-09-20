@@ -197,6 +197,28 @@ export const likeProfileFromUser = (userKey, profileKey) => {
   firebase.database().ref().child('users').child(userKey).child('likes').update({[profileKey]:{date: now}})
 }
 
+export const checkForMatch = (userKey, profileKey, func) => {
+  firebase.database().ref().child('users').child(userKey).child('likes').once('value').then((snap) => {
+    if(snap.val() != null) {
+      const userLikes = Object.keys(snap.val())
+
+      firebase.database().ref().child('users').child(profileKey).child('likes').once('value').then((snap) => {
+        if(snap.val() != null) {
+          const profileLikes = Object.keys(snap.val())
+
+          func(userLikes.some((userLike) => { 
+            return profileLikes.some((profileLike) => {
+              return userLike == profileLike
+            })
+          }))
+        } else 
+          func(false)
+      })
+    } else
+     func(false)
+  })
+}
+
 export const getUser = (key) => {
   return firebase.database().ref().child('users').child(key).once('value')
     .then((snap) => snap.val())
