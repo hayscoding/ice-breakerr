@@ -375,6 +375,7 @@ export default class BioScreen extends React.Component {
             }
             </View>
           </ScrollView>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       );
     } else if(!this.state.locationEnabled) {
@@ -401,6 +402,7 @@ export default class BioScreen extends React.Component {
               </View>
             </View>
           </ScrollView>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       );
     } else
@@ -426,6 +428,7 @@ export default class BioScreen extends React.Component {
               </View>
             </View>
           </ScrollView>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       );
   }
