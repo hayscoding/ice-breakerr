@@ -198,13 +198,13 @@ export const likeProfileFromUser = (userKey, profileKey) => {
 }
 
 export const checkForMatch = (userKey, profileKey, func) => {
-  firebase.database().ref().child('users').child(userKey).child('likes').once('value').then((snap) => {
+  firebase.database().ref().child('users').child(profileKey).child('likes').once('value').then((snap) => {
     if(snap.val() != null) {
-      const userLikes = Object.keys(snap.val())
+      const profileLikes = Object.keys(snap.val())
 
-      firebase.database().ref().child('users').child(profileKey).child('likes').once('value').then((snap) => {
+      firebase.database().ref().child('users').child(userKey).child('likes').once('value').then((snap) => {
         if(snap.val() != null) {
-          const profileLikes = Object.keys(snap.val())
+          const userLikes = Object.keys(snap.val())
 
           func(userLikes.some((userLike) => { 
             return profileLikes.some((profileLike) => {
