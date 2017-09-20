@@ -87,29 +87,32 @@ export default class IndexScreen extends React.Component {
       index = this.props.navigation.state.params.index;
 
     return(
-      <Swiper
-          horizontal={true}
-          loop={false}
-          showsPagination={true}
-          paginationStyle={{
-            height: width/7,
-            bottom: 0,
-            backgroundColor: '#efefef',
-            borderTopWidth: 1,
-            borderColor: 'lightgrey',
-          }}
-          index={index}
-          scrollEnabled={this.state.scrollEnabled}>
-          <View style={this.viewStyle()}>
-            <SettingsScreen screenProps={this.state} navigation={this.props.navigation}/>
-          </View>
-          <View style={this.viewStyle()}>
-            <BioScreen screenProps={this.state} navigation={this.props.navigation}/>
-          </View>
-          <View style={this.viewStyle()}>
-            <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.state} navigation={this.props.navigation}/>
-          </View>
-      </Swiper>
+      <View style={{flex: 1}}>
+        <Swiper
+            horizontal={true}
+            loop={false}
+            showsPagination={true}
+            paginationStyle={{
+              height: width/7,
+              bottom: 0,
+              backgroundColor: '#efefef',
+              borderTopWidth: 1,
+              borderBottomWidth: 1,
+              borderColor: 'lightgrey',
+            }}
+            index={index}
+            scrollEnabled={this.state.scrollEnabled}>
+            <View style={this.viewStyle()}>
+              <SettingsScreen screenProps={this.state} navigation={this.props.navigation}/>
+            </View>
+            <View style={this.viewStyle()}>
+              <BioScreen screenProps={this.state} navigation={this.props.navigation}/>
+            </View>
+            <View style={this.viewStyle()}>
+              <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.state} navigation={this.props.navigation}/>
+            </View>
+        </Swiper>
+      </View>
     )
   }
 }

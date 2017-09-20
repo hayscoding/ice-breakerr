@@ -169,7 +169,7 @@ export default class SettingsScreen extends React.Component {
               <Text style={styles.logout}>Logout</Text>
           </View>
         </TouchableOpacity>
-        <View style={styles.spacer}></View>
+        <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
       </View>
     );
   }

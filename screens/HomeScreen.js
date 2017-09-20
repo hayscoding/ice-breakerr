@@ -268,6 +268,7 @@ export default class HomeScreen extends React.Component {
               })
             }
           </ScrollView>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       )
     } else {
@@ -285,6 +286,7 @@ export default class HomeScreen extends React.Component {
               </View>
             </View>
           </ScrollView>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       )
     }

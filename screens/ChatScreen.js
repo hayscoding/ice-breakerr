@@ -177,6 +177,7 @@ export default class ChatScreen extends Component {
                 _id: this.state.user.uid,
               }} />
           </View>
+          <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
   		  </View>
   		</View>
   	)

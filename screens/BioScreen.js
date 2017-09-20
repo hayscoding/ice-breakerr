@@ -143,11 +143,7 @@ export default class BioScreen extends React.Component {
   }
 
   getProfiles() {
-    let profileSlots = 3
-
-    if('referrals' in this.state.user && 
-      this.state.user.referrals.some((referralObj) => { return referralObj.confirmed}))
-        profileSlots = 4
+    let profileSlots = 6
 
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
       FirebaseAPI.getAllUsers((users) => {
