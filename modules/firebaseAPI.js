@@ -195,7 +195,6 @@ export const likeProfileFromUser = (userKey, profileKey) => {
   const now = new Date();
 
   firebase.database().ref().child('users').child(userKey).child('likes').update({[profileKey]:{date: now}})
-  firebase.database().ref().child('users').child(profileKey).child('likes').update({[userKey]:{date: now}})
 }
 
 export const getUser = (key) => {

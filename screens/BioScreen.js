@@ -166,6 +166,13 @@ export default class BioScreen extends React.Component {
                 })
               else
                 return true
+            }).filter((user) => { //Filter profiles liked by user
+              if(this.state.user.likes != undefined)
+                return !Object.keys(this.state.user.likes).some((uid) => {
+                  return uid == user.uid
+                })
+              else
+                return true
             }).slice(0, profileSlots - this.state.profiles.length)
 
           const updatedProfiles = this.state.profiles.concat(newProfiles)
@@ -257,13 +264,15 @@ export default class BioScreen extends React.Component {
 
   rejectProfile(profile) {
     Alert.alert(
-      ('Delete '+profile.name.split(' ')[0]+'?'),
+      ('Pass on '+profile.name.split(' ')[0]+'?'),
       'You will not be able to view their profile or messages again.',
       [
         {text: 'OK', onPress: () => {
           FirebaseAPI.rejectProfileFromUser(this.state.user.uid, profile.uid)
           FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
-            this.setState({user: user})
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({user: user})
+              })
           })
 
           InteractionManager.runAfterInteractions(() => {
@@ -273,6 +282,19 @@ export default class BioScreen extends React.Component {
         {text: 'Cancel', onPress: () => {}, style: 'cancel'},
       ],
       { cancelable: false })
+  }
+
+  likeProfile(profile) {
+    FirebaseAPI.likeProfileFromUser(this.state.user.uid, profile.uid)
+    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({user: user})
+      })
+    })
+
+    InteractionManager.runAfterInteractions(() => {
+      this.removeProfile(profile)
+    })
   }
 
   render() {
@@ -325,12 +347,12 @@ export default class BioScreen extends React.Component {
                           if(this.state.profiles.indexOf(profile) == 0)
                             return (
                               <View style={styles.decisionContainer}>
-                                <TouchableOpacity onPress={() => {}}>
+                                <TouchableOpacity onPress={() => {this.likeProfile(profile)}}>
                                   <View style={styles.leftButton}>
                                       <Text style={styles.decisionButton}>Like</Text>
                                   </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => {}}>
+                                <TouchableOpacity onPress={() => {this.rejectProfile(profile)}}>
                                   <View style={styles.rightButton}>
                                       <Text style={styles.decisionButton}>Pass</Text>
                                   </View>
@@ -392,7 +414,6 @@ export default class BioScreen extends React.Component {
                     <View style={styles.headerContainer}>
                       <View style={styles.leftColumn}>
                         <Text style={styles.name}>Finding People Near You...</Text>
-                        <Text style={styles.gender}>Wait here, or check back later.</Text>
                       </View>
                       <View style={styles.rightColumn}>
                       </View>
