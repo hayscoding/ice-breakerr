@@ -245,7 +245,7 @@ export default class HomeScreen extends React.Component {
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>
-          <ScrollView horizontal> 
+          <ScrollView horizontal style={{borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
             </View>
           </ScrollView>
@@ -280,7 +280,7 @@ export default class HomeScreen extends React.Component {
     } else {
       return(
         <View style={styles.container}>
-          <ScrollView horizontal> 
+          <ScrollView horizontal style={{borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
             </View>
           </ScrollView>
@@ -314,7 +314,6 @@ const styles = StyleSheet.create({
   newMatches: {
     width: width,
     height: height/7,
-    backgroundColor: 'white',
   },
   name: {
     color: '#2B2B2B',
@@ -363,7 +362,5 @@ const styles = StyleSheet.create({
   recentUpdates: {
     height: height/7*6,
     width: width,
-    borderTopWidth: 1,
-    borderTopColor: 'lightgrey',
   },
 });
