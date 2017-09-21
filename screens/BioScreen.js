@@ -284,13 +284,19 @@ export default class BioScreen extends React.Component {
       { cancelable: false })
   }
 
+  alertIfMatch(profile) {
+    const profileLikes = profile.likes != undefined ? Object.keys(profile.likes) : []
+    const hasMatch = profileLikes.some((profileLike) => {
+        return this.state.user.uid == profileLike
+    })
+
+    if(hasMatch) {
+        Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
+      }
+  }
+
   likeProfile(profile) {
     FirebaseAPI.likeProfileFromUser(this.state.user.uid, profile.uid)
-    FirebaseAPI.checkForMatch(this.state.user.uid, profile.uid, (hasMatch) => {
-        if(hasMatch) {
-          Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
-        }
-      })
 
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       InteractionManager.runAfterInteractions(() => {
@@ -300,6 +306,10 @@ export default class BioScreen extends React.Component {
 
     InteractionManager.runAfterInteractions(() => {
       this.removeProfile(profile)
+    })
+
+    InteractionManager.runAfterInteractions(() => {
+      this.alertIfMatch(profile)
     })
   }
 
