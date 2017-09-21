@@ -309,12 +309,12 @@ export default class HomeScreen extends React.Component {
             {
               this.state.initialMatches.map((match) => {
                 return(
-                  <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 10,}} key={match.uid+'container'}>
+                  <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.gifUrl+'container'}>
                     <Image
                     resizeMode='cover'
                     source={{uri: match.gifUrl}}
                     style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                    key={match.uid}/> 
+                    key={match.girUrl}/> 
                   </View>
                 )
               })
@@ -351,7 +351,9 @@ const styles = StyleSheet.create({
   newMatches: {
     width: width+1,
     height: height/7,
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   name: {
     color: '#2B2B2B',
