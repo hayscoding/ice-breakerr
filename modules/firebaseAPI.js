@@ -197,6 +197,13 @@ export const likeProfileFromUser = (userKey, profileKey) => {
   firebase.database().ref().child('users').child(userKey).child('likes').update({[profileKey]:{date: now}})
 }
 
+export const setMatchWithProfiles = (userKey, profileKey) => {
+  const now = new Date();
+
+  firebase.database().ref().child('users').child(userKey).child('matches').update({[profileKey]:{date: now}})
+  firebase.database().ref().child('users').child(profileKey).child('matches').update({[userKey]:{date: now}})
+}
+
 export const checkForMatch = (userKey, profileKey, func) => {
   firebase.database().ref().child('users').child(profileKey).child('likes').once('value').then((snap) => {
     if(snap.val() != null) {

@@ -21,6 +21,7 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
 const size = 50;
+const matchBarGifSize = height/9;
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -34,13 +35,15 @@ export default class HomeScreen extends React.Component {
       user: this.props.screenProps.user, 
       profiles: [],
       photoUrls: [],
+      initialMatches: [],
       loaded: false,
     }
   }
 
   componentDidMount() {
     this.watchChatsAndProfiles()
-      this.watchUserForNewRejections()
+    this.watchUserForNewMatches()
+    this.watchUserForNewRejections()
 
     this._navigating = false
     console.log('DID MOUNT homescreen')
@@ -76,7 +79,27 @@ export default class HomeScreen extends React.Component {
         })
       })
     })
+  }
 
+  watchUserForNewMatches() {
+    FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+      const updatedMatches = "matches" in updatedUser ? Object.keys(updatedUser.matches) : []
+      const newMatches = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => {
+        return !this.state.initialMatches.some((initialMatch) => { return initialMatch == match })
+      }) : []
+
+      updatedMatches.concat(newMatches)
+
+      updatedMatches.forEach((match) => {
+        FirebaseAPI.getUserCb(match, (profile) => {
+          updatedMatches[updatedMatches.indexOf(match)] = {uid: match, gifUrl: profile.gifUrl}
+        })
+      })
+
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({initialMatches: updatedMatches})
+      })
+    })
   }
 
   watchUserForNewRejections() {
@@ -241,6 +264,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    console.log('initialMatches', this.state.initialMatches)
     // console.log(this.state.loaded, this.state.profiles.length)
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
@@ -280,8 +304,21 @@ export default class HomeScreen extends React.Component {
     } else {
       return(
         <View style={styles.container}>
-          <ScrollView horizontal style={{borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
+            {
+              this.state.initialMatches.map((match) => {
+                return(
+                  <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10, paddingRight: 10,}} key={match.uid+'container'}>
+                    <Image
+                    resizeMode='cover'
+                    source={{uri: match.gifUrl}}
+                    style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                    key={match.uid}/> 
+                  </View>
+                )
+              })
+            }
             </View>
           </ScrollView>
           <ScrollView style={styles.recentUpdates}>
@@ -312,8 +349,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   newMatches: {
-    width: width,
+    width: width+1,
     height: height/7,
+    alignItems: 'flex-start',
   },
   name: {
     color: '#2B2B2B',
@@ -360,7 +398,7 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
   },
   recentUpdates: {
-    height: height/7*6,
+    height: height/7*5,
     width: width,
   },
 });

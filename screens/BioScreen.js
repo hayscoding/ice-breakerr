@@ -291,8 +291,9 @@ export default class BioScreen extends React.Component {
     })
 
     if(hasMatch) {
-        Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
-      }
+      FirebaseAPI.setMatchWithProfiles(this.state.user.uid, profile.uid)
+      Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
+    }
   }
 
   likeProfile(profile) {
@@ -304,12 +305,10 @@ export default class BioScreen extends React.Component {
       })
     })
 
-    InteractionManager.runAfterInteractions(() => {
-      this.removeProfile(profile)
-    })
+    this.alertIfMatch(profile)
 
     InteractionManager.runAfterInteractions(() => {
-      this.alertIfMatch(profile)
+      this.removeProfile(profile)
     })
   }
 
