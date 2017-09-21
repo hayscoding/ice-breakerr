@@ -245,7 +245,12 @@ export default class HomeScreen extends React.Component {
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>
+          <ScrollView horizontal> 
+            <View style={styles.newMatches}>
+            </View>
+          </ScrollView>
           <ScrollView style={styles.recentUpdates}>
+            <View style={{width: width, height: height/8*7}}>
             {
               this.state.profiles.map((profile) => {
                 const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
@@ -267,6 +272,7 @@ export default class HomeScreen extends React.Component {
                 )
               })
             }
+            </View>
           </ScrollView>
           <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
@@ -274,15 +280,21 @@ export default class HomeScreen extends React.Component {
     } else {
       return(
         <View style={styles.container}>
+          <ScrollView horizontal> 
+            <View style={styles.newMatches}>
+            </View>
+          </ScrollView>
           <ScrollView style={styles.recentUpdates}>
-            <View style={styles.match}>
-              <Image
-                resizeMode='cover'
-                source={{uri: ' '}}
-                style={[{width: size, height: size, borderRadius: size/4}]}/>  
-              <View>   
-                <Text style={styles.name}>Send someone a message!</Text>
-                <Text style={styles.messagePreview}>Your chats will appear here.</Text>
+            <View style={{width: width, height: height/8*7}}>
+              <View style={styles.match}>
+                <Image
+                  resizeMode='cover'
+                  source={{uri: ' '}}
+                  style={[{width: size, height: size, borderRadius: size/4}]}/>  
+                <View>   
+                  <Text style={styles.name}>Send someone a message!</Text>
+                  <Text style={styles.messagePreview}>Your chats will appear here.</Text>
+                </View>
               </View>
             </View>
           </ScrollView>
@@ -297,7 +309,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f7fbff',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  newMatches: {
+    width: width,
+    height: height/7,
+    backgroundColor: 'white',
   },
   name: {
     color: '#2B2B2B',
@@ -318,7 +335,8 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   match: {
-    flex: 1,
+    height: height/9,
+    width: width,
     flexDirection: 'row',
     justifyContent: 'flex-start', 
     alignItems: 'flex-start',
@@ -343,7 +361,9 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
   },
   recentUpdates: {
-    flex: 1,
+    height: height/7*6,
     width: width,
+    borderTopWidth: 1,
+    borderTopColor: 'lightgrey',
   },
 });
