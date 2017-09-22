@@ -70,12 +70,12 @@ export default class ChatScreen extends Component {
     this.watchChat()
   }
 
-  componentDidMount() {
+  // componentDidMount() {
     // if(this.state.messages.length == 1)
     //   Alert.alert(
     //     ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
     //     'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
-  }
+  // }
 
   componentDidUpdate() {
     if(this.state.messages.length == 1 && 'cb' in this.props.navigation.state.params) {
@@ -150,7 +150,8 @@ export default class ChatScreen extends Component {
         text: message[0].text,
         createdAt: new Date().getTime(),
         sender: message[0].user._id,
-        name: this.state.user.name 
+        name: this.state.user.name,
+        read: false,
       })
 
     const pushToken = 'pushToken' in this.state.profile ? this.state.profile.pushToken : 'No push token'

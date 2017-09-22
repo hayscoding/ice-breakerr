@@ -126,7 +126,16 @@ export default class HomeScreen extends React.Component {
 
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-        this.getMatches(updatedUser)
+
+
+        const updatedMatchKeys = "matches" in updatedUser ? Object.keys(updatedUser.matches) : []
+        const currentMatchKeys = this.state.initialMatches.map((match) => {return match.uid})
+        console.log(updatedMatchKeys.sort().join(',') , currentMatchKeys.sort().join(','))
+        if(updatedMatchKeys.sort().join(',') != currentMatchKeys.sort().join(',')) {
+          console.log('UPDATED THE FUCKING USER BITCH', updatedUser.matches)
+          this.getMatches(updatedUser)
+        } else
+          console.log('MATCHING KEYS YOU BITCH')
 
         console.log('IS THIS EVEN GETTING CALLED')
         if(this.getNewRejection(updatedUser) != null) {
@@ -293,7 +302,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    console.log('initialMatches', this.state.initialMatches)
+    // console.log('initialMatches', this.state.initialMatches)
     // console.log(this.state.loaded, this.state.profiles.length)
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
@@ -412,9 +421,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   messagePreview: {
-    flex: 1,
     width: (width/1.4),
-    height: 24,
+    height: 26,
     lineHeight: 12,
     color: 'gray',
     fontSize: 12,
