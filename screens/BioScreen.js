@@ -23,7 +23,7 @@ export default class BioScreen extends React.Component {
         distances: [],
         timing: false,
         locationEnabled: false,
-      }
+        likeTimerDone: true      }
 
       this._mounted = false
       this._navigating = false
@@ -297,19 +297,29 @@ export default class BioScreen extends React.Component {
   }
 
   likeProfile(profile) {
-    FirebaseAPI.likeProfileFromUser(this.state.user.uid, profile.uid)
+    if(this.state.likeTimerDone) {
+      FirebaseAPI.likeProfileFromUser(this.state.user.uid, profile.uid)
 
-    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       InteractionManager.runAfterInteractions(() => {
-        this.setState({user: user})
+        this.setState({likeTimerDone: false})
       })
-    })
 
-    this.alertIfMatch(profile)
+      FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({user: user})
+        })
+      })
 
-    InteractionManager.runAfterInteractions(() => {
-      this.removeProfile(profile)
-    })
+      this.alertIfMatch(profile)
+
+      InteractionManager.runAfterInteractions(() => {
+        this.removeProfile(profile)
+      })
+
+      setTimeout(() => {
+        this.setState({likeTimerDone: true})
+      }, 500)
+    }
   }
 
   render() {
