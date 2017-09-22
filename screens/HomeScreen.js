@@ -42,7 +42,6 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.watchChatsAndProfiles()
-    this.watchUserForNewMatches()
     this.watchUserForNewRejections()
 
     this._navigating = false
@@ -101,32 +100,34 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  watchUserForNewMatches() {
-    FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-      const updatedMatches = this.state.initialMatches
-      const newMatches = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => {
-        return !this.state.initialMatches.some((initialMatch) => { return initialMatch == match })
-      }) : []
+  getMatchProfiles(updatedMatches) {
+    const profiles = []
 
-      newMatches.forEach((match) => {
+    updatedMatches.forEach((match) => {
         FirebaseAPI.getUserCb(match, (profile) => {
-          if(!this.state.profiles.some((user) => { return user == profile }))
-            newMatches[newMatches.indexOf(match)] = profile
-        })
+          profiles.push(profile)
+
+          InteractionManager.runAfterInteractions(() => {
+            this.setState({initialMatches: profiles})
+          })
       })
-
-      if(updatedMatches != [])
-        newMatches.concat(updatedMatches)
-
-      if(newMatches != this.state.initialMatches)
-        InteractionManager.runAfterInteractions(() => {
-          this.setState({initialMatches: newMatches})
-        })
     })
+  }
+
+  getMatches(updatedUser) {
+      const matches = "matches" in updatedUser ? Object.keys(updatedUser.matches) : []
+
+      this.getMatchProfiles(matches.filter((match) => { 
+        return "rejections" in updatedUser ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == match }) : true
+      }).filter((match) => {
+        return !this.state.profiles.some((user) => { return user.uid == match })
+      }))
   }
 
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+        this.getMatches(updatedUser)
+
         console.log('IS THIS EVEN GETTING CALLED')
         if(this.getNewRejection(updatedUser) != null) {
           const newRejectionUid = this.getNewRejection(updatedUser)
@@ -134,17 +135,22 @@ export default class HomeScreen extends React.Component {
              return profile.uid == newRejectionUid
           })
 
-          const index = this.state.profiles.indexOf(newRejectedProfile)
+          const profilesIndex = this.state.profiles.indexOf(newRejectedProfile)
+          const matchesIndex = this.state.initialMatches.indexOf(newRejectedProfile)
           // console.log('mypenileindex is huge', index)
-          if(index != -1) {
+          if(profilesIndex != -1) {
             const updatedProfiles = this.state.profiles
-            updatedProfiles.splice(index, 1)
+            updatedProfiles.slice(profilesIndex, profileIndex+1)
 
             if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
               InteractionManager.runAfterInteractions(() => {
                 this.setState({profiles: updatedProfiles, user: updatedUser})
               })
             }
+          } else if(matchesIndex != -1) {
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({user: updatedUser})
+            })
           }
         }
       })
