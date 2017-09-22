@@ -173,7 +173,7 @@ export default class ProfileScreen extends React.Component {
   }
 
   sendMessageTouchable(profile) {
-    if(!(this.state.hasChat || Object.keys(this.state.user.matches).some((uid) => { return uid == profile.uid}))
+    if(!(this.state.hasChat || ("matches" in this.state.user && Object.keys(this.state.user.matches).some((uid) => { return uid == profile.uid})))
       && this._mounted)
       return(
         <View style={styles.chatButtonContainer}>
@@ -187,7 +187,9 @@ export default class ProfileScreen extends React.Component {
   }
 
   unmatchTouchable(profile) {
-    if(this.state.user.uid != this.state.profile.uid && (this.state.hasChat || Object.keys(this.state.user.likes).some((uid) => { return uid == profile.uid})) && this._mounted)
+    if(this.state.user.uid != this.state.profile.uid && 
+      (this.state.hasChat || ("likes" in this.state.user && Object.keys(this.state.user.likes).some((uid) => { return uid == profile.uid}))) 
+      && this._mounted)
       return(
         <TouchableOpacity onPress={() => {this.rejectProfile(profile)}} >
           <View style={styles.chatButtonContainer}>
