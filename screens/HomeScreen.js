@@ -49,6 +49,10 @@ export default class HomeScreen extends React.Component {
     console.log('DID MOUNT homescreen')
   }
 
+  componentDidUpdate() {
+      this.removeMatchesInChat()
+    }
+
   componentWillUnmount() {
     console.log('unmounting homescreen')
     FirebaseAPI.turnOffChatListener()
@@ -67,7 +71,6 @@ export default class HomeScreen extends React.Component {
 
   watchChatsAndProfiles() {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
-      console.log('UPDATEING PROFILES')
       FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
         this.setState({profiles: profiles.filter((profile) => {
         return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
@@ -81,6 +84,23 @@ export default class HomeScreen extends React.Component {
     })
   }
 
+  removeMatchesInChat() {
+    this.state.initialMatches.forEach((match) => {
+      if(this.state.profiles.some((profile) => { return match.uid == profile.uid })) {
+        const index = this.state.initialMatches.findIndex((match) => { 
+          return this.state.profiles.some((profile) => { return profile.uid == match.uid})
+        })
+        const updatedMatches = this.state.initialMatches
+
+        updatedMatches.splice(index, 1)
+
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({initialMatches: updatedMatches})
+        })
+      }
+    })
+  }
+
   watchUserForNewMatches() {
     FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
       const updatedMatches = this.state.initialMatches
@@ -90,7 +110,8 @@ export default class HomeScreen extends React.Component {
 
       newMatches.forEach((match) => {
         FirebaseAPI.getUserCb(match, (profile) => {
-          newMatches[newMatches.indexOf(match)] = {uid: match, gifUrl: profile.gifUrl}
+          if(!this.state.profiles.some((user) => { return user == profile }))
+            newMatches[newMatches.indexOf(match)] = profile
         })
       })
 
@@ -277,13 +298,16 @@ export default class HomeScreen extends React.Component {
               this.state.initialMatches.map((match) => {
                 if(typeof match === 'object')
                   return(
-                    <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
-                      <Image
-                      resizeMode='cover'
-                      source={{uri: match.gifUrl}}
-                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                      key={match.uid+'gif-preview'}/> 
-                    </View>
+                    <TouchableOpacity onPress={() => {this.openChat(match)}}
+                      key={match.uid+"-touchable"} >
+                      <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                        <Image
+                        resizeMode='cover'
+                        source={{uri: match.gifUrl}}
+                        style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                        key={match.uid+'gif-preview'}/> 
+                      </View>
+                    </TouchableOpacity>
                   )
               })
             }
@@ -326,13 +350,16 @@ export default class HomeScreen extends React.Component {
               this.state.initialMatches.map((match) => {
                 if(typeof match === 'object')
                   return(
-                    <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
-                      <Image
-                      resizeMode='cover'
-                      source={{uri: match.gifUrl}}
-                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                      key={match.uid+'gif-preview'}/> 
-                    </View>
+                    <TouchableOpacity onPress={() => {this.openChat(match)}}
+                      key={match.uid+"-touchable"} >
+                      <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                        <Image
+                        resizeMode='cover'
+                        source={{uri: match.gifUrl}}
+                        style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                        key={match.uid+'gif-preview'}/> 
+                      </View>
+                    </TouchableOpacity>
                   )
               })
             }
