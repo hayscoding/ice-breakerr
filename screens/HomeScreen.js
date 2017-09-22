@@ -20,7 +20,7 @@ import firebase from 'firebase'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
 const {height, width} = Dimensions.get('window');
-const size = 50;
+const size = height/11.5;
 const matchBarGifSize = height/9;
 
 export default class HomeScreen extends React.Component {
@@ -302,7 +302,7 @@ export default class HomeScreen extends React.Component {
                         <Image
                           resizeMode='cover'
                           source={{uri: fbPhotoUrl}}
-                          style={[{width: size, height: size, borderRadius: size/4}]}/>  
+                          style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
                         <View>   
                           <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
                           <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
@@ -380,8 +380,9 @@ const styles = StyleSheet.create({
   },
   messagePreview: {
     flex: 1,
-    width: (width/1.5)+30,
-    height: 28,
+    width: (width/1.4),
+    height: 24,
+    lineHeight: 12,
     color: 'gray',
     fontSize: 12,
     paddingLeft: 15,
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     paddingTop: 10,
     paddingBottom: 10,
-    paddingLeft: 30,
+    paddingLeft: 20,
     shadowColor: '#000000', 
     shadowOffset: {width: 0, height: 0}, 
     shadowRadius: 7, 
