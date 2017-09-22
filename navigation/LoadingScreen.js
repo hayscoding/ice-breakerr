@@ -27,7 +27,9 @@ export default class LoadingScreen extends React.Component {
 
   componentDidUpdate() {
     if(this.state.needsLogin)
+      InteractionManager.runAfterInteractions(() => {
         this.props.navigation.navigate('Login')
+      })  
   }
 
   componentDidMount() {
@@ -54,7 +56,9 @@ export default class LoadingScreen extends React.Component {
   componentWillUnmount() {
     //Stops listening to onAuthStateChanged() so unmounted updates do not occur
     if(this.state.unsubscribe != '')
+      InteractionManager.runAfterInteractions(() => {
         this.state.unsubscribe()
+      })  
   }
 
   render() {
