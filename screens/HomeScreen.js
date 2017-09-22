@@ -83,22 +83,24 @@ export default class HomeScreen extends React.Component {
 
   watchUserForNewMatches() {
     FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-      const updatedMatches = "matches" in updatedUser ? Object.keys(updatedUser.matches) : []
+      const updatedMatches = this.state.initialMatches
       const newMatches = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => {
         return !this.state.initialMatches.some((initialMatch) => { return initialMatch == match })
       }) : []
 
-      updatedMatches.concat(newMatches)
-
-      updatedMatches.forEach((match) => {
+      newMatches.forEach((match) => {
         FirebaseAPI.getUserCb(match, (profile) => {
-          updatedMatches[updatedMatches.indexOf(match)] = {uid: match, gifUrl: profile.gifUrl}
+          newMatches[newMatches.indexOf(match)] = {uid: match, gifUrl: profile.gifUrl}
         })
       })
 
-      InteractionManager.runAfterInteractions(() => {
-        this.setState({initialMatches: updatedMatches})
-      })
+      if(updatedMatches != [])
+        newMatches.concat(updatedMatches)
+
+      if(newMatches != this.state.initialMatches)
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({initialMatches: newMatches})
+        })
     })
   }
 
@@ -269,8 +271,22 @@ export default class HomeScreen extends React.Component {
     if(this.state.loaded && this.state.profiles.length > 0) {
       return(
         <View style={styles.container}>
-          <ScrollView horizontal style={{borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
+            {
+              this.state.initialMatches.map((match) => {
+                if(typeof match === 'object')
+                  return(
+                    <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                      <Image
+                      resizeMode='cover'
+                      source={{uri: match.gifUrl}}
+                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                      key={match.uid+'gif-preview'}/> 
+                    </View>
+                  )
+              })
+            }
             </View>
           </ScrollView>
           <ScrollView style={styles.recentUpdates}>
@@ -308,15 +324,16 @@ export default class HomeScreen extends React.Component {
             <View style={styles.newMatches}>
             {
               this.state.initialMatches.map((match) => {
-                return(
-                  <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.gifUrl+'container'}>
-                    <Image
-                    resizeMode='cover'
-                    source={{uri: match.gifUrl}}
-                    style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                    key={match.girUrl}/> 
-                  </View>
-                )
+                if(typeof match === 'object')
+                  return(
+                    <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                      <Image
+                      resizeMode='cover'
+                      source={{uri: match.gifUrl}}
+                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                      key={match.uid+'gif-preview'}/> 
+                    </View>
+                  )
               })
             }
             </View>
@@ -349,7 +366,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   newMatches: {
-    width: width+1,
     height: height/7,
     flexDirection: 'row',
     alignItems: 'center',
