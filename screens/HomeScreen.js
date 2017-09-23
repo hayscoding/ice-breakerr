@@ -153,7 +153,7 @@ export default class HomeScreen extends React.Component {
              return profile.uid == newRejectionUid
           })
 
-          const profilesIndex = Object.keys(this.state.profiles).indexOf(newRejectedProfile)
+          const profilesIndex = this.state.profiles.indexOf(newRejectedProfile)
 
           // console.log('mypenileindex is huge', index)
           if(profilesIndex != -1) {
