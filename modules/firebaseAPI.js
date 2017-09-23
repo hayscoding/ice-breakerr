@@ -46,6 +46,19 @@ export const getImgurGifs = (searchTerm, func) => {
   })
 }
 
+export const setReceivedMessagesReadTrue = (chatKey, userKey) => {
+  return firebase.database().ref().child('messages').child(chatKey).once('value').then((snap) => {
+    if(snap.val() != null) {
+      Object.keys(snap.val()).forEach((messageKey) => {
+        firebase.database().ref().child('messages').child(chatKey).child(messageKey).once('value').then((snap) => {
+          if(snap.val().sender != userKey && snap.val().read != true)
+            firebase.database().ref().child('messages').child(chatKey).child(messageKey).update({['read']:true})
+        })
+      })
+    }
+  })
+}
+
 export const updateUser = (uid, key, value) => {
   firebase.database().ref().child('users').child(uid)
     .update({[key]:value})

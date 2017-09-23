@@ -68,6 +68,7 @@ export default class ChatScreen extends Component {
     this.chatID = uidArray[0]+'-'+uidArray[1]
 
     this.watchChat()
+    FirebaseAPI.setReceivedMessagesReadTrue(this.chatID, this.state.user.uid)
   }
 
   // componentDidMount() {
