@@ -126,9 +126,15 @@ export default class HomeScreen extends React.Component {
 
   watchUserForNewRejections() {
       FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+        InteractionManager.runAfterInteractions(() => {
+          this.setState({user: updatedUser})
+        })
 
-
-        const updatedMatchKeys = "matches" in updatedUser ? Object.keys(updatedUser.matches) : []
+        const updatedMatchKeys = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => { 
+          return "rejections" in updatedUser ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == match }) : true
+        }).filter((match) => {
+            return !this.state.profiles.some((user) => { return user.uid == match })
+        }) : []
         const currentMatchKeys = this.state.initialMatches.map((match) => {return match.uid})
         console.log(updatedMatchKeys.sort().join(',') , currentMatchKeys.sort().join(','))
         if(updatedMatchKeys.sort().join(',') != currentMatchKeys.sort().join(',')) {
@@ -153,13 +159,11 @@ export default class HomeScreen extends React.Component {
 
             if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
               InteractionManager.runAfterInteractions(() => {
-                this.setState({profiles: updatedProfiles, user: updatedUser})
+                this.setState({profiles: updatedProfiles})
               })
             }
           } else if(matchesIndex != -1) {
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({user: updatedUser})
-            })
+            
           }
         }
       })
