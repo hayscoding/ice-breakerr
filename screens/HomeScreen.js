@@ -37,6 +37,7 @@ export default class HomeScreen extends React.Component {
       photoUrls: [],
       initialMatches: [],
       loaded: false,
+      messagePreviews: [],
     }
   }
 
@@ -49,8 +50,13 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidUpdate() {
-      this.removeMatchesInChat()
+    this.removeMatchesInChat()
+
+    if(this.state.profiles.length > 0){
+      this.listenLastMessages()
+      // this.sortProfiles()
     }
+  }
 
   componentWillUnmount() {
     console.log('unmounting homescreen')
@@ -72,15 +78,40 @@ export default class HomeScreen extends React.Component {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
       FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
         this.setState({profiles: profiles.filter((profile) => {
-        return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
-        }), 
-        loaded: true })
-
-        InteractionManager.runAfterInteractions(() => {
-          this.listenProfileUrls()
+            return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
+          }),
+          loaded: true,
         })
+    
+        this.listenProfileUrls()
       })
     })
+  }
+
+  sortProfiles() {
+    console.log('SORTING')
+    let profiles = this.state.profiles
+
+    profiles.sort((a, b) => {
+      const aMsg = this.state.messagePreviews.find((msg) => {
+        return msg.otherUser == a.uid
+      })
+      const bMsg = this.state.messagePreviews.find((msg) => {
+        return msg.otherUser == b.uid
+      })
+
+      console.log(parseInt(aMsg.createdAt - bMsg.createdAt))
+      return parseInt(aMsg.createdAt - bMsg.createdAt)
+    })
+
+    console.log(profiles.some((profile) => { return profile != this.state.profiles[profiles.indexOf(profile)] }), 
+      profiles.map((profile) => {return profile.name}), this.state.profiles.map((profile) => {return profile.name}))
+
+    if(profiles.some((profile) => { return profile != this.state.profiles[profiles.indexOf(profile)] })) //If arrays aren't in same order
+      InteractionManager.runAfterInteractions(() => {
+        console.log("UPDATED SORT")
+        this.setState({profiles: profiles})
+      })
   }
 
   removeMatchesInChat() {
@@ -141,12 +172,10 @@ export default class HomeScreen extends React.Component {
             return !this.state.profiles.some((user) => { return user.uid == match })
         }) : []
         const currentMatchKeys = this.state.initialMatches.map((match) => {return match.uid})
-        console.log(updatedMatchKeys.sort().join(',') , currentMatchKeys.sort().join(','))
-        if(updatedMatchKeys.sort().join(',') != currentMatchKeys.sort().join(',')) 
-          this.getMatches(updatedUser)
+        
+        this.getMatches(updatedUser)
         
 
-        console.log('IS THIS EVEN GETTING CALLED')
         if(this.getNewRejection(updatedUser) != null) {
           const newRejectionUid = this.getNewRejection(updatedUser)
           const newRejectedProfile = this.state.profiles.find((profile) => {
@@ -183,37 +212,62 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  listenLastMessage(profile) {
-    const uidArray = [profile.uid, this.state.user.uid]
-    uidArray.sort()
-    const chatID = uidArray[0]+'-'+uidArray[1]
+  listenLastMessages() {
+    this.state.profiles.forEach((profile) => {
+      const uidArray = [profile.uid, this.state.user.uid]
+      uidArray.sort()
+      const chatID = uidArray[0]+'-'+uidArray[1]
 
-    let recentMessage = ''
+      firebase.database().ref().child('messages').child(chatID)
+        .orderByChild('createdAt')
+        .off()
 
-    firebase.database().ref().child('messages').child(chatID)
-      .orderByChild('createdAt')
-      .on('value', (snap) => {
-        let messages = []
 
-        snap.forEach((child) => {
-          const date = moment(child.val().createdAt).format()
-          messages.push({
-            text: child.val().text,
-            _id: child.key,
-            createdAt: date,
-            user: {
-              _id: child.val().sender,
-              name: child.val().name
-            }
-          })
-        });
+      firebase.database().ref().child('messages').child(chatID)
+        .orderByChild('createdAt')
+        .on('value', (snap) => {
+          let messages = []
 
-        messages.reverse()
+          snap.forEach((child) => {
+            const date = child.val().createdAt
+            messages.push({
+              otherUser: profile.uid,
+              text: child.val().text,
+              _id: child.key,
+              createdAt: date,
+              read: child.val().read,
+              user: {
+                _id: child.val().sender,
+                name: child.val().name
+              }
+            })
+          });
 
-        recentMessage = messages[0]
+          messages.reverse()
+
+          let updatedMessages = this.state.messagePreviews
+
+          if(this.state.messagePreview != [] &&
+            this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
+            this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id != messages[0]._id) {
+            const index = updatedMessages.findIndex((msg) => {return msg.otherUser == messages[0].otherUser})
+
+            updatedMessages.splice(index, 1)
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({messagePreviews: updatedMessages})
+            })
+          }
+
+          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
+            updatedMessages.push(messages[0])
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({messagePreviews: updatedMessages})
+            })
+          }
+      })
     })
-
-    return recentMessage.text != undefined ? recentMessage.text : ' '
   }
 
   listenProfileUrls() {
@@ -225,6 +279,7 @@ export default class HomeScreen extends React.Component {
         firebase.database().ref().child('messages').child(chatID)
           .orderByChild('createdAt')
           .on('value', (snap) => {
+            
             let messages = []
 
             snap.forEach((child) => {
@@ -307,9 +362,11 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    console.log('RENDERING HOME SCREEN')
     // console.log('initialMatches', this.state.initialMatches)
-    // console.log(this.state.loaded, this.state.profiles.length)
-    if(this.state.loaded && this.state.profiles.length > 0) {
+    console.log('false', this.state.loaded)
+    console.log(this.state.messagePreviews)
+    if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
       return(
         <View style={styles.container}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
@@ -338,7 +395,12 @@ export default class HomeScreen extends React.Component {
             {
               this.state.profiles.map((profile) => {
                 const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
-                
+                const message = this.state.messagePreviews.find((msg) => { 
+                  return msg.otherUser == profile.uid 
+                })
+                const hasRead = message.user._id != this.state.user.uid ? message.read : true
+                const name = !hasRead ? (profile.name.split(' ')[0]+' *') : profile.name.split(' ')[0]
+
                 return (
                   <TouchableOpacity onPress={() => {this.openChat(profile)}}
                   key={profile.uid+"-touchable"} >
@@ -348,8 +410,8 @@ export default class HomeScreen extends React.Component {
                           source={{uri: fbPhotoUrl}}
                           style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
                         <View>   
-                          <Text style={styles.name} key={profile.uid+'-name'}>{profile.name.split(' ')[0]}</Text>
-                          <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{this.listenLastMessage(profile)}</Text>
+                          <Text style={styles.name} key={profile.uid+'-name'}>{name}</Text>
+                          <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{message.text}</Text>
                         </View>
                       </View>
                   </TouchableOpacity>
