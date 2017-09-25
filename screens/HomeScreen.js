@@ -37,7 +37,6 @@ export default class HomeScreen extends React.Component {
       photoUrls: [],
       initialMatches: [],
       loaded: false,
-      calledInitialProfileListener: false,
       messagePreviews: [],
     }
   }
@@ -53,12 +52,8 @@ export default class HomeScreen extends React.Component {
   componentDidUpdate() {
     this.removeMatchesInChat()
 
-    if(this.state.profiles.length > 0 && !this.state.calledInitialProfileListener && this.state.profiles.length != this.state.messagePreviews.length){
+    if(this.state.profiles.length > 0){
       this.listenLastMessages(this.state.profiles)
-
-      InteractionManager.runAfterInteractions(() => {
-        this.setState({calledInitialProfileListener: true})
-      })
     }
   }
 
