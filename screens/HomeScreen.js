@@ -43,7 +43,7 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.watchChatsAndProfiles()
-    this.watchUserForNewRejections()
+    this.watchUserRejections()
 
     this._navigating = false
     console.log('DID MOUNT homescreen')
@@ -76,16 +76,17 @@ export default class HomeScreen extends React.Component {
   watchChatsAndProfiles() {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
       const oldProfiles = this.state.profiles
+      const newProfileUids = profiles.map((profile) => {return profile.uid})
+      const oldProfileUids = oldProfiles.map((profile) => {return profile.uid})
 
-      if(profiles.map((profile) => {return profile.uid}).sort().join(',') != oldProfiles.map((profile) => {return profile.uid}).sort().join(',')){ 
-        FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
+      FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
+        if(newProfileUids.sort().join(',') != oldProfileUids.sort().join(',')) { 
           this.setState({profiles: profiles.filter((profile) => {
               return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
             }),
-            loaded: true,
-          })
-        })
-      }
+            loaded: true})
+        }
+      })
     })
   }
 
@@ -135,43 +136,47 @@ export default class HomeScreen extends React.Component {
       this.getMatchProfiles(matches)
   }
 
-  watchUserForNewRejections() {
-      FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-        InteractionManager.runAfterInteractions(() => {
-          this.setState({user: updatedUser})
-        })
+  watchUserRejections() {
+    FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+      const updatedMatchKeys = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => { 
+        return "rejections" in updatedUser ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == match }) : true
+      }).filter((match) => {
+          return !this.state.profiles.some((user) => { return user.uid == match })
+      }) : []
 
-        const updatedMatchKeys = "matches" in updatedUser ? Object.keys(updatedUser.matches).filter((match) => { 
-          return "rejections" in updatedUser ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == match }) : true
-        }).filter((match) => {
-            return !this.state.profiles.some((user) => { return user.uid == match })
-        }) : []
-        const currentMatchKeys = this.state.initialMatches.map((match) => {return match.uid})
-        
-        this.getMatches(updatedUser)
-        
+      this.getMatches(updatedUser)
 
-        if(this.getNewRejection(updatedUser) != null) {
-          const newRejectionUid = this.getNewRejection(updatedUser)
-          const newRejectedProfile = this.state.profiles.find((profile) => {
-             return profile.uid == newRejectionUid
-          })
+      const messagesIndex = "rejections" in updatedUser ? this.state.messagePreviews.findIndex((msg) => {
+        return Object.keys(updatedUser.rejections).some((uid) => { return msg.otherUser == uid })
+      }) : -1
+      const profilesIndex = "rejections" in updatedUser ? this.state.profiles.findIndex((profile) => {
+        return Object.keys(updatedUser.rejections).some((uid) => { return profile.uid == uid })
+      }) : -1
+      const updatedMessages = this.state.messagePreviews
+      const updatedProfiles = this.state.profiles
 
-          const profilesIndex = this.state.profiles.indexOf(newRejectedProfile)
+      console.log('mypenileindex is huge', messagesIndex, this.state.messagePreviews[messagesIndex])
+      if(messagesIndex != -1) {
+        const uidArray = [updatedMessages[messagesIndex].otherProfile, this.state.user.uid]
+        uidArray.sort()
+        const chatID = uidArray[0]+'-'+uidArray[1]
 
-          // console.log('mypenileindex is huge', index)
-          if(profilesIndex != -1) {
-            let updatedProfiles = this.state.profiles
-            updatedProfiles.splice(profilesIndex, 1)
+        firebase.database().ref().child('messages').child(chatID)
+        .orderByChild('createdAt')
+        .off()
 
-            if(updatedProfiles.map((profile) => {return profile.uid}).sort() != this.state.profiles.map((profile) => {return profile.uid}).sort()) {
-              InteractionManager.runAfterInteractions(() => {
-                this.setState({profiles: updatedProfiles})
-              })
-            }
-          }
-        }
-      })
+        updatedMessages.splice(messagesIndex, 1)
+      }
+
+      if(profilesIndex != -1) {
+        updatedProfiles.splice(profilesIndex, 1)
+      }
+
+      if(this.state.user != updatedUser) { 
+        console.log("ALKSJFLAKSJFALKSJFLKAJLK")
+        this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages, user: updatedUser })
+      }
+    })
   }
 
   getNewRejection(updatedUser) {
@@ -270,22 +275,7 @@ export default class HomeScreen extends React.Component {
 
           let updatedMessages = this.state.messagePreviews
           let updatedProfiles = this.state.profiles
-
-          console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
-
-          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
-            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
-            const shiftingProfile = updatedProfiles[profileIndex]
-
-            updatedProfiles.splice(profileIndex, 1)
-            updatedProfiles.unshift(shiftingProfile)
-
-            updatedMessages.unshift(messages[0])
-
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
-            })
-          }
+          // console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
 
           if(this.state.messagePreview != [] &&
             this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
@@ -299,21 +289,41 @@ export default class HomeScreen extends React.Component {
 
             updatedMessages.splice(msgIndex, 1)
             updatedMessages.unshift(messages[0])
+          }
 
+          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
+            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
+            const shiftingProfile = updatedProfiles[profileIndex]
+
+            updatedProfiles.splice(profileIndex, 1)
+            updatedProfiles.unshift(shiftingProfile)
+
+            updatedMessages.unshift(messages[0])
+          }
+
+          if(this.state.messagePreviews.map((profile) => {return profile.uid}).sort().join(',') != updatedMessages.map((profile) => {return profile.uid}).sort().join(','))
             InteractionManager.runAfterInteractions(() => {
               this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
             })
-          }
       })
     })
   }
 
-  openChat(profile) {
+  openChat(profile, message) {
     InteractionManager.runAfterInteractions(() => {
       if(!this._navigating) {
         this._navigating = true
 
-        this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
+        const index = this.state.messagePreviews.findIndex((msg) => { return profile.uid == msg.otherUser })
+        if(index != -1) {
+          const updatedMessages = this.state.messagePreviews
+          updatedMessages[index].read = true
+          this.setState({messagePreviews: updatedMessages})
+        }
+
+        InteractionManager.runAfterInteractions(() => {
+          this.props.navigation.navigate('Chat', {profile: profile, user: this.state.user})
+        })
       }
     })
 
@@ -327,7 +337,7 @@ export default class HomeScreen extends React.Component {
     // console.log('initialMatches', this.state.initialMatches)
     // console.log('false', this.state.loaded)
     // console.log(this.state.messagePreviews)
-    console.log("renderProfiles", this.state.profiles)
+    console.log("renderProfiles", this.state.profiles.length, this.state.messagePreviews.length)
     const profiles = this.state.profiles
 
     if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
@@ -339,8 +349,6 @@ export default class HomeScreen extends React.Component {
           return msg.otherUser == b.uid
         })
 
-        console.log(new Date(aMsg.createdAt) - new Date(bMsg.createdAt))
-
         return new Date(aMsg.createdAt) - new Date(bMsg.createdAt)
       }).reverse()
 
@@ -349,21 +357,36 @@ export default class HomeScreen extends React.Component {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
             {
-              this.state.initialMatches.map((match) => {
-                if(typeof match === 'object')
-                  return(
-                    <TouchableOpacity onPress={() => {this.openChat(match)}}
-                      key={match.uid+"-touchable"} >
-                      <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
-                        <Image
-                        resizeMode='cover'
-                        source={{uri: match.gifUrl}}
-                        style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                        key={match.uid+'gif-preview'}/> 
-                      </View>
-                    </TouchableOpacity>
-                  )
-              })
+              (() => {
+                if(this.state.initialMatches.length == 0)
+                 return(
+                  <TouchableOpacity onPress={() => {}}
+                    key={'fake'+"-touchable"} >
+                    <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={'fake'+'init-match-container'}>
+                      <Image
+                      resizeMode='cover'
+                      source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
+                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                      key={'fake'+'gif-preview'}/> 
+                    </View>
+                  </TouchableOpacity>)
+               else
+                return this.state.initialMatches.map((match) => {
+                  if(typeof match === 'object')
+                    return(
+                      <TouchableOpacity onPress={() => {this.openChat(match)}}
+                        key={match.uid+"-touchable"} >
+                        <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                          <Image
+                          resizeMode='cover'
+                          source={{uri: match.gifUrl}}
+                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                          key={match.uid+'gif-preview'}/> 
+                        </View>
+                      </TouchableOpacity>
+                    )
+                })
+              })()
             }
             </View>
           </ScrollView>
@@ -375,24 +398,26 @@ export default class HomeScreen extends React.Component {
                 const message = this.state.messagePreviews.find((msg) => { 
                   return msg.otherUser == profile.uid 
                 })
-                const hasRead = message.user._id != this.state.user.uid ? message.read : true
-                const name = !hasRead ? (profile.name.split(' ')[0]+' *') : profile.name.split(' ')[0]
+                if(message != undefined) {
+                  const hasRead = message.user._id != this.state.user.uid ? message.read : true
+                  const name = !hasRead ? (profile.name.split(' ')[0]+' *') : profile.name.split(' ')[0]
 
-                return (
-                  <TouchableOpacity onPress={() => {this.openChat(profile)}}
-                  key={profile.uid+"-touchable"} >
-                      <View style={styles.match}  key={profile.uid+"-container"}>
-                        <Image
-                          resizeMode='cover'
-                          source={{uri: fbPhotoUrl}}
-                          style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
-                        <View>   
-                          <Text style={styles.name} key={profile.uid+'-name'}>{name}</Text>
-                          <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{message.text}</Text>
+                  return (
+                    <TouchableOpacity onPress={() => {this.openChat(profile, message)}}
+                    key={profile.uid+"-touchable"} >
+                        <View style={styles.match}  key={profile.uid+"-container"}>
+                          <Image
+                            resizeMode='cover'
+                            source={{uri: fbPhotoUrl}}
+                            style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
+                          <View>   
+                            <Text style={styles.name} key={profile.uid+'-name'}>{name}</Text>
+                            <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{message.text}</Text>
+                          </View>
                         </View>
-                      </View>
-                  </TouchableOpacity>
-                )
+                    </TouchableOpacity>
+                  )
+                }
               })
             }
             </View>
@@ -405,16 +430,39 @@ export default class HomeScreen extends React.Component {
         <View style={styles.container}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
-              <TouchableOpacity onPress={() => {}}
-                key={'fake'+"-touchable"} >
-                <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={'fake'+'init-match-container'}>
-                  <Image
-                  resizeMode='cover'
-                  source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
-                  style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                  key={'fake'+'gif-preview'}/> 
-                </View>
-              </TouchableOpacity>
+              
+                {
+                  (() => {
+                    if(this.state.initialMatches.length == 0 || !this.state.loaded)
+                     return(
+                      <TouchableOpacity onPress={() => {}}
+                        key={'fake'+"-touchable"} >
+                        <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={'fake'+'init-match-container'}>
+                          <Image
+                          resizeMode='cover'
+                          source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
+                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                          key={'fake'+'gif-preview'}/> 
+                        </View>
+                      </TouchableOpacity>)
+                   else
+                    return this.state.initialMatches.map((match) => {
+                      if(typeof match === 'object')
+                        return(
+                          <TouchableOpacity onPress={() => {this.openChat(match)}}
+                            key={match.uid+"-touchable"} >
+                            <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
+                              <Image
+                              resizeMode='cover'
+                              source={{uri: match.gifUrl}}
+                              style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                              key={match.uid+'gif-preview'}/> 
+                            </View>
+                          </TouchableOpacity>
+                        )
+                    })
+                  })()
+                }
             </View>
           </ScrollView>
           <ScrollView style={styles.recentUpdates}>

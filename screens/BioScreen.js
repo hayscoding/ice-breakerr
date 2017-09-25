@@ -102,7 +102,7 @@ export default class BioScreen extends React.Component {
             })
 
             InteractionManager.runAfterInteractions(() => {
-              console.log('updatedProfile', updatedProfile)
+              // console.log('updatedProfile', updatedProfile)
               const didRejectUser = 'rejections' in updatedProfile ? Object.keys(updatedProfile.rejections).some((uid) => {
                   return uid == this.state.user.uid
                 }) : false
