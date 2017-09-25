@@ -37,6 +37,7 @@ export default class HomeScreen extends React.Component {
       photoUrls: [],
       initialMatches: [],
       loaded: false,
+      calledInitialProfileListener: false,
       messagePreviews: [],
     }
   }
@@ -52,9 +53,12 @@ export default class HomeScreen extends React.Component {
   componentDidUpdate() {
     this.removeMatchesInChat()
 
-    if(this.state.profiles.length > 0){
-      this.listenLastMessages()
-      // this.sortProfiles()
+    if(this.state.profiles.length > 0 && !this.state.calledInitialProfileListener && this.state.profiles.length != this.state.messagePreviews.length){
+      this.listenLastMessages(this.state.profiles)
+
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({calledInitialProfileListener: true})
+      })
     }
   }
 
@@ -76,42 +80,18 @@ export default class HomeScreen extends React.Component {
 
   watchChatsAndProfiles() {
     FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
-      FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
-        this.setState({profiles: profiles.filter((profile) => {
-            return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
-          }),
-          loaded: true,
+      const oldProfiles = this.state.profiles
+
+      if(profiles.map((profile) => {return profile.uid}).sort().join(',') != oldProfiles.map((profile) => {return profile.uid}).sort().join(',')){ 
+        FirebaseAPI.getUserCb(this.state.user.uid, (updatedUser) => {
+          this.setState({profiles: profiles.filter((profile) => {
+              return (profile != undefined && updatedUser.rejections != undefined) ? !Object.keys(updatedUser.rejections).some((uid) => { return uid == profile.uid }) : true
+            }),
+            loaded: true,
+          })
         })
-    
-        this.listenProfileUrls()
-      })
+      }
     })
-  }
-
-  sortProfiles() {
-    console.log('SORTING')
-    let profiles = this.state.profiles
-
-    profiles.sort((a, b) => {
-      const aMsg = this.state.messagePreviews.find((msg) => {
-        return msg.otherUser == a.uid
-      })
-      const bMsg = this.state.messagePreviews.find((msg) => {
-        return msg.otherUser == b.uid
-      })
-
-      console.log(parseInt(aMsg.createdAt - bMsg.createdAt))
-      return parseInt(aMsg.createdAt - bMsg.createdAt)
-    })
-
-    console.log(profiles.some((profile) => { return profile != this.state.profiles[profiles.indexOf(profile)] }), 
-      profiles.map((profile) => {return profile.name}), this.state.profiles.map((profile) => {return profile.name}))
-
-    if(profiles.some((profile) => { return profile != this.state.profiles[profiles.indexOf(profile)] })) //If arrays aren't in same order
-      InteractionManager.runAfterInteractions(() => {
-        console.log("UPDATED SORT")
-        this.setState({profiles: profiles})
-      })
   }
 
   removeMatchesInChat() {
@@ -212,8 +192,8 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  listenLastMessages() {
-    this.state.profiles.forEach((profile) => {
+  listenLastMessages(profiles) {
+    profiles.forEach((profile) => {
       const uidArray = [profile.uid, this.state.user.uid]
       uidArray.sort()
       const chatID = uidArray[0]+'-'+uidArray[1]
@@ -245,57 +225,7 @@ export default class HomeScreen extends React.Component {
 
           messages.reverse()
 
-          let updatedMessages = this.state.messagePreviews
-
-          if(this.state.messagePreview != [] &&
-            this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
-            this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id != messages[0]._id) {
-            const index = updatedMessages.findIndex((msg) => {return msg.otherUser == messages[0].otherUser})
-
-            updatedMessages.splice(index, 1)
-
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({messagePreviews: updatedMessages})
-            })
-          }
-
-          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
-            updatedMessages.push(messages[0])
-
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({messagePreviews: updatedMessages})
-            })
-          }
-      })
-    })
-  }
-
-  listenProfileUrls() {
-      this.state.profiles.forEach((profile) => {
-        const uidArray = [profile.uid, this.state.user.uid]
-        uidArray.sort()
-        const chatID = uidArray[0]+'-'+uidArray[1]
-
-        firebase.database().ref().child('messages').child(chatID)
-          .orderByChild('createdAt')
-          .on('value', (snap) => {
-            
-            let messages = []
-
-            snap.forEach((child) => {
-              const date = moment(child.val().createdAt).format()
-              messages.push({
-                text: child.val().text,
-                _id: child.key,
-                createdAt: date,
-                user: {
-                  _id: child.val().sender,
-                  name: child.val().name
-                }
-              })
-            });
-
-            const msgCount = messages.filter((msg) => {
+          const msgCount = messages.filter((msg) => {
               return msg.user._id == profile.uid
             }).length
             // console.log(profile.name, msgCount)
@@ -343,7 +273,44 @@ export default class HomeScreen extends React.Component {
                 })
               } 
             }
-        })
+
+          let updatedMessages = this.state.messagePreviews
+          let updatedProfiles = this.state.profiles
+
+          console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
+
+          if(this.state.messagePreview != [] &&
+            this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
+            this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id != messages[0]._id) {
+            const msgIndex = updatedMessages.findIndex((msg) => {return msg.otherUser == messages[0].otherUser})
+            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
+            const shiftingProfile = updatedProfiles[profileIndex]
+
+            updatedProfiles.splice(profileIndex, 1)
+            updatedProfiles.unshift(shiftingProfile)
+
+            updatedMessages.splice(msgIndex, 1)
+            updatedMessages.unshift(messages[0])
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
+            })
+          }
+
+          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
+            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
+            const shiftingProfile = updatedProfiles[profileIndex]
+
+            updatedProfiles.splice(profileIndex, 1)
+            updatedProfiles.unshift(shiftingProfile)
+
+            updatedMessages.unshift(messages[0])
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
+            })
+          }
+      })
     })
   }
 
@@ -364,8 +331,9 @@ export default class HomeScreen extends React.Component {
   render() {
     console.log('RENDERING HOME SCREEN')
     // console.log('initialMatches', this.state.initialMatches)
-    console.log('false', this.state.loaded)
-    console.log(this.state.messagePreviews)
+    // console.log('false', this.state.loaded)
+    // console.log(this.state.messagePreviews)
+    console.log("renderProfiles", this.state.profiles)
     if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
       return(
         <View style={styles.container}>

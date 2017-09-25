@@ -56,27 +56,32 @@ export default class ChatScreen extends Component {
     this.state = { 
       messages: [],
       user: this.props.navigation.state.params.user,
-      profile: this.props.navigation.state.params.profile, 
+      profile: this.props.navigation.state.params.profile,
+      mounted: false, 
     }
-
-    const profileUid = this.props.navigation.state.params.profile.uid
-    const uid = this.props.navigation.state.params.user.uid
-
-    //Sort uid concatenation in order of greatness so every user links to the same chat
-    const uidArray = [uid, profileUid]
-    uidArray.sort()
-    this.chatID = uidArray[0]+'-'+uidArray[1]
-
-    this.watchChat()
-    FirebaseAPI.setReceivedMessagesReadTrue(this.chatID, this.state.user.uid)
   }
 
-  // componentDidMount() {
+  componentDidMount() {
     // if(this.state.messages.length == 1)
     //   Alert.alert(
     //     ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
     //     'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
-  // }
+    if(!this.state.mounted)
+      this.setState({mounted: true})
+
+    InteractionManager.runAfterInteractions(() => {
+      const profileUid = this.props.navigation.state.params.profile.uid
+      const uid = this.props.navigation.state.params.user.uid
+
+      //Sort uid concatenation in order of greatness so every user links to the same chat
+      const uidArray = [uid, profileUid]
+      uidArray.sort()
+      this.chatID = uidArray[0]+'-'+uidArray[1]
+
+      this.watchChat()
+      FirebaseAPI.setReceivedMessagesReadTrue(this.chatID, this.state.user.uid)
+    })
+  }
 
   componentDidUpdate() {
     if(this.state.messages.length == 1 && 'cb' in this.props.navigation.state.params) {
@@ -85,51 +90,55 @@ export default class ChatScreen extends Component {
   }
 
   componentWillUnmount() {
-    firebase.database().ref().child('messages').child(this.chatID).off()
+    if(this.state.mounted) 
+      this.setState({mounted: false})
   }
 
   watchChat() {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')
       .on('value', (snap) => {
-      
-      let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
-      snap.forEach((child) => {
-        const date = moment(child.val().createdAt).format()
-        precountMsgs.push({
-          user: {
-            _id: child.val().sender,
-          }
-        })
-      });
-
-      const canShowAvatar = precountMsgs.filter((msg) => {
-              return msg.user._id == this.state.profile.uid
-            }).length >= 5 ? true : false
-      const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
-
-      let messages = []
-      snap.forEach((child) => {
-        const date = moment(child.val().createdAt).format()
-        messages.push({
-          text: child.val().text,
-          _id: child.key,
-          createdAt: date,
-          user: {
-            _id: child.val().sender,
-            name: child.val().name,
-            avatar: avatarUrl,
-          }
-        })
-      });
-      messages.reverse()
-
-
-      if(messages != this.state.messages) {
         InteractionManager.runAfterInteractions(() => {
-          this.setState({messages: messages})      
+          if(this.state.mounted) {
+            let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
+            snap.forEach((child) => {
+              const date = moment(child.val().createdAt).format()
+              precountMsgs.push({
+                user: {
+                  _id: child.val().sender,
+                }
+              })
+            });
+
+            const canShowAvatar = precountMsgs.filter((msg) => {
+                    return msg.user._id == this.state.profile.uid
+                  }).length >= 5 ? true : false
+            const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
+
+            let messages = []
+            snap.forEach((child) => {
+              const date = moment(child.val().createdAt).format()
+              messages.push({
+                text: child.val().text,
+                _id: child.key,
+                createdAt: date,
+                user: {
+                  _id: child.val().sender,
+                  name: child.val().name,
+                  avatar: avatarUrl,
+                }
+              })
+            });
+            messages.reverse()
+
+
+            if(messages != this.state.messages) {
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({messages: messages})      
+              })
+            }
+          }
         })
-      }
     })
   }
 

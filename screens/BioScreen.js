@@ -131,7 +131,7 @@ export default class BioScreen extends React.Component {
       FirebaseAPI.removeWatchUser(profile.uid)
     })
 
-    FirebaseAPI.removeWatchForChat()
+    // FirebaseAPI.removeWatchForChat()
   }
 
   watchUserForUpdates() {
