@@ -197,7 +197,6 @@ export default class HomeScreen extends React.Component {
         .orderByChild('createdAt')
         .off()
 
-
       firebase.database().ref().child('messages').child(chatID)
         .orderByChild('createdAt')
         .on('value', (snap) => {
@@ -274,6 +273,20 @@ export default class HomeScreen extends React.Component {
 
           console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
 
+          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
+            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
+            const shiftingProfile = updatedProfiles[profileIndex]
+
+            updatedProfiles.splice(profileIndex, 1)
+            updatedProfiles.unshift(shiftingProfile)
+
+            updatedMessages.unshift(messages[0])
+
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
+            })
+          }
+
           if(this.state.messagePreview != [] &&
             this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
             this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id != messages[0]._id) {
@@ -285,20 +298,6 @@ export default class HomeScreen extends React.Component {
             updatedProfiles.unshift(shiftingProfile)
 
             updatedMessages.splice(msgIndex, 1)
-            updatedMessages.unshift(messages[0])
-
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
-            })
-          }
-
-          if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
-            const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
-            const shiftingProfile = updatedProfiles[profileIndex]
-
-            updatedProfiles.splice(profileIndex, 1)
-            updatedProfiles.unshift(shiftingProfile)
-
             updatedMessages.unshift(messages[0])
 
             InteractionManager.runAfterInteractions(() => {
@@ -329,7 +328,22 @@ export default class HomeScreen extends React.Component {
     // console.log('false', this.state.loaded)
     // console.log(this.state.messagePreviews)
     console.log("renderProfiles", this.state.profiles)
+    const profiles = this.state.profiles
+
     if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
+      profiles.sort((a, b) => {
+        const aMsg = this.state.messagePreviews.find((msg) => {
+          return msg.otherUser == a.uid
+        })
+        const bMsg = this.state.messagePreviews.find((msg) => {
+          return msg.otherUser == b.uid
+        })
+
+        console.log(new Date(aMsg.createdAt) - new Date(bMsg.createdAt))
+
+        return new Date(aMsg.createdAt) - new Date(bMsg.createdAt)
+      }).reverse()
+
       return(
         <View style={styles.container}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
@@ -356,7 +370,7 @@ export default class HomeScreen extends React.Component {
           <ScrollView style={styles.recentUpdates}>
             <View style={{width: width, height: height/8*7}}>
             {
-              this.state.profiles.map((profile) => {
+              profiles.map((profile) => {
                 const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
                 const message = this.state.messagePreviews.find((msg) => { 
                   return msg.otherUser == profile.uid 
@@ -391,23 +405,16 @@ export default class HomeScreen extends React.Component {
         <View style={styles.container}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{height: height/7, borderBottomWidth: 1, borderColor: 'lightgrey',}}> 
             <View style={styles.newMatches}>
-            {
-              this.state.initialMatches.map((match) => {
-                if(typeof match === 'object')
-                  return(
-                    <TouchableOpacity onPress={() => {this.openChat(match)}}
-                      key={match.uid+"-touchable"} >
-                      <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={match.uid+'init-match-container'}>
-                        <Image
-                        resizeMode='cover'
-                        source={{uri: match.gifUrl}}
-                        style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
-                        key={match.uid+'gif-preview'}/> 
-                      </View>
-                    </TouchableOpacity>
-                  )
-              })
-            }
+              <TouchableOpacity onPress={() => {}}
+                key={'fake'+"-touchable"} >
+                <View style={{width: matchBarGifSize+20, justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10}} key={'fake'+'init-match-container'}>
+                  <Image
+                  resizeMode='cover'
+                  source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
+                  style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                  key={'fake'+'gif-preview'}/> 
+                </View>
+              </TouchableOpacity>
             </View>
           </ScrollView>
           <ScrollView style={styles.recentUpdates}>
