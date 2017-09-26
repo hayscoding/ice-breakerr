@@ -106,7 +106,7 @@ export default class ChatScreen extends Component {
 
             const canShowAvatar = precountMsgs.filter((msg) => {
                     return msg.user._id == this.state.profile.uid
-                  }).length >= 4 ? true : false
+                  }).length >= 2 ? true : false
             const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
 
             let messages = []
