@@ -44,7 +44,7 @@ export default class ProfileScreen extends React.Component {
                   return message.sender == profile.uid
                 }).length
 
-                if(msgCount >= 5 && this._mounted) 
+                if(msgCount >= 4 && this._mounted) 
                   InteractionManager.runAfterInteractions(() => {
                     this.setState({profile: profile, photoUrls: profile.photoUrls})
                   })            

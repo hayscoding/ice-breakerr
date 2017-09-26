@@ -238,7 +238,7 @@ export default class HomeScreen extends React.Component {
               const index = this.state.photoUrls.indexOf(profileUrlObj)
               const updatedPhotoUrls = this.state.photoUrls
 
-              if(msgCount >= 5) {
+              if(msgCount >= 4) {
                 const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
 
                 updatedPhotoUrls[index].url = newUrl
@@ -258,7 +258,7 @@ export default class HomeScreen extends React.Component {
                   })
               } 
             } else {
-              if(msgCount >= 5) {
+              if(msgCount >= 4) {
                 const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
 
                 InteractionManager.runAfterInteractions(() => {
