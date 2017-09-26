@@ -57,7 +57,6 @@ export default class ChatScreen extends Component {
       messages: [],
       user: this.props.navigation.state.params.user,
       profile: this.props.navigation.state.params.profile,
-      mounted: false, 
     }
   }
 
@@ -66,9 +65,6 @@ export default class ChatScreen extends Component {
     //   Alert.alert(
     //     ('Here\'s your chat with '+this.state.profile.name.split(' ')[0]+'.'),
     //     'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
-    if(!this.state.mounted)
-      this.setState({mounted: true})
-
     InteractionManager.runAfterInteractions(() => {
       const profileUid = this.props.navigation.state.params.profile.uid
       const uid = this.props.navigation.state.params.user.uid
@@ -83,15 +79,14 @@ export default class ChatScreen extends Component {
     })
   }
 
-  componentDidUpdate() {
-    if(this.state.messages.length == 1 && 'cb' in this.props.navigation.state.params) {
+  componentWillUnmount() {
+    firebase.database().ref().child('messages').child(this.chatID)
+      .orderByChild('createdAt')
+      .off()
+
+    if(this.state.messages.length >= 1 && 'cb' in this.props.navigation.state.params) {
       this.props.navigation.state.params.cb(true)
     }
-  }
-
-  componentWillUnmount() {
-    if(this.state.mounted) 
-      this.setState({mounted: false})
   }
 
   watchChat() {
@@ -99,7 +94,6 @@ export default class ChatScreen extends Component {
       .orderByChild('createdAt')
       .on('value', (snap) => {
         InteractionManager.runAfterInteractions(() => {
-          if(this.state.mounted) {
             let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
             snap.forEach((child) => {
               const date = moment(child.val().createdAt).format()
@@ -137,7 +131,6 @@ export default class ChatScreen extends Component {
                 this.setState({messages: messages})      
               })
             }
-          }
         })
     })
   }
