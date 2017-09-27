@@ -52,7 +52,7 @@ export default class HomeScreen extends React.Component {
   componentDidUpdate() {
     this.removeMatchesInChat()
 
-    if(this.state.profiles.length > 0){
+    if(this.state.profiles.length > 0 && this.state.profiles.length != this.state.messagePreviews.length){
       this.listenLastMessages(this.state.profiles)
     }
   }

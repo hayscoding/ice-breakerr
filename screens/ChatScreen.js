@@ -75,7 +75,6 @@ export default class ChatScreen extends Component {
       this.chatID = uidArray[0]+'-'+uidArray[1]
 
       this.watchChat()
-      FirebaseAPI.setReceivedMessagesReadTrue(this.chatID, this.state.user.uid)
     })
   }
 
@@ -90,47 +89,54 @@ export default class ChatScreen extends Component {
   }
 
   watchChat() {
-    firebase.database().ref().child('messages').child(this.chatID)
-      .orderByChild('createdAt')
-      .on('value', (snap) => {
-          let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
-          snap.forEach((child) => {
-            const date = moment(child.val().createdAt).format()
-            precountMsgs.push({
-              user: {
-                _id: child.val().sender,
-              }
-            })
-          });
+    if(this.chatID != undefined) {
+      firebase.database().ref().child('messages').child(this.chatID)
+        .orderByChild('createdAt')
+        .off()
 
-          const canShowAvatar = precountMsgs.filter((msg) => {
-                  return msg.user._id == this.state.profile.uid
-                }).length >= 2 ? true : false
-          const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
+      firebase.database().ref().child('messages').child(this.chatID)
+        .orderByChild('createdAt')
+        .on('value', (snap) => {
+            let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
+            snap.forEach((child) => {
+              const date = moment(child.val().createdAt).format()
+              precountMsgs.push({
+                user: {
+                  _id: child.val().sender,
+                }
+              })
+            });
 
-          let messages = []
-          snap.forEach((child) => {
-            const date = moment(child.val().createdAt).format()
-            messages.push({
-              text: child.val().text,
-              _id: child.key,
-              createdAt: date,
-              user: {
-                _id: child.val().sender,
-                name: child.val().name,
-                avatar: avatarUrl,
-              }
-            })
-          });
-          messages.reverse()
+            const canShowAvatar = precountMsgs.filter((msg) => {
+                    return msg.user._id == this.state.profile.uid
+                  }).length >= 2 ? true : false
+            const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
+
+            let messages = []
+            snap.forEach((child) => {
+              const date = moment(child.val().createdAt).format()
+              messages.push({
+                text: child.val().text,
+                _id: child.key,
+                createdAt: date,
+                user: {
+                  _id: child.val().sender,
+                  name: child.val().name,
+                  avatar: avatarUrl,
+                }
+              })
+            });
+            messages.reverse()
 
 
-          if(messages != this.state.messages) {
-            InteractionManager.runAfterInteractions(() => {
-              this.setState({messages: messages})      
-            })
-          }
-    })
+            if(messages.map((msg) => {return msg._id}).join(',') != this.state.messages.map((msg) => {return msg._id}).join(',')) {
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({messages: messages})
+                FirebaseAPI.setReceivedMessagesReadTrue(this.chatID, this.state.user.uid)
+              })
+            }
+      })
+    }
   }
 
   showProfile() {
@@ -158,8 +164,6 @@ export default class ChatScreen extends Component {
     const pushToken = 'pushToken' in this.state.profile ? this.state.profile.pushToken : 'No push token'
 
     ServerAPI.postMessageNotificationToUid(this.state.user.name.split(' ')[0], pushToken, message[0].text)
-
-    this.watchChat()
   }
 
   render() {
