@@ -346,7 +346,7 @@ export default class HomeScreen extends React.Component {
 
   render() {
     console.log('RENDERING HOME SCREEN')
-    // console.log('initialMatches', this.state.initialMatches)
+    console.log('initialMatches', this.state.initialMatches.map((match) => {return match.uid}))
     // console.log('false', this.state.loaded)
     // console.log(this.state.messagePreviews)
     console.log("renderProfiles", this.state.profiles.length, this.state.messagePreviews.length)
@@ -445,7 +445,7 @@ export default class HomeScreen extends React.Component {
               
                 {
                   (() => {
-                    if(this.state.initialMatches.length == 0 || !this.state.loaded)
+                    if(this.state.initialMatches.length == 0)
                      return(
                       <TouchableOpacity onPress={() => {}}
                         key={'fake'+"-touchable"} >
