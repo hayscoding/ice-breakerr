@@ -93,45 +93,43 @@ export default class ChatScreen extends Component {
     firebase.database().ref().child('messages').child(this.chatID)
       .orderByChild('createdAt')
       .on('value', (snap) => {
-        InteractionManager.runAfterInteractions(() => {
-            let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
-            snap.forEach((child) => {
-              const date = moment(child.val().createdAt).format()
-              precountMsgs.push({
-                user: {
-                  _id: child.val().sender,
-                }
-              })
-            });
+          let precountMsgs = [] //Needs to count messages beforehand so avatar will show on initial loads
+          snap.forEach((child) => {
+            const date = moment(child.val().createdAt).format()
+            precountMsgs.push({
+              user: {
+                _id: child.val().sender,
+              }
+            })
+          });
 
-            const canShowAvatar = precountMsgs.filter((msg) => {
-                    return msg.user._id == this.state.profile.uid
-                  }).length >= 2 ? true : false
-            const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
+          const canShowAvatar = precountMsgs.filter((msg) => {
+                  return msg.user._id == this.state.profile.uid
+                }).length >= 2 ? true : false
+          const avatarUrl = canShowAvatar ? this.state.profile.photoUrls[0] : null
 
-            let messages = []
-            snap.forEach((child) => {
-              const date = moment(child.val().createdAt).format()
-              messages.push({
-                text: child.val().text,
-                _id: child.key,
-                createdAt: date,
-                user: {
-                  _id: child.val().sender,
-                  name: child.val().name,
-                  avatar: avatarUrl,
-                }
-              })
-            });
-            messages.reverse()
+          let messages = []
+          snap.forEach((child) => {
+            const date = moment(child.val().createdAt).format()
+            messages.push({
+              text: child.val().text,
+              _id: child.key,
+              createdAt: date,
+              user: {
+                _id: child.val().sender,
+                name: child.val().name,
+                avatar: avatarUrl,
+              }
+            })
+          });
+          messages.reverse()
 
 
-            if(messages != this.state.messages) {
-              InteractionManager.runAfterInteractions(() => {
-                this.setState({messages: messages})      
-              })
-            }
-        })
+          if(messages != this.state.messages) {
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({messages: messages})      
+            })
+          }
     })
   }
 
@@ -160,6 +158,8 @@ export default class ChatScreen extends Component {
     const pushToken = 'pushToken' in this.state.profile ? this.state.profile.pushToken : 'No push token'
 
     ServerAPI.postMessageNotificationToUid(this.state.user.name.split(' ')[0], pushToken, message[0].text)
+
+    this.watchChat()
   }
 
   render() {

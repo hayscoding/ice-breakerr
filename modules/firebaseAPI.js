@@ -33,7 +33,7 @@ export const getImgurGifs = (searchTerm, func) => {
     fetch('https://api.imgur.com/3/gallery/search/top/?q='+searchTerm+'&q_type=anigif&q_size_px=small', request).then((response) => {
       response.json().then((res) => {
         gifUrls = res.data.filter((item) => {
-          return item.size <= 2000000
+          return item.size <= 1500000
         }).map((item) => {
             return item.link;
         })
