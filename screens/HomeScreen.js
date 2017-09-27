@@ -51,7 +51,7 @@ export default class HomeScreen extends React.Component {
 
   componentDidUpdate() {
     this.removeMatchesInChat()
-
+    
     if(this.state.profiles.length > 0 && this.state.profiles.length != this.state.messagePreviews.length){
       this.listenLastMessages(this.state.profiles)
     }
@@ -115,15 +115,15 @@ export default class HomeScreen extends React.Component {
           FirebaseAPI.getUserCb(match, (profile) => {
             profiles.push(profile)
 
-            InteractionManager.runAfterInteractions(() => {
+            if(this.state.initialMatches.map((match) => {return match.uid}).join(',') != profiles.map(() => {
+              return profile.uid
+            }).join(',')){
               this.setState({initialMatches: profiles})
-            })
+            }
         })
       })
     else
-      InteractionManager.runAfterInteractions(() => {
-        this.setState({initialMatches: []})
-      })
+      this.setState({initialMatches: []})
   }
 
   getMatches(updatedUser) {
@@ -133,7 +133,10 @@ export default class HomeScreen extends React.Component {
         return !this.state.profiles.some((user) => { return user.uid == match })
       }) : []
 
-      this.getMatchProfiles(matches)
+      if(matches.join(',') != this.state.initialMatches.map((match) => {return match.uid}).join(','))
+        InteractionManager.runAfterInteractions(() => {
+          this.getMatchProfiles(matches)
+        })
   }
 
   watchUserRejections() {
@@ -143,8 +146,6 @@ export default class HomeScreen extends React.Component {
       }).filter((match) => {
           return !this.state.profiles.some((user) => { return user.uid == match })
       }) : []
-
-      this.getMatches(updatedUser)
 
       const messagesIndex = "rejections" in updatedUser ? this.state.messagePreviews.findIndex((msg) => {
         return Object.keys(updatedUser.rejections).some((uid) => { return msg.otherUser == uid })
@@ -173,8 +174,8 @@ export default class HomeScreen extends React.Component {
       }
 
       if(this.state.user != updatedUser) { 
-        console.log("ALKSJFLAKSJFALKSJFLKAJLK")
         this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages, user: updatedUser })
+        this.getMatches(updatedUser)
       }
     })
   }
