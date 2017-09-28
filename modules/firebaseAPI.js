@@ -102,10 +102,11 @@ export const mergeUser = (uid, token, newData) => {
         uid: uid,
         fbAuthToken: token,
         photoUrls: [],
-        gifUrl: '',
+        gifUrl: 'https://i.imgur.com/2lf2lNU.gif',
         bio: '',
         emojis: '',
         interests: '',
+        discoverable: true,
     }
     const current = snap.val()
     const mergedUser = {...defaults, ...current, ...newData}

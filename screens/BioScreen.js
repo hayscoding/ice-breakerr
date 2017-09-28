@@ -173,6 +173,8 @@ export default class BioScreen extends React.Component {
                 })
               else
                 return true
+            }).filter((user) => { //Filter profiles liked by user
+                return user.discoverable
             }).slice(0, profileSlots - this.state.profiles.length)
 
           const updatedProfiles = this.state.profiles.concat(newProfiles)

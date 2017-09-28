@@ -28,7 +28,7 @@ export default class AddGifScreen extends React.Component {
       photoUrls: [],
     }
 
-    FirebaseAPI.getImgurGifs('popular', (gifs) => {
+    FirebaseAPI.getImgurGifs('recent', (gifs) => {
       InteractionManager.runAfterInteractions(() => {
         this.setState({photoUrls: gifs})
       })

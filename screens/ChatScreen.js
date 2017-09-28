@@ -172,12 +172,22 @@ export default class ChatScreen extends Component {
       profile
     } = this.state
 
+    const defaultMessages = [{
+                text: "Ask them a question! Make a joke! Say something fun!!!",
+                _id: "defaultMessage",
+                createdAt: null,
+                user: {
+                  _id: "defaultMessage",
+                  name: "Ice Breakerr",
+                }
+              }]
+
   	return(
   		<View style={{flex: 1}}>
   		  <View style={styles.container}>
   		  	<View style={{flex:1, borderBottomWidth: 1, borderColor: 'gray'}} >
             <GiftedChat
-              messages={this.state.messages}
+              messages={this.state.messages.length != 0 ? this.state.messages : defaultMessages}
               onSend={(m) => this.onSend(m)}
               onPressAvatar={() => {this.showProfile()}}
               renderTime={() => {}}
