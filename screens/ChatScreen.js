@@ -10,11 +10,13 @@ import {
   TouchableOpacity, 
   Dimensions,
   InteractionManager,
-  ActivityIndicator
+  ActivityIndicator,
+  Platform
 } from 'react-native'
 
 import moment from 'moment'
 
+import KeyboardSpacer from 'react-native-keyboard-spacer'
 import { GiftedChat } from 'react-native-gifted-chat'
 
 import * as firebase from 'firebase'
@@ -194,6 +196,7 @@ export default class ChatScreen extends Component {
               user={{
                 _id: this.state.user.uid,
               }} />
+            {Platform.OS === 'android' ? <KeyboardSpacer /> : null }
           </View>
   		  </View>
   		</View>

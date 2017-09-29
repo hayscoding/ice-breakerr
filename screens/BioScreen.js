@@ -355,7 +355,7 @@ export default class BioScreen extends React.Component {
                                 <Image
                                   resizeMode='cover'
                                   source={{uri: profile.gifUrl != "" ? profile.gifUrl : ' '}}
-                                  style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2}]}/> 
+                                  style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2, overlayColor: 'white',}]}/> 
                               </View>
                               <View style={{flex: 3, justifyContent: 'flex-start'}}>
                                 <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
@@ -483,10 +483,10 @@ const styles = StyleSheet.create({
   content: {
     width: matchWidth,
     height: matchHeight, 
-    shadowColor: '#000000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 7, 
-    shadowOpacity: 0.3,
+    // shadowColor: '#000000', 
+    // shadowOffset: {width: 0, height: 0}, 
+    // shadowRadius: 7, 
+    // shadowOpacity: 0.3,
     borderWidth: 1,
     borderColor: 'lightgrey',
     borderRadius: 10,
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     //The following limits the shown portion of bio
     //to a max of 4 lines
-    lineHeight: (matchHeight/10*6)/5,
+    lineHeight: Math.round((matchHeight/10*6)/5),
   },
   bioContainer: {
     flex: 1,
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   decisionContainer: {
     flex: 1,
     width: matchWidth,
-    height: matchHeight/4,
+    height: matchHeight/3.5,
     flexDirection: 'row',
     marginTop: 10,
     paddingBottom: 10,
@@ -548,6 +548,7 @@ const styles = StyleSheet.create({
     width: matchWidth/2.1,
     height: matchHeight/4.2,
     alignSelf: 'flex-start',
+    justifyContent: 'center',
     borderRadius: 30,
     backgroundColor: 'green',
     overflow: 'hidden',
@@ -556,6 +557,7 @@ const styles = StyleSheet.create({
     width: matchWidth/2.1,
     height: matchHeight/4.2,
     alignSelf: 'flex-end',
+    justifyContent: 'center',
     borderRadius: 30,
     backgroundColor: 'red',
     overflow: 'hidden',
@@ -563,19 +565,17 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     paddingTop: 5,
-    paddingLeft: 20,
-    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
     paddingBottom: 10,
     backgroundColor:'white',
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
-    borderRadius: 10,
   },
   decisionButton: {
     textAlign: 'center',
-    paddingTop: 10,
-    paddingBottom: 10,
-    fontSize: matchHeight/7.5,
+    alignSelf: 'center',
+    fontSize: matchHeight/8,
     color: 'white',
   },
   leftColumn: {

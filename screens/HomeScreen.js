@@ -379,7 +379,7 @@ export default class HomeScreen extends React.Component {
                       <Image
                       resizeMode='cover'
                       source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
-                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                      style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2, overlayColor: 'white',}}
                       key={'fake'+'gif-preview'}/> 
                     </View>
                   </TouchableOpacity>)
@@ -393,7 +393,7 @@ export default class HomeScreen extends React.Component {
                           <Image
                           resizeMode='cover'
                           source={{uri: match.gifUrl}}
-                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2, overlayColor: 'white',}}
                           key={match.uid+'gif-preview'}/> 
                         </View>
                       </TouchableOpacity>
@@ -454,7 +454,7 @@ export default class HomeScreen extends React.Component {
                           <Image
                           resizeMode='cover'
                           source={{uri: 'http://i.imgur.com/HNfWmVu.jpg'}}
-                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                          style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2, overlayColor: 'white',}}
                           key={'fake'+'gif-preview'}/> 
                         </View>
                       </TouchableOpacity>)
@@ -468,7 +468,7 @@ export default class HomeScreen extends React.Component {
                               <Image
                               resizeMode='cover'
                               source={{uri: match.gifUrl}}
-                              style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,}}
+                              style={{width: matchBarGifSize, height: matchBarGifSize, borderRadius: matchBarGifSize/2,  overlayColor: 'white',}}
                               key={match.uid+'gif-preview'}/> 
                             </View>
                           </TouchableOpacity>
@@ -541,10 +541,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 20,
-    shadowColor: '#000000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowRadius: 7, 
-    shadowOpacity: 0.1,
+    // shadowColor: '#000000', 
+    // shadowOffset: {width: 0, height: 0}, 
+    // shadowRadius: 7, 
+    // shadowOpacity: 0.1,
   },
   mainTitle: {
     height: height/20,

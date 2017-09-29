@@ -176,10 +176,12 @@ export default class ProfileScreen extends React.Component {
     if(!(this.state.hasChat || ("matches" in this.state.user && Object.keys(this.state.user.matches).some((uid) => { return uid == profile.uid})))
       && this._mounted)
       return(
-        <View style={styles.chatButtonContainer}>
-          <TouchableOpacity onPress={() => {this.startChat(profile)}} >
-            <Text style={styles.chatButton}>Send Message</Text>
-          </TouchableOpacity>
+        <View style={{height: height/10}}>
+          <View style={styles.chatButtonContainer}>
+            <TouchableOpacity onPress={() => {this.startChat(profile)}} >
+              <Text style={styles.chatButton}>Send Message</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )
     else
@@ -241,7 +243,7 @@ export default class ProfileScreen extends React.Component {
     
     return(
       <View style={styles.container}>  
-        <ScrollView style={{height: height/10*9}}>
+        <ScrollView style={{flex: 1}}>
           <View style={{flex: 1, marginBottom: height/5*1.2}}>
             <ScrollView horizontal indicatorStyle={'white'} scrollEventThrottle={10} pagingEnabled> 
               {
@@ -291,9 +293,8 @@ export default class ProfileScreen extends React.Component {
           </View>
           { this.reportTouchable(profile) }
           { this.unmatchTouchable(profile) }
-          <View style={styles.chatButtonContainer}></View>
           </ScrollView>
-        { this.sendMessageTouchable(profile) } 
+            { this.sendMessageTouchable(profile) } 
       </View>
     )
   }

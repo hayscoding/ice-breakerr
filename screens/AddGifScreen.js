@@ -172,8 +172,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     backgroundColor:'white',
-    borderBottomWidth: 1,
-    borderColor: 'lightgrey',
   },
   titleContainer: {
     backgroundColor:'#f7fbff',
@@ -183,9 +181,6 @@ const styles = StyleSheet.create({
     height: 40,
     alignSelf: 'center',
     justifyContent: 'flex-start',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'lightgrey',
   },
   bio: {
     flex: 1,
@@ -255,8 +250,6 @@ const styles = StyleSheet.create({
     color:'white', 
     fontSize:24, 
     backgroundColor: 'green',
-    borderColor: 'lightgrey', 
-    borderTopWidth: 3, 
   },
   unmatchButton: {
     width: width,
@@ -268,7 +261,5 @@ const styles = StyleSheet.create({
     color:'white', 
     fontSize:24, 
     backgroundColor: 'gray',
-    borderColor: 'lightgrey', 
-    borderTopWidth: 3, 
   },
 });

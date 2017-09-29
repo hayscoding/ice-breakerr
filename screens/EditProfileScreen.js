@@ -136,7 +136,7 @@ export default class EditProfileScreen extends React.Component {
       let scrollResponder = this.refs.scrollView.getScrollResponder();
       scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
         findNodeHandle(this.refs[refName]),
-        200, //additionalOffset
+        height/1.5, //additionalOffset
         true
       );
     }, 50);
@@ -205,6 +205,7 @@ export default class EditProfileScreen extends React.Component {
           <Text style={styles.title}>Express Who You Are</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='bio'
+              underlineColorAndroid='transparent'
               style={styles.bio} 
               multiline={true}
               blurOnSubmit={false}
@@ -215,6 +216,7 @@ export default class EditProfileScreen extends React.Component {
           <Text style={styles.title}>Enter Your Favorite Emojis</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='emojis'
+              underlineColorAndroid='transparent'
               style={styles.bio} 
               multiline={true}
               blurOnSubmit={false}
@@ -225,6 +227,7 @@ export default class EditProfileScreen extends React.Component {
           <Text style={styles.title}>List Your Top Interests</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='interests'
+              underlineColorAndroid='transparent'
               style={styles.bio} 
               multiline={true}
               blurOnSubmit={false}
@@ -243,15 +246,15 @@ export default class EditProfileScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    height:height,
     width:width,
     backgroundColor: '#f7fbff',
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
+    height:height+height/2.5,
     width: width,
     backgroundColor: '#f7fbff'
   },
@@ -262,9 +265,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingBottom: 10,
     backgroundColor:'white',
-    borderBottomWidth: 1,
-    borderColor: 'lightgrey',
-    borderRadius: 10,
   },
   leftColumn: {
     alignSelf: 'flex-start',
@@ -278,15 +278,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   bioContainer: {
-    flex: 1,
+    height: height/5,
     width: width,
     alignSelf: 'center',
     justifyContent: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'lightgrey',
   },
   bio: {
-    flex: 1,
+    height: height/5,
     width: width,
     alignSelf: 'flex-start',
     paddingTop: 10,
