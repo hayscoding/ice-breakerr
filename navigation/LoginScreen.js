@@ -15,7 +15,7 @@ import Exponent from 'expo'
 import * as FirebaseAPI from '../modules/firebaseAPI'
 import firebase from 'firebase'
 
-const APP_ID = '1829743797339304';
+const APP_ID = '1897933140424590';
 
 const {height, width} = Dimensions.get('window');
 const size = width*1.45

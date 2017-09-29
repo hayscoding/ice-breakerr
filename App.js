@@ -8,11 +8,11 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
 import * as firebase from 'firebase'
 
-var firebaseConfig = {
-  apiKey: "AIzaSyB4YQqTLAKam3kqCxWub3Y8gqTOsJAhOmA",
-  authDomain: "ice-breakerr-development.firebaseapp.com",
-  databaseURL: "https://ice-breakerr-development.firebaseio.com",
-};
+const firebaseConfig = {
+   apiKey: "AIzaSyBSfQ2Ux-vZWAcpmjdhCL47Gh7q0HBIpag",
+   authDomain: "ice-breaker-ad9a9.firebaseapp.com",
+   databaseURL: "https://ice-breaker-ad9a9.firebaseio.com",
+ } 
 
 firebase.initializeApp(firebaseConfig)
 

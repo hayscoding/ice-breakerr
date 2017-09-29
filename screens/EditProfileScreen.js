@@ -12,6 +12,7 @@ import {
   TextInput,
   findNodeHandle,
   Alert,
+  Platform,
 } from 'react-native';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
@@ -133,10 +134,11 @@ export default class EditProfileScreen extends React.Component {
   // Scroll a component into view. Just pass the component ref string.
   textInputFocused(refName) {
     setTimeout(() => {
+      const px = Platform.OS === 'android' ? height/1.5 : 200
       let scrollResponder = this.refs.scrollView.getScrollResponder();
       scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
         findNodeHandle(this.refs[refName]),
-        height/1.5, //additionalOffset
+        px, //additionalOffset
         true
       );
     }, 50);
