@@ -25,7 +25,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "city.icebreaker.exp"
+      "package": "city.icebreaker.exp",
+      "versionCode": "2"
     }
   }
 }
