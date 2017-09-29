@@ -23,6 +23,9 @@
     "ios": {
       "bundleIdentifier": "city.icebreaker.exp",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "city.icebreaker.exp"
     }
   }
 }
