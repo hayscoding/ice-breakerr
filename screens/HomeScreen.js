@@ -404,7 +404,7 @@ export default class HomeScreen extends React.Component {
             </View>
           </ScrollView>
           <ScrollView style={styles.recentUpdates}>
-            <View style={{width: width, height: height/8*7}}>
+            <View style={{flexGrow: 1, width: width}}>
             {
               profiles.map((profile) => {
                 const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
