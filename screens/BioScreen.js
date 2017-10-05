@@ -5,6 +5,7 @@ import { ExpoLinksView } from '@expo/samples';
 import TimerMixin from 'react-timer-mixin';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
+import * as ServerAPI from '../modules/serverAPI'
 
 const {height, width} = Dimensions.get('window');
 const size = width/5.4
@@ -293,7 +294,11 @@ export default class BioScreen extends React.Component {
     })
 
     if(hasMatch) {
+      const pushToken = 'pushToken' in profile ? profile.pushToken : 'No push token'
+
       FirebaseAPI.setMatchWithProfiles(this.state.user.uid, profile.uid)
+      ServerAPI.postMatchNotificationToUid(this.state.user.name.split(' ')[0], pushToken)
+
       Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
     }
   }

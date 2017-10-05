@@ -40,11 +40,11 @@ export default class Login extends React.Component {
 	fbLogin = async() => {
 	 	const { type, token } = await Exponent.Facebook.logInWithReadPermissionsAsync(
 		    APP_ID, {
-		      permissions: ['public_profile', 'user_photos', 'user_birthday', 'email', 'user_education_history'],
+		      permissions: ['public_profile', 'user_photos', 'user_birthday', 'email'],
 		    });
 		if (type === 'success') {
 	        // facebook user data request
-	        const response = await fetch(`https://graph.facebook.com/me?fields=email,birthday,gender,education,name&access_token=${token}`)
+	        const response = await fetch(`https://graph.facebook.com/me?fields=email,birthday,gender,name&access_token=${token}`)
 	        const user = await FirebaseAPI.loginUser(token)
 
 	        FirebaseAPI.mergeUser(await user.uid, await token, await response.json())

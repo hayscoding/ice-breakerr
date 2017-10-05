@@ -16,3 +16,17 @@ export const postMessageNotificationToUid = (senderFirstName, receiverPushToken,
 	  })
 	})
 }
+
+export const postMatchNotificationToUid = (senderFirstName, receiverPushToken) => {
+	fetch((baseUrl+'notify-match'), {
+	  method: 'POST',
+	  headers: {
+	    Accept: 'application/json',
+	    'Content-Type': 'application/json',
+	  },
+	  body: JSON.stringify({
+	  	senderFirstName: senderFirstName,
+	    receiverPushToken: receiverPushToken,
+	  })
+	})
+}

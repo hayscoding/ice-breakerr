@@ -461,10 +461,13 @@ export const getDistanceFromUser = (profileKey, userKey, func) => {
   const geoFire = new GeoFire(firebaseRef.child('geoData/'))
 
   geoFire.get(profileKey).then((profileLocation) => {
-    geoFire.get(userKey).then((userLocation) => {
-      const distanceFromUser = GeoFire.distance(userLocation, profileLocation)
-      func(distanceFromUser)
-    })
+    if(profileLocation != null)
+      geoFire.get(userKey).then((userLocation) => {
+        if(userLocation != null) {
+          const distanceFromUser = GeoFire.distance(userLocation, profileLocation)
+          func(distanceFromUser)
+        }
+      })
   })
 }
 
