@@ -28,6 +28,7 @@ export default class ProfileScreen extends React.Component {
       photoUrls: [],
       hasChat: false,
       startedChat: false,
+      picsShown: false,
     }
 
     FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
@@ -46,7 +47,7 @@ export default class ProfileScreen extends React.Component {
 
                 if(msgCount >= 5 && this._mounted) 
                   InteractionManager.runAfterInteractions(() => {
-                    this.setState({profile: profile, photoUrls: profile.photoUrls})
+                    this.setState({profile: profile, photoUrls: profile.photoUrls, picsShown: true})
                   })            
                 else if(this._mounted)
                   InteractionManager.runAfterInteractions(() => {
@@ -57,7 +58,7 @@ export default class ProfileScreen extends React.Component {
             })
           else if(this._mounted)
             InteractionManager.runAfterInteractions(() => {
-              this.setState({profile: profile, photoUrls: profile.photoUrls})
+              this.setState({profile: profile, photoUrls: profile.photoUrls, picsShown: true})
             })            
           }
         })
@@ -188,6 +189,17 @@ export default class ProfileScreen extends React.Component {
       return null
   }
 
+  buyPicturesTouchable(profile) {
+    if(this.state.user.uid != this.state.profile.uid && !this.state.picsShown && this._mounted)
+      return(
+        <TouchableOpacity onPress={() => {this.props.navigation.navigate('BuyPictures', {profile: this.state.profile, user: this.state.user})}}>
+          <View style={styles.chatButtonContainer}>
+              <Text style={styles.buyButton}>Buy Pictures</Text>
+          </View>
+        </TouchableOpacity>
+      )
+  }
+
   unmatchTouchable(profile) {
     if(this.state.user.uid != this.state.profile.uid && 
       (this.state.hasChat || ("likes" in this.state.user && Object.keys(this.state.user.likes).some((uid) => { return uid == profile.uid}))) 
@@ -291,6 +303,7 @@ export default class ProfileScreen extends React.Component {
               <Text style={styles.bio}>{profile.interests}</Text>
             </View>
           </View>
+          { this.buyPicturesTouchable(profile) }
           { this.reportTouchable(profile) }
           { this.unmatchTouchable(profile) }
           </ScrollView>
@@ -400,6 +413,18 @@ const styles = StyleSheet.create({
     color:'white', 
     fontSize:24, 
     backgroundColor: 'green',
+    borderColor: 'lightgrey', 
+    borderTopWidth: 3, 
+  },
+  buyButton: {
+    width: width,
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    textAlign: 'center', 
+    color:'white', 
+    fontSize:24, 
+    backgroundColor: '#00d8ff',
     borderColor: 'lightgrey', 
     borderTopWidth: 3, 
   },

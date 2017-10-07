@@ -16,6 +16,7 @@ import AddPhotoScreen from '../screens/AddPhotoScreen'
 import ReferralScreen from '../screens/ReferralScreen'
 import GetADateScreen from '../screens/GetADateScreen'
 import AddGifScreen from '../screens/AddGifScreen'
+import BuyPicturesScreen from '../screens/BuyPicturesScreen'
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -44,6 +45,9 @@ const RootStackNavigator = StackNavigator(
     },
     GetADate: {
       screen: GetADateScreen,
+    },
+    BuyPictures: {
+      screen: BuyPicturesScreen,
     },
   },
   {
