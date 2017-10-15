@@ -37,6 +37,11 @@ export default class BuyPicturesScreen extends React.Component {
 
   componentWillUnmount() {
     this._mounted = false;
+
+    //User data in state will not have paid profiles, so we return the user from db
+    FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
+      this.props.navigation.state.params.cb(user)
+    })
   }
 
   render() {    

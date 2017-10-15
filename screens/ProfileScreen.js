@@ -25,7 +25,7 @@ export default class ProfileScreen extends React.Component {
       user: this.props.navigation.state.params.user, 
       profile: this.props.navigation.state.params.profile,
       distance: ' ',
-      photoUrls: [],
+      photoUrls: null,
       hasChat: false,
       startedChat: false,
       picsShown: false,
@@ -51,10 +51,11 @@ export default class ProfileScreen extends React.Component {
                   })            
                 else if(this._mounted)
                   InteractionManager.runAfterInteractions(() => {
-                    console.log('KNAWLEDGE', profile)
                     this.setState({profile: profile, photoUrls: null})
                   })            
-              }
+              } 
+
+              this.updatePaidPictures(this.state.user)
             })
           else if(this._mounted)
             InteractionManager.runAfterInteractions(() => {
@@ -85,6 +86,18 @@ export default class ProfileScreen extends React.Component {
 
   componentWillUnmount() {
     this._mounted = false;
+  }
+
+  updatePaidPictures(user) {
+    console.log('lakdjflkadsjflkadsjflk')
+    const userHasPaid = 'paidProfiles' in user ? Object.keys(user.paidProfiles).some((uid) => {
+      return uid == this.state.profile.uid
+    }) : false
+
+    if(userHasPaid) 
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({profile: this.state.profile, photoUrls: this.state.profile.photoUrls, picsShown: true})
+      })  
   }
 
   getDistanceFromUser(profile) {
@@ -192,7 +205,10 @@ export default class ProfileScreen extends React.Component {
   buyPicturesTouchable(profile) {
     if(this.state.user.uid != this.state.profile.uid && !this.state.picsShown && this._mounted)
       return(
-        <TouchableOpacity onPress={() => {this.props.navigation.navigate('BuyPictures', {profile: this.state.profile, user: this.state.user})}}>
+        <TouchableOpacity onPress={() => {this.props.navigation.navigate('BuyPictures', 
+          {profile: this.state.profile, user: this.state.user, cb: (user) => {
+            this.updatePaidPictures(user)
+          }})}}>
           <View style={styles.chatButtonContainer}>
               <Text style={styles.buyButton}>Buy Pictures</Text>
           </View>
