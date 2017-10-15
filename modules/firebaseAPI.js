@@ -265,6 +265,26 @@ export const getUsersCb = (keyArray, func) => {
     })
 }
 
+export const getSomeUsersCb = (keyArray, func) => {
+  firebase.database().ref().child('users').once('value')
+    .then((snap) => {
+      if(snap.val() != null) {
+        const randInt =  Math.floor(Math.random() * 10) //Generate random number from 0 to 9
+        const users = []
+        let index = 0
+
+        keyArray.forEach((key) => {
+          index++
+          if(index%10 == randInt) //This should evenly go through the data childs at random selection
+            users.push(snap.val()[key])
+        })
+
+        func(users)
+      }
+    })
+}
+
+
 export const getChat = (key) => {
   return firebase.database().ref().child('messages').child(key).once('value')
     .then((snap) => snap.val())
@@ -414,14 +434,17 @@ export const turnOffChatListener = () => {
 }
 
 
-export const getAllUsers = (func) => {
+export const getUsers = (func) => {
   firebase.database().ref().child('users').once('value')
     .then((snap) => {
       if(snap.val() != null) {
         if(snap.val() != null)
-          getUsersCb(Object.keys(snap.val()), (profiles) => {
-            if(profiles != null)
+          getSomeUsersCb(Object.keys(snap.val()), (profiles) => {
+            if(profiles != null){
+              console.log('getUsers', profiles.map((profile) => { return profile.name }))
+              profiles.length = 10
               func(profiles)
+            }
           })
         else
           func(null)

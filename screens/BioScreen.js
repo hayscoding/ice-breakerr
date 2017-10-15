@@ -24,7 +24,8 @@ export default class BioScreen extends React.Component {
         distances: [],
         timing: false,
         locationEnabled: false,
-        likeTimerDone: true      }
+        likeTimerDone: true      
+      }
 
       this._mounted = false
       this._navigating = false
@@ -35,7 +36,7 @@ export default class BioScreen extends React.Component {
             const gotLocation = FirebaseAPI.getLocationAsync(this.state.user.uid)
 
             InteractionManager.runAfterInteractions(() => {
-              this.setState({ locationEnabled: gotLocation})
+              this.setState({locationEnabled: gotLocation})
             })
           }
         })
@@ -51,39 +52,31 @@ export default class BioScreen extends React.Component {
   }
 
   componentDidUpdate() {
-    InteractionManager.runAfterInteractions(() => {
-        this.getDistancesFromUser()
-    })
-
-    this.updateProfilesIfZero()
+    if(this.state.profiles.length == 0)
+      this.updateProfilesIfZero()
   }
 
   componentWillUnmount() {
     this._mounted = false
-    console.log('UNMOUNTEDDDD')
     this.stopWatchingUsers()
     FirebaseAPI.removeWatchUser(this.state.user.uid)
   }
 
   updateProfilesIfZero() {
-    if(this.state.profiles.length == 0) {
-      if(!this.state.isTiming) {  //Keeps recursion in check to prevent accelerating recalls
-        this.getProfiles()
+    if(this.state.profiles.length == 0 && !this.state.isTiming) { //Keeps recursion in check to prevent accelerating recalls
+    console.log('calleding Get Profiles')
+      this.getProfiles()
 
-        InteractionManager.runAfterInteractions(() => {
+      InteractionManager.runAfterInteractions(() => {
+        if(this.state.profiles.length == 0) {
           this.setState({isTiming: true})
-        })
 
-        InteractionManager.runAfterInteractions(() => {
-          if(this.state.profiles.length == 0)
-            setTimeout(() => { //Search for new profiles every 15 secs
-              this.updateProfilesIfZero()
-              InteractionManager.runAfterInteractions(() => {
-                this.setState({isTiming: false})
-              })
-            }, 7000)
-        }) 
-      }
+          setTimeout(() => { //Search for new profiles every 15 secs
+            this.updateProfilesIfZero()
+            this.setState({isTiming: false})
+          }, 4000)
+        }
+      }) 
     }
   }
 
@@ -93,6 +86,7 @@ export default class BioScreen extends React.Component {
           FirebaseAPI.removeWatchUser(profile.uid)
 
           FirebaseAPI.watchUser(profile.uid, (updatedProfile) => {
+            console.log('WATCH PROFILES')
             const index = this.state.profiles.findIndex((user) => { return user.uid == updatedProfile.uid })
             const updatedProfiles = this.state.profiles
 
@@ -137,6 +131,7 @@ export default class BioScreen extends React.Component {
 
   watchUserForUpdates() {
     FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
+      console.log('calledealio yo')
       InteractionManager.runAfterInteractions(() => {
           this.setState({user: updatedUser})
       })
@@ -144,49 +139,56 @@ export default class BioScreen extends React.Component {
   }
 
   getProfiles() {
-    let profileSlots = 6
+    let profileSlots = 5
+    console.log('GET PROFILES')
 
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-      FirebaseAPI.getAllUsers((users) => {
-        FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-          const newProfiles = users.filter((user) => { //Filter the current user from the other individuals
-            return user.uid != this.state.user.uid 
-            }).filter((user) => { //Filter profiles already in current state
-              if(this.state.profiles.length != 0)
-                return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
-              else
-                return true
-            }).filter((user) => { //Filter profiles already in chat with user
-              return !(chattedProfiles.some((profile) => {
-                return profile.uid == user.uid
-                }))
-            }).filter((user) => { //Filter  profiles rejected by user
-              if(this.state.user.rejections != undefined)
-                return !Object.keys(this.state.user.rejections).some((uid) => {
-                  return uid == user.uid
-                })
-              else
-                return true
-            }).filter((user) => { //Filter profiles liked by user
-              if(this.state.user.likes != undefined)
-                return !Object.keys(this.state.user.likes).some((uid) => {
-                  return uid == user.uid
-                })
-              else
-                return true
-            }).filter((user) => { //Filter profiles liked by user
-                return user.discoverable
-            }).slice(0, profileSlots - this.state.profiles.length)
+      FirebaseAPI.getUsers((users) => {
+        const newProfiles = users.filter((user) => { //Filter the current user from the other individuals
+          return user.uid != this.state.user.uid 
+          }).filter((user) => { //Filter profiles already in current state
+            if(this.state.profiles.length != 0)
+              return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
+            else
+              return true
+          }).filter((user) => { //Filter profiles already in chat with user
+            return !(chattedProfiles.some((profile) => {
+              return profile.uid == user.uid
+              }))
+          }).filter((profile) => { //Filter the current profile from the other individuals
+            return profile.uid != this.state.user.uid 
+          }).filter((profile) => { //Filter  profiles rejected by profile
+            if(this.state.user.rejections != undefined)
+              return !Object.keys(this.state.user.rejections).some((uid) => {
+                return uid == profile.uid
+              })
+            else
+              return true
+          }).filter((profile) => { //Filter profiles liked by user
+            if(this.state.user.likes != undefined)
+              return !Object.keys(this.state.user.likes).some((uid) => {
+                return uid == profile.uid
+              })
+            else
+              return true
+          }).filter((profile) => { //Filter undiscoverable profiles
+              return profile.discoverable
+          }).slice(0, profileSlots - this.state.profiles.length)
 
-          const updatedProfiles = this.state.profiles.concat(newProfiles)
+          console.log('newProfiles Length', newProfiles.length)
 
-          if(updatedProfiles != this.state.profiles)
+        const updatedProfiles = this.state.profiles.concat(newProfiles)
+
+        if(updatedProfiles != this.state.profiles)
+          InteractionManager.runAfterInteractions(() => {            
+            this.setState({profiles: updatedProfiles, distances: []}) //only show the assigned number of profiles
+
             InteractionManager.runAfterInteractions(() => {
-              this.setState({profiles: updatedProfiles}) //only show the assigned number of profiles
+              this.getDistancesFromUser()
             })
+          })
 
-          this.watchProfiles()
-        })
+        this.watchProfiles()
       })
     })
   }
@@ -252,16 +254,16 @@ export default class BioScreen extends React.Component {
   }
 
   removeProfile(profile) {
-    const index = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
+    const profileIndex = this.state.profiles.findIndex((user) => { return user.uid == profile.uid })
     const updatedProfiles = this.state.profiles
 
     FirebaseAPI.removeWatchUser(profile.uid)
 
-    updatedProfiles.splice(index, 1)
+    updatedProfiles.splice(profileIndex, 1)
 
     InteractionManager.runAfterInteractions(() => {
-      this.setState({profiles: updatedProfiles})
-      this.getProfiles()                
+      if(this.state.profiles.map((profile) => {return profile.uid}).join(',') != updatedProfiles.map((profile) => {return profile.uid}).join(','))
+        this.setState({profiles: updatedProfiles})
     })
   }
 
@@ -275,11 +277,8 @@ export default class BioScreen extends React.Component {
           FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
               InteractionManager.runAfterInteractions(() => {
                 this.setState({user: user})
+                this.removeProfile(profile)
               })
-          })
-
-          InteractionManager.runAfterInteractions(() => {
-            this.removeProfile(profile)
           })
         }},
         {text: 'Cancel', onPress: () => {}, style: 'cancel'},
@@ -309,28 +308,30 @@ export default class BioScreen extends React.Component {
 
       InteractionManager.runAfterInteractions(() => {
         this.setState({likeTimerDone: false})
+
+        setTimeout(() => {
+          this.setState({likeTimerDone: true})
+        }, 100)
       })
 
       FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
         InteractionManager.runAfterInteractions(() => {
           this.setState({user: user})
+          this.removeProfile(profile)
         })
       })
 
       this.alertIfMatch(profile)
-
-      InteractionManager.runAfterInteractions(() => {
-        this.removeProfile(profile)
-      })
-
-      setTimeout(() => {
-        this.setState({likeTimerDone: true})
-      }, 500)
     }
   }
 
   render() {
     console.log('RENDNDFKNLKFJEFKJLKEJFLKFJEKJFLKEJFKLJFLKEJFKFJEK')
+    // console.log('Distances', this.state.distances, 
+    //             'Timing', this.state.timing, 
+    //             'locationEnabled', this.state.locationEnabled, 
+    //             'likeTimerDone',this.state.likeTimerDone)
+
     if(this.state.profiles.length > 0 && this.state.locationEnabled) {
       return (
         <View style={styles.container}>
