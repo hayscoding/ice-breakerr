@@ -1,6 +1,0 @@
-# node_modules ignored by default
-
-**/staticBundle.js
-**/main.js
-Libraries/vendor/**/*
-packager/src/worker-farm/**/*
