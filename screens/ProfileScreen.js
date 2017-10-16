@@ -26,6 +26,9 @@ export default class ProfileScreen extends React.Component {
       profile: this.props.navigation.state.params.profile,
       distance: ' ',
       photoUrls: null,
+      name: '',
+      gender: '', 
+      interests: null,
       hasChat: false,
       startedChat: false,
       picsShown: false,
@@ -38,6 +41,8 @@ export default class ProfileScreen extends React.Component {
           uidArray.sort()
           const chatID = uidArray[0]+'-'+uidArray[1]
 
+          const gender = "gender" in profile ? profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1) : 'NaN gender'
+
           if(this.state.profile.uid != this.state.user.uid)
             FirebaseAPI.getChatCb(chatID, (chat) => {
               if(chat != null) {
@@ -47,19 +52,31 @@ export default class ProfileScreen extends React.Component {
 
                 if(msgCount >= 5 && this._mounted) 
                   InteractionManager.runAfterInteractions(() => {
-                    this.setState({profile: profile, photoUrls: profile.photoUrls, picsShown: true})
+                    this.setState({profile: profile, photoUrls: profile.photoUrls, name: profile.name, gender: gender, interests: profile.interests, picsShown: true})
                   })            
+                else if(msgCount >= 4 && this._mounted) 
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({profile: profile, name: profile.name, gender: gender, interests: profile.interests, picsShown: true})
+                  })
+                else if(msgCount >= 3 && this._mounted) 
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({profile: profile, name: profile.name, interests: profile.interests, picsShown: true})
+                  }) 
+                else if(msgCount >= 1 && this._mounted) 
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({profile: profile, interests: profile.interests, picsShown: true})
+                  }) 
                 else if(this._mounted)
                   InteractionManager.runAfterInteractions(() => {
                     this.setState({profile: profile, photoUrls: null})
                   })            
               } 
 
-              this.updatePaidPictures(this.state.user)
+              //this.updatePaidPictures(this.state.user)
             })
           else if(this._mounted)
             InteractionManager.runAfterInteractions(() => {
-              this.setState({profile: profile, photoUrls: profile.photoUrls, picsShown: true})
+              this.setState({profile: profile, photoUrls: profile.photoUrls, name: profile.name, gender: gender, interests: profile.interests, picsShown: true})
             })            
           }
         })
@@ -295,31 +312,34 @@ export default class ProfileScreen extends React.Component {
               }
             </ScrollView>
             <View style={styles.headerContainer}>
-              <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+              <Text style={styles.name}>{this.state.name.split(' ')[0]}{profile.emojis}</Text>
               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
-              <Text style={styles.gender}>{"gender" in profile ? profile.gender[0].toUpperCase() + profile.gender.slice(1, profile.gender.length+1) : 'NaN gender'}</Text>
+              {(() => {
+                return this.state.gender != '' ? <Text style={styles.gender}>{this.state.gender}</Text> : null
+              })()}
               <Text style={styles.gender}>{milesAway}</Text>
             </View>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>About {profile.name.split(' ')[0]}</Text>
+              <Text style={styles.title}>Bio</Text>
             </View>
             <View style={styles.bioContainer}>
               <Text style={styles.bio}>{profile.bio}</Text>
             </View>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Favorite Emojis</Text>
-            </View>
-            <View style={styles.bioContainer}>
-              <Text style={styles.bio}>{profile.emojis}</Text>
-            </View>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Top Interests</Text>
-            </View>
-            <View style={styles.bioContainer}>
-              <Text style={styles.bio}>{profile.interests}</Text>
-            </View>
+            {
+              (() => {
+                return this.state.interests != null ? 
+                  <View>
+                    <View style={styles.titleContainer}>
+                      <Text style={styles.title}>{profile.name.split(' ')[0]}{"\'"}s Top Interests</Text>
+                    </View>
+                    <View style={styles.bioContainer}>
+                      <Text style={styles.bio}>{this.state.interests}</Text>
+                    </View>
+                  </View> : null              
+              })() 
+            }
           </View>
-          { this.buyPicturesTouchable(profile) }
+          { /*this.buyPicturesTouchable(profile)*/ }
           { this.reportTouchable(profile) }
           { this.unmatchTouchable(profile) }
           </ScrollView>

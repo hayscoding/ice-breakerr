@@ -215,11 +215,12 @@ export default class EditProfileScreen extends React.Component {
               onFocus={this.textInputFocused.bind(this, 'bio')}
               value={this.state.user.bio} />
           </View>
-          <Text style={styles.title}>Enter Your Favorite Emojis</Text>
-          <View style={styles.bioContainer}>
+          <Text style={styles.title}>Enter A Profile Headline (Hint: Use Emojis)</Text>
+          <View style={styles.emojiContainer}>
             <TextInput ref='emojis'
+              maxLength={24}
               underlineColorAndroid='transparent'
-              style={styles.bio} 
+              style={styles.emojis} 
               multiline={true}
               blurOnSubmit={false}
               onChangeText={(text) => this.setEmojis(text)}
@@ -285,6 +286,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'flex-start',
   },
+  emojiContainer: {
+    height: 50,
+    width: width,
+    alignSelf: 'center',
+    justifyContent: 'flex-start',
+  },
   bio: {
     height: height/5,
     width: width,
@@ -294,6 +301,20 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     fontSize:18,
+    color: '#565656',
+    textAlign: 'left',
+    backgroundColor: 'white',
+  },
+  emojis: {
+    height: 50,
+    width: width,
+    alignSelf: 'flex-start',
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    fontSize:18,
+    lineHeight: 20,
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',

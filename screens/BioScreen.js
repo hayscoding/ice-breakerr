@@ -364,7 +364,7 @@ export default class BioScreen extends React.Component {
                                   style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2, overlayColor: 'white',}]}/> 
                               </View>
                               <View style={{flex: 3, justifyContent: 'flex-start'}}>
-                                <Text style={styles.name}>{profile.name.split(' ')[0]}</Text>
+                                <Text style={styles.name}>{profile.emojis != '' ? profile.emojis : ' '}</Text>
                                 <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                                 <Text style={styles.gender}>{milesAway}</Text>
                               </View>
@@ -467,7 +467,7 @@ export default class BioScreen extends React.Component {
   }
 }
 
-const matchHeight = height/3*1.05
+const matchHeight = height/3.5*1.05
 const matchWidth =  width/20*19
 
 const styles = StyleSheet.create({
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   bio: {
-    flex: 1,
+    height: 90,
     alignSelf: 'flex-start',
     paddingTop: 10,
     paddingBottom: 30,
@@ -524,9 +524,7 @@ const styles = StyleSheet.create({
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',
-    //The following limits the shown portion of bio
-    //to a max of 4 lines
-    lineHeight: Math.round((matchHeight/10*6)/5),
+    lineHeight: 22,
   },
   bioContainer: {
     flex: 1,
@@ -552,7 +550,7 @@ const styles = StyleSheet.create({
   },
   leftButton: {
     width: matchWidth/2.1,
-    height: matchHeight/4.2,
+    height: height/3/4.2,
     alignSelf: 'flex-start',
     justifyContent: 'center',
     borderRadius: 30,
@@ -561,7 +559,7 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     width: matchWidth/2.1,
-    height: matchHeight/4.2,
+    height: height/3/4.2,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     borderRadius: 30,
@@ -581,7 +579,7 @@ const styles = StyleSheet.create({
   decisionButton: {
     textAlign: 'center',
     alignSelf: 'center',
-    fontSize: matchHeight/8,
+    fontSize: height/3/8,
     color: 'white',
   },
   leftColumn: {
