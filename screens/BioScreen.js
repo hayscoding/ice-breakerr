@@ -514,10 +514,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   bio: {
-    height: 90,
+    height: 78,
     alignSelf: 'flex-start',
     paddingTop: 10,
-    paddingBottom: 30,
     paddingLeft: 20,
     paddingRight: 20,
     fontSize:18,

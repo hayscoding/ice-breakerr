@@ -62,7 +62,7 @@ export default class ProfileScreen extends React.Component {
                   InteractionManager.runAfterInteractions(() => {
                     this.setState({profile: profile, name: profile.name, interests: profile.interests, picsShown: true})
                   }) 
-                else if(msgCount >= 1 && this._mounted) 
+                else if(msgCount >= 2 && this._mounted) 
                   InteractionManager.runAfterInteractions(() => {
                     this.setState({profile: profile, interests: profile.interests, picsShown: true})
                   }) 
@@ -312,7 +312,7 @@ export default class ProfileScreen extends React.Component {
               }
             </ScrollView>
             <View style={styles.headerContainer}>
-              <Text style={styles.name}>{this.state.name.split(' ')[0]}{profile.emojis}</Text>
+              <Text style={styles.name}>{this.state.name != '' ? this.state.name.split(' ')[0]+' ': ''}{profile.emojis != '' ? profile.emojis : ' '}</Text>
               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
               {(() => {
                 return this.state.gender != '' ? <Text style={styles.gender}>{this.state.gender}</Text> : null

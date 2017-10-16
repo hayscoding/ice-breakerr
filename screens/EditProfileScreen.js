@@ -204,6 +204,18 @@ export default class EditProfileScreen extends React.Component {
                 </TouchableOpacity>
               </View>
             </View>
+          <Text style={styles.title}>Enter A Profile Headline (Hint: Use Emojis)</Text>
+          <View style={styles.emojiContainer}>
+            <TextInput ref='emojis'
+              maxLength={16}
+              underlineColorAndroid='transparent'
+              style={styles.emojis} 
+              multiline={true}
+              blurOnSubmit={false}
+              onChangeText={(text) => this.setEmojis(text)}
+              onFocus={this.textInputFocused.bind(this, 'emojis')}
+              value={this.state.user.emojis} />
+          </View>
           <Text style={styles.title}>Express Who You Are</Text>
           <View style={styles.bioContainer}>
             <TextInput ref='bio'
@@ -214,18 +226,6 @@ export default class EditProfileScreen extends React.Component {
               onChangeText={(text) => this.setBio(text)}
               onFocus={this.textInputFocused.bind(this, 'bio')}
               value={this.state.user.bio} />
-          </View>
-          <Text style={styles.title}>Enter A Profile Headline (Hint: Use Emojis)</Text>
-          <View style={styles.emojiContainer}>
-            <TextInput ref='emojis'
-              maxLength={24}
-              underlineColorAndroid='transparent'
-              style={styles.emojis} 
-              multiline={true}
-              blurOnSubmit={false}
-              onChangeText={(text) => this.setEmojis(text)}
-              onFocus={this.textInputFocused.bind(this, 'emojis')}
-              value={this.state.user.emojis} />
           </View>
           <Text style={styles.title}>List Your Top Interests</Text>
           <View style={styles.bioContainer}>
@@ -304,6 +304,9 @@ const styles = StyleSheet.create({
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderColor: 'lightgrey',
   },
   emojis: {
     height: 50,
@@ -318,6 +321,9 @@ const styles = StyleSheet.create({
     color: '#565656',
     textAlign: 'left',
     backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderColor: 'lightgrey',
   },
   text: {
     color: '#565656',
