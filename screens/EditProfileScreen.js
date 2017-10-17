@@ -268,6 +268,8 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingBottom: 10,
     backgroundColor:'white',
+    borderBottomWidth: 1,
+    borderColor: 'lightgrey',
   },
   leftColumn: {
     alignSelf: 'flex-start',
