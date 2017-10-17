@@ -194,7 +194,7 @@ export default class EditProfileScreen extends React.Component {
           <View style={styles.content} >
             <View style={styles.headerContainer}>
               <View style={styles.leftColumn}>
-                <Text style={styles.name}>{user.name.split(' ')[0]}</Text>
+                <Text style={styles.name}>{user.name.split(' ')[0]} {user.emojis}</Text>
                 <Text style={styles.age}>{this.getAge(user.birthday)} years old</Text>
                 <Text style={styles.gender}>{user.gender[0].toUpperCase() + user.gender.slice(1, user.gender.length+1)}</Text>
               </View>
@@ -207,7 +207,7 @@ export default class EditProfileScreen extends React.Component {
           <Text style={styles.title}>Enter A Profile Headline (Hint: Use Emojis)</Text>
           <View style={styles.emojiContainer}>
             <TextInput ref='emojis'
-              maxLength={16}
+              maxLength={12}
               underlineColorAndroid='transparent'
               style={styles.emojis} 
               multiline={true}

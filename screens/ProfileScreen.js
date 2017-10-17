@@ -143,7 +143,7 @@ export default class ProfileScreen extends React.Component {
         });
 
     Alert.alert(
-      ('Delete '+profile.name.split(' ')[0]+'?'),
+      ('Remove this profile from ever being shown?'),
       'You will not be able to view their profile or messages again.',
       [
         {text: 'OK', onPress: () => {
@@ -174,7 +174,7 @@ export default class ProfileScreen extends React.Component {
         });
 
     Alert.alert(
-      ('Report '+profile.name.split(' ')[0]+'?'),
+      ('Report this profile?'),
       'The Ice Breakerr team will review their profile and you will not be able to view their profile or messages again.',
       [
         {text: 'OK', onPress: () => {
@@ -266,9 +266,9 @@ export default class ProfileScreen extends React.Component {
       user: this.state.user, 
       newChat: true,
       cb: (hasChat) => {
-          Alert.alert(
-            ('Thanks for starting a chat with '+this.state.profile.name.split(' ')[0]+'.'),
-            'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
+          // Alert.alert(
+          //   ('Thanks for starting a chat.'),
+          //   'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
 
         this.setState({hasChat: hasChat})
       }})

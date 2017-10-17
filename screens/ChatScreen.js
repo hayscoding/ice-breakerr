@@ -32,12 +32,12 @@ export default class ChatScreen extends Component {
     //Sort uid concatenation in order of greatness so every user links to the same chat
     if('newChat' in navigation.state.params && navigation.state.params.newChat == true)
       return({
-        title: `${navigation.state.params.profile.name.split(' ')[0]}`,
+        title: `Chat`,
         headerRight: null,
       })
     else
       return({
-        title: `${navigation.state.params.profile.name.split(' ')[0]}`,
+        title: `Chat`,
         headerRight: (<Button title='Info'
             onPress={() => {
               if(!this._navigating) {
@@ -165,7 +165,7 @@ export default class ChatScreen extends Component {
 
     const pushToken = 'pushToken' in this.state.profile ? this.state.profile.pushToken : 'No push token'
 
-    ServerAPI.postMessageNotificationToUid(this.state.user.name.split(' ')[0], pushToken, message[0].text)
+    ServerAPI.postMessageNotificationToUid(this.state.user.emojis, pushToken, message[0].text)
   }
 
   render() {
