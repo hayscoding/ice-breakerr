@@ -207,7 +207,7 @@ export default class EditProfileScreen extends React.Component {
           <Text style={styles.title}>Enter A Profile Headline (Hint: Use Emojis)</Text>
           <View style={styles.emojiContainer}>
             <TextInput ref='emojis'
-              maxLength={12}
+              maxLength={16}
               underlineColorAndroid='transparent'
               style={styles.emojis} 
               multiline={true}

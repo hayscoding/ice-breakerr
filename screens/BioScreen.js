@@ -364,7 +364,7 @@ export default class BioScreen extends React.Component {
                                   style={[{alignSelf: 'flex-start', width: size, height: size, borderRadius: size/2, overlayColor: 'white',}]}/> 
                               </View>
                               <View style={{flex: 3, justifyContent: 'flex-start'}}>
-                                <Text style={styles.name}>{profile.emojis != '' ? profile.emojis : ' '}</Text>
+                                <Text style={styles.name}>{profile.emojis != '' ? profile.emojis.slice(0,16) : ' '}</Text>
                                 <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                                 <Text style={styles.gender}>{milesAway}</Text>
                               </View>

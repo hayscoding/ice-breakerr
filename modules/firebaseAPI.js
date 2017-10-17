@@ -30,7 +30,14 @@ export const getImgurGifs = (searchTerm, func) => {
         }  
     }  
 
-    fetch('https://api.imgur.com/3/gallery/search/top/?q='+searchTerm+'&q_type=anigif&q_size_px=small', request).then((response) => {
+    if(searchTerm == null) {
+      searchOptions = ['art', 'super', 'cowboy', 'funny', 'spooky', 'cute', 'psychedelic', 'freak', 'rawr', 'games']
+
+      searchTerm = searchOptions[Math.floor(Math.random() * 10)] //Random index from 0 to 9
+    }
+
+
+    fetch('https://api.imgur.com/3/gallery/search/viral/?q='+searchTerm+'&q_type=anigif&q_size_px=small', request).then((response) => {
       response.json().then((res) => {
         gifUrls = res.data.filter((item) => {
           return item.size <= 1500000
@@ -38,7 +45,7 @@ export const getImgurGifs = (searchTerm, func) => {
             return item.link;
         })
 
-        gifUrls.length = 18
+        gifUrls.length = 12
 
         func(gifUrls)
       })
