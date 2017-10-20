@@ -1,6 +1,6 @@
 import React from 'react';
 import Swiper from 'react-native-swiper'
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, Alert } from 'react-native';
+import { AppState, ScrollView, StyleSheet, TouchableOpacity, View, Text, Image, Dimensions, InteractionManager, Alert } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -20,6 +20,7 @@ export default class IndexScreen extends React.Component {
 
   componentWillMount() {
       this.state = {
+        appState: AppState.currentState,
         user: this.props.screenProps.user, 
         scrollEnabled: true,
       }
@@ -47,22 +48,41 @@ export default class IndexScreen extends React.Component {
       }
   }
 
+  // componentDidMount() {
+  //   // setTimeout(() => {
+  //   //     Alert.alert(
+  //   //     ('Be sure to create an interesting profile before you message!'),
+  //   //     'Edit your profile now?',
+  //   //     [
+  //   //       {text: 'OK', onPress: () => {
+  //   //         InteractionManager.runAfterInteractions(() => {
+  //   //            this.props.navigation.navigate('Edit', 
+  //   //             {user: this.state.user, cb: (user) => { this.setState({user}) }})
+  //   //         })
+  //   //       }},
+  //   //       {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+  //   //     ],
+  //   //     { cancelable: false }
+  //   //   )}, 4000)
+  // }
+
   componentDidMount() {
-    // setTimeout(() => {
-    //     Alert.alert(
-    //     ('Be sure to create an interesting profile before you message!'),
-    //     'Edit your profile now?',
-    //     [
-    //       {text: 'OK', onPress: () => {
-    //         InteractionManager.runAfterInteractions(() => {
-    //            this.props.navigation.navigate('Edit', 
-    //             {user: this.state.user, cb: (user) => { this.setState({user}) }})
-    //         })
-    //       }},
-    //       {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-    //     ],
-    //     { cancelable: false }
-    //   )}, 4000)
+    AppState.addEventListener('change', this._handleAppStateChange);
+    FirebaseAPI.updateUser(this.state.user.uid, 'appState', 'active')
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!')
+    }
+
+    this.setState({appState: nextAppState});
+
+    FirebaseAPI.updateUser(this.state.user.uid, 'appState', this.state.appState)
   }
 
   viewStyle() {
@@ -85,7 +105,7 @@ export default class IndexScreen extends React.Component {
       && 'params' in this.props.navigation.state 
       && 'index' in this.props.navigation.state.params)
       index = this.props.navigation.state.params.index;
-
+    
     return(
       <View style={{flex: 1}}>
         <Swiper
