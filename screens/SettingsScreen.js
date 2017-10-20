@@ -140,7 +140,7 @@ export default class SettingsScreen extends React.Component {
               source={{uri: this.state.user.gifUrl != "" ? this.state.user.gifUrl : 'photoUrls' in this.state.user ? this.state.user.photoUrls[0] : ' '}}
               style={{width: size, height: size, borderRadius: size/2, overlayColor: 'white',}}/> 
           </TouchableOpacity>
-          <Text style={styles.name}>{this.state.user.name.split(' ')[0]}</Text>
+          <Text style={styles.name}>{this.state.user.name.split(' ')[0]} {this.state.user.emojis.slice(0,12)}</Text>
         </View> 
         <View style={styles.columnContainer}>
           <View style={styles.leftColumn}>

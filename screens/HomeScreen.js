@@ -38,6 +38,7 @@ export default class HomeScreen extends React.Component {
       initialMatches: [],
       loaded: false,
       messagePreviews: [],
+      names: []
     }
   }
 
@@ -274,6 +275,51 @@ export default class HomeScreen extends React.Component {
               } 
             }
 
+            if(this.state.names != [] && this.state.names.some((nameObj) => {
+              return nameObj.uid == profile.uid
+            })) {
+              const profileNameObj = this.state.names.find((nameObj) => {
+                return nameObj.uid == profile.uid
+              })
+              const index = this.state.names.indexOf(profileNameObj)
+              const updatedNames = this.state.names
+
+              if(msgCount >= 3) {
+                const newName = profile.name
+
+                updatedNames[index].name = newName
+
+                if(updatedNames[index] != profileNameObj)
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({names: updatedNames})
+                  })
+              } else {
+                const newName = ' '
+
+                updatedNames[index].name = newName
+
+                if(updatedNames[index] != profileNameObj)
+                  InteractionManager.runAfterInteractions(() => {
+                    this.setState({names: updatedNames})
+                  })
+              } 
+            } else {
+              if(msgCount >= 3) {
+                const newName = profile.name
+
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
+                })
+              } else {
+                const newName =  ' '
+
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
+                })
+              } 
+            }
+
+
           let updatedMessages = this.state.messagePreviews
           let updatedProfiles = this.state.profiles
           // console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
@@ -351,6 +397,7 @@ export default class HomeScreen extends React.Component {
     // console.log('false', this.state.loaded)
     // console.log(this.state.messagePreviews)
     console.log("renderProfiles", this.state.profiles.length, this.state.messagePreviews.length)
+    console.log('names', this.state.names.length, this.state.names)
     const profiles = this.state.profiles
 
     if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
@@ -408,12 +455,13 @@ export default class HomeScreen extends React.Component {
             {
               profiles.map((profile) => {
                 const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
+                const name = this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }) != undefined ? this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }).name : ' '
                 const message = this.state.messagePreviews.find((msg) => { 
                   return msg.otherUser == profile.uid 
                 })
                 if(message != undefined) {
                   const hasRead = message.user._id != this.state.user.uid ? message.read : true
-                  const name = !hasRead ? (profile.name.split(' ')[0]+' *') : profile.name.split(' ')[0]
+                  const emojis = !hasRead ? (profile.emojis+' *') : profile.emojis
 
                   return (
                     <TouchableOpacity onPress={() => {this.openChat(profile, message)}}
@@ -424,7 +472,7 @@ export default class HomeScreen extends React.Component {
                             source={{uri: fbPhotoUrl}}
                             style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
                           <View>   
-                            <Text style={styles.name} key={profile.uid+'-name'}>{name}</Text>
+                            <Text style={styles.name} key={profile.uid+'-name'}>{name.split(' ')[0]+' '+emojis}</Text>
                             <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{message.text}</Text>
                           </View>
                         </View>
