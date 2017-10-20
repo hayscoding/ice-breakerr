@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   age: {
     color: '#2B2B2B',
     textAlign: 'left',
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 2,
     marginBottom: 1,
     color: 'gray',

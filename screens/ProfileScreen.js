@@ -286,6 +286,8 @@ export default class ProfileScreen extends React.Component {
     else
       milesAway = 'Finding location...'
     
+    const onlineIndicator = profile.appState == 'active' ? 'online now' : 'offline'
+
     return(
       <View style={styles.container}>  
         <ScrollView style={{flex: 1}}>
@@ -313,6 +315,7 @@ export default class ProfileScreen extends React.Component {
             </ScrollView>
             <View style={styles.headerContainer}>
               <Text style={styles.name}>{this.state.name != '' ? this.state.name.split(' ')[0]+' ': ''}{profile.emojis != '' ? profile.emojis : ' '}</Text>
+              <Text style={styles.onlineIndicator}>{onlineIndicator}</Text>
               <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
               {(() => {
                 return this.state.gender != '' ? <Text style={styles.gender}>{this.state.gender}</Text> : null
@@ -427,6 +430,13 @@ const styles = StyleSheet.create({
     fontSize:15,
     color: 'gray',
     textAlign: 'left'
+  },
+  onlineIndicator: {
+    textAlign: 'left',
+    fontSize: 14,
+    marginTop: 2,
+    marginBottom: 2,
+    color: 'green',
   },
   gender: {
     fontSize:16,

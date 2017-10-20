@@ -73,6 +73,11 @@ export default class IndexScreen extends React.Component {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+
+    const now = new Date();
+
+    FirebaseAPI.updateUser(this.state.user.uid, 'appState', 'inactive')
+    FirebaseAPI.updateUser(this.state.user.uid, 'lastActive', now)
   }
 
   _handleAppStateChange = (nextAppState) => {
@@ -81,7 +86,7 @@ export default class IndexScreen extends React.Component {
     }
 
     const now = new Date();
-    
+
     this.setState({appState: nextAppState});
 
     FirebaseAPI.updateUser(this.state.user.uid, 'appState', this.state.appState)
