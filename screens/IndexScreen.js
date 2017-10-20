@@ -80,9 +80,12 @@ export default class IndexScreen extends React.Component {
       console.log('App has come to the foreground!')
     }
 
+    const now = new Date();
+    
     this.setState({appState: nextAppState});
 
     FirebaseAPI.updateUser(this.state.user.uid, 'appState', this.state.appState)
+    FirebaseAPI.updateUser(this.state.user.uid, 'lastActive', now)
   }
 
   viewStyle() {
