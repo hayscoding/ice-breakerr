@@ -269,7 +269,7 @@ export default class BioScreen extends React.Component {
 
   rejectProfile(profile) {
     Alert.alert(
-      ('Pass on '+profile.name.split(' ')[0]+'?'),
+      ('Pass on this profile?'),
       'You will not be able to view their profile or messages again.',
       [
         {text: 'OK', onPress: () => {
@@ -298,7 +298,7 @@ export default class BioScreen extends React.Component {
       FirebaseAPI.setMatchWithProfiles(this.state.user.uid, profile.uid)
       ServerAPI.postMatchNotificationToUid(this.state.user.name.split(' ')[0], pushToken)
 
-      Alert.alert(profile.name.split(' ')[0]+" likes you too!", "A chat has been started for both of you.")
+      Alert.alert("They like you too!", "A chat has been started for both of you.")
     }
   }
 
@@ -349,6 +349,7 @@ export default class BioScreen extends React.Component {
                 else
                   milesAway = 'Finding location...'
               
+                const onlineIndicator = profile.appState == 'active' ? 'online now' : 'offline'
 
                 return (
                     <View style={styles.match} key={profile.uid+"-container"}>
@@ -365,6 +366,7 @@ export default class BioScreen extends React.Component {
                               </View>
                               <View style={{flex: 3, justifyContent: 'flex-start'}}>
                                 <Text style={styles.name}>{profile.emojis != '' ? profile.emojis.slice(0,12) : ' '}</Text>
+                                <Text style={styles.onlineIndicator}>{onlineIndicator}</Text>
                                 <Text style={styles.age}>{this.getAge(profile.birthday)} years old</Text>
                                 <Text style={styles.gender}>{milesAway}</Text>
                               </View>
@@ -575,6 +577,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
   },
+  onlineIndicator: {
+    textAlign: 'left',
+    fontSize: 10,
+    marginTop: 2,
+    marginBottom: 2,
+    color: 'green',
+  },
   decisionButton: {
     textAlign: 'center',
     alignSelf: 'center',
@@ -606,7 +615,7 @@ const styles = StyleSheet.create({
   age: {
     color: '#2B2B2B',
     textAlign: 'left',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 2,
     marginBottom: 1,
     color: 'gray',
@@ -615,10 +624,8 @@ const styles = StyleSheet.create({
   gender: {
     color: '#2B2B2B',
     textAlign: 'left',
-    fontSize: 17,
+    fontSize: 11,
     marginTop: 2,
-    marginBottom: 2,
     color: 'gray',
-    borderRadius: 10,
   },
 });
