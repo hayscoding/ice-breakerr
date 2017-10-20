@@ -167,7 +167,12 @@ export default class BioScreen extends React.Component {
       console.log('nearby profiles', this.state.nearbyProfiles)
       FirebaseAPI.getSomeUsersCb(this.state.nearbyProfiles, (newProfiles) => {
             if(newProfiles != null) {
-              newProfiles.length = 10
+              newProfiles.sort((a, b) => {
+                const aMsg = 'lastActive' in a ? a.lastActive : '0'
+                const bMsg = 'lastActive' in b ? b.lastActive : '0'
+
+                return new Date(aMsg.createdAt) - new Date(bMsg.createdAt)
+              }).reverse().length = 10
 
               const currentProfiles = newProfiles.filter((user) => { //Filter profiles already in current state
                 if(this.state.profiles.length != 0)

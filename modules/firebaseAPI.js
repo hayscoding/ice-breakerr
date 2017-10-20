@@ -71,6 +71,18 @@ export const updateUser = (uid, key, value) => {
     .update({[key]:value})
 }
 
+export const updateAllUsers = (key, value) => {
+  firebase.database().ref().child('users').once('value')
+    .then((snap) => {
+      if(snap.val() != null) {
+        if(snap.val() != null)
+          Object.keys(snap.val()).forEach((uid) => {
+            updateUser(uid, key, value)
+          })
+      }
+    })
+}
+
 export async function getLocationAsync(key) {
   const { Location, Permissions } = Expo;
   const { status } = await Permissions.askAsync(Permissions.LOCATION);
