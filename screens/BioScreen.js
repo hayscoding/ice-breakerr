@@ -4,6 +4,9 @@ import { ExpoLinksView } from '@expo/samples';
 
 import TimerMixin from 'react-timer-mixin';
 
+import * as firebase from 'firebase'
+import GeoFire from 'geofire'
+
 import * as FirebaseAPI from '../modules/firebaseAPI'
 import * as ServerAPI from '../modules/serverAPI'
 
@@ -24,7 +27,8 @@ export default class BioScreen extends React.Component {
         distances: [],
         timing: false,
         locationEnabled: false,
-        likeTimerDone: true      
+        likeTimerDone: true,
+        nearbyProfiles: [],
       }
 
       this._mounted = false
@@ -46,7 +50,8 @@ export default class BioScreen extends React.Component {
   componentDidMount() {
     this._mounted = true
     this._navigating = false
-    
+
+    this.getNearbyUsers()
     this.updateProfilesIfZero()
     this.watchUserForUpdates()
   }
@@ -60,6 +65,22 @@ export default class BioScreen extends React.Component {
     this._mounted = false
     this.stopWatchingUsers()
     FirebaseAPI.removeWatchUser(this.state.user.uid)
+  }
+
+  getNearbyUsers() {
+    const firebaseRef = firebase.database().ref()
+    const geoFire = new GeoFire(firebaseRef.child('geoData/'))
+
+    geoFire.get(this.state.user.uid).then(location => {    
+      const geoQuery = geoFire.query({
+        center: location,
+        radius: 80 //80 km is about 50 miles
+      })
+
+      geoQuery.on("key_entered", (key) => {
+        this.setState({nearbyProfiles: [...this.state.nearbyProfiles, key]})
+      })
+    }) 
   }
 
   updateProfilesIfZero() {
@@ -143,53 +164,88 @@ export default class BioScreen extends React.Component {
     console.log('GET PROFILES')
 
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-      FirebaseAPI.getUsers((users) => {
-        const newProfiles = users.filter((user) => { //Filter the current user from the other individuals
-          return user.uid != this.state.user.uid 
-          }).filter((user) => { //Filter profiles already in current state
-            if(this.state.profiles.length != 0)
-              return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
-            else
-              return true
-          }).filter((user) => { //Filter profiles already in chat with user
-            return !(chattedProfiles.some((profile) => {
-              return profile.uid == user.uid
-              }))
-          }).filter((profile) => { //Filter the current profile from the other individuals
-            return profile.uid != this.state.user.uid 
-          }).filter((profile) => { //Filter  profiles rejected by profile
-            if(this.state.user.rejections != undefined)
-              return !Object.keys(this.state.user.rejections).some((uid) => {
-                return uid == profile.uid
-              })
-            else
-              return true
-          }).filter((profile) => { //Filter profiles liked by user
-            if(this.state.user.likes != undefined)
-              return !Object.keys(this.state.user.likes).some((uid) => {
-                return uid == profile.uid
-              })
-            else
-              return true
-          }).filter((profile) => { //Filter undiscoverable profiles
-              return profile.discoverable
-          }).slice(0, profileSlots - this.state.profiles.length)
+      console.log('nearby profiles', this.state.nearbyProfiles)
+      FirebaseAPI.getSomeUsersCb(this.state.nearbyProfiles, (newProfiles) => {
+            if(newProfiles != null) {
+              newProfiles.length = 10
 
-          console.log('newProfiles Length', newProfiles.length)
+              const currentProfiles = newProfiles.filter((user) => { //Filter profiles already in current state
+                if(this.state.profiles.length != 0)
+                  return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
+                else
+                  return true
+              }).filter((user) => { //Filter profiles already in chat with user
+                return !(chattedProfiles.some((profile) => {
+                  return profile.uid == user.uid
+                  }))
+              }).filter((profile) => { //Filter the current profile from the other individuals
+                return profile.uid != this.state.user.uid 
+              }).filter((profile) => { //Filter  profiles rejected by profile
+                if(this.state.user.rejections != undefined)
+                  return !Object.keys(this.state.user.rejections).some((uid) => {
+                    return uid == profile.uid
+                  })
+                else
+                  return true
+              }).filter((profile) => { //Filter profiles liked by user
+                if(this.state.user.likes != undefined)
+                  return !Object.keys(this.state.user.likes).some((uid) => {
+                    return uid == profile.uid
+                  })
+                else
+                  return true
+              }).filter((profile) => { //Filter undiscoverable profiles
+                  return profile.discoverable
+              }).slice(0, profileSlots - this.state.profiles.length)
 
-        const updatedProfiles = this.state.profiles.concat(newProfiles)
 
-        if(updatedProfiles != this.state.profiles)
-          InteractionManager.runAfterInteractions(() => {            
-            this.setState({profiles: updatedProfiles, distances: []}) //only show the assigned number of profiles
+              console.log('newProfiles Length', currentProfiles.length)
 
-            InteractionManager.runAfterInteractions(() => {
-              this.getDistancesFromUser()
-            })
-          })
+              const updatedProfiles = this.state.profiles.concat(currentProfiles)
 
-        this.watchProfiles()
-      })
+              if(updatedProfiles != this.state.profiles)
+                InteractionManager.runAfterInteractions(() => {            
+                  this.setState({profiles: updatedProfiles, distances: []}) //only show the assigned number of profiles
+
+                  InteractionManager.runAfterInteractions(() => {
+                    this.getDistancesFromUser()
+                  })
+                })
+
+              this.watchProfiles()
+            }
+    })
+      // FirebaseAPI.getUsers((users) => {
+      //   const newProfiles = users.filter((user) => { //Filter the current user from the other individuals
+      //     return user.uid != this.state.user.uid 
+      //     }).filter((user) => { //Filter profiles already in current state
+      //       if(this.state.profiles.length != 0)
+      //         return !this.state.profiles.some((profile) => { return profile.uid == user.uid })
+      //       else
+      //         return true
+      //     }).filter((user) => { //Filter profiles already in chat with user
+      //       return !(chattedProfiles.some((profile) => {
+      //         return profile.uid == user.uid
+      //         }))
+      //     }).filter((profile) => { //Filter the current profile from the other individuals
+      //       return profile.uid != this.state.user.uid 
+      //     }).filter((profile) => { //Filter  profiles rejected by profile
+      //       if(this.state.user.rejections != undefined)
+      //         return !Object.keys(this.state.user.rejections).some((uid) => {
+      //           return uid == profile.uid
+      //         })
+      //       else
+      //         return true
+      //     }).filter((profile) => { //Filter profiles liked by user
+      //       if(this.state.user.likes != undefined)
+      //         return !Object.keys(this.state.user.likes).some((uid) => {
+      //           return uid == profile.uid
+      //         })
+      //       else
+      //         return true
+      //     }).filter((profile) => { //Filter undiscoverable profiles
+      //         return profile.discoverable
+      //     }).slice(0, profileSlots - this.state.profiles.length)
     })
   }
 
