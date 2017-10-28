@@ -448,6 +448,36 @@ export const watchChatsWithProfilesInKey = (key, func) => {
     })
 }
 
+export const getChatsWithUser = (key, func) => {
+  return firebase.database().ref().child('messages').once('value').then((snap) => {
+    if(snap.val() != null) {
+        const profileUids = []
+
+        Object.keys(snap.val()).forEach((chatID) => {
+          if(chatID.split('-').some((uid) => {return uid == key}))
+            profileUids.push(chatID.split('-').filter((uid) => {return uid != key}))
+        })
+
+        getUsersCb(profileUids, (profiles) => {func(profiles)})
+      }
+    })
+}
+
+export const watchChatsWithUser = (key, func) => {
+  return firebase.database().ref().child('messages').on('value', (snap) => {
+    if(snap.val() != null) {
+        const profileUids = []
+
+        Object.keys(snap.val()).forEach((chatID) => {
+          if(chatID.split('-').some((uid) => {return uid == key}))
+            profileUids.push(chatID.split('-').filter((uid) => {return uid != key}))
+        })
+
+        getUsersCb(profileUids, (profiles) => {func(profiles)})
+      }
+    })
+}
+
 export const turnOffChatListener = () => {
   return firebase.database().ref().child('messages').off()
 }
@@ -472,7 +502,7 @@ export const getUsers = (func) => {
 }
 export const watchUser = (key, func) => {
   firebase.database().ref().child('users/'+key).on('value', (snap) => {
-    console.log('called watch user for:', key)
+    // console.log('called watch user for:', key)
     func(snap.val())
   })
 }

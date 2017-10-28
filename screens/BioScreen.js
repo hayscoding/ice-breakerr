@@ -85,7 +85,6 @@ export default class BioScreen extends React.Component {
 
   updateProfilesIfZero() {
     if(this.state.profiles.length == 0 && !this.state.isTiming) { //Keeps recursion in check to prevent accelerating recalls
-    console.log('calleding Get Profiles')
       this.getProfiles()
 
       InteractionManager.runAfterInteractions(() => {
@@ -107,7 +106,7 @@ export default class BioScreen extends React.Component {
           FirebaseAPI.removeWatchUser(profile.uid)
 
           FirebaseAPI.watchUser(profile.uid, (updatedProfile) => {
-            console.log('WATCH PROFILES')
+            // console.log('WATCH PROFILES')
             const index = this.state.profiles.findIndex((user) => { return user.uid == updatedProfile.uid })
             const updatedProfiles = this.state.profiles
 
@@ -152,7 +151,6 @@ export default class BioScreen extends React.Component {
 
   watchUserForUpdates() {
     FirebaseAPI.watchUser(this.state.user.uid, (updatedUser) => {
-      console.log('calledealio yo')
       InteractionManager.runAfterInteractions(() => {
           this.setState({user: updatedUser})
       })
@@ -161,10 +159,9 @@ export default class BioScreen extends React.Component {
 
   getProfiles() {
     let profileSlots = 5
-    console.log('GET PROFILES')
 
     FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
-      console.log('nearby profiles', this.state.nearbyProfiles)
+      // console.log('nearby profiles', this.state.nearbyProfiles)
       FirebaseAPI.getSomeUsersCb(this.state.nearbyProfiles, (newProfiles) => {
             if(newProfiles != null) {
               newProfiles.sort((a, b) => {
@@ -204,7 +201,7 @@ export default class BioScreen extends React.Component {
               }).slice(0, profileSlots - this.state.profiles.length)
 
 
-              console.log('newProfiles Length', currentProfiles.length)
+              // console.log('newProfiles Length', currentProfiles.length)
 
               const updatedProfiles = this.state.profiles.concat(currentProfiles)
 
@@ -269,7 +266,7 @@ export default class BioScreen extends React.Component {
     }
 
   getAge(dateString) {
-    console.log(dateString)
+    // console.log(dateString)
     var today = new Date();
     var birthDate = new Date(dateString);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -387,7 +384,7 @@ export default class BioScreen extends React.Component {
   }
 
   render() {
-    console.log('RENDNDFKNLKFJEFKJLKEJFLKFJEKJFLKEJFKLJFLKEJFKFJEK')
+    // console.log('RENDNDFKNLKFJEFKJLKEJFLKFJEKJFLKEJFKLJFLKEJFKFJEK')
     // console.log('Distances', this.state.distances, 
     //             'Timing', this.state.timing, 
     //             'locationEnabled', this.state.locationEnabled, 
