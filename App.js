@@ -8,11 +8,13 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
 import * as firebase from 'firebase'
 
+// These should be in a separate config file that's gitignored.
+// Regenerate these keys immediately, as this is a hack waiting to happen.
 const firebaseConfig = {
    apiKey: "AIzaSyBSfQ2Ux-vZWAcpmjdhCL47Gh7q0HBIpag",
    authDomain: "ice-breaker-ad9a9.firebaseapp.com",
    databaseURL: "https://ice-breaker-ad9a9.firebaseio.com",
- } 
+ }
 
 firebase.initializeApp(firebaseConfig)
 
