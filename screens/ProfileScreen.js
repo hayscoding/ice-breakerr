@@ -286,8 +286,7 @@ export default class ProfileScreen extends React.Component {
       milesAway = this.state.distance
 
       milesAway = milesAway != 1 ? (milesAway+' miles away') : (milesAway+' mile away') //Keep proper grammer for 1 mile away
-    }
-    else
+    } else
       milesAway = 'Finding location...'
     
     const onlineIndicator = profile.appState == 'active' ? 'online now' : 'offline'
