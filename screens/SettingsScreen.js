@@ -92,6 +92,11 @@ export default class SettingsScreen extends React.Component {
   }
 
   logout() {
+    const now = new Date();
+
+    FirebaseAPI.updateUser(this.state.user.uid, 'appState', 'inactive')   //Can't do this at unmount because access to user is lost
+    FirebaseAPI.updateUser(this.state.user.uid, 'lastActive', now)
+
     FirebaseAPI.logoutUser().then(
       () => console.log('signout successful'),
       () => console.log('signout not successful'))

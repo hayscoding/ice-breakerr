@@ -1,9 +1,10 @@
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
-const baseUrl = 'https://ice-breaker-server.herokuapp.com/'
+var env = process.env.NODE_ENV || 'development';
+var config = require('../config')[env];
  
 export const postMessageNotificationToUid = (senderFirstName, receiverPushToken, msg) => {
-	fetch((baseUrl+'notify-message'), {
+	fetch((config.server.baseUrl+'notify-message'), {
 	  method: 'POST',
 	  headers: {
 	    Accept: 'application/json',
@@ -18,7 +19,7 @@ export const postMessageNotificationToUid = (senderFirstName, receiverPushToken,
 }
 
 export const postMatchNotificationToUid = (senderFirstName, receiverPushToken) => {
-	fetch((baseUrl+'notify-match'), {
+	fetch((config.server.baseUrl+'notify-match'), {
 	  method: 'POST',
 	  headers: {
 	    Accept: 'application/json',

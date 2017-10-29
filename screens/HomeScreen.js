@@ -10,6 +10,7 @@ import {
   View,
   Dimensions,
   InteractionManager,
+  FlatList,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -30,7 +31,7 @@ export default class HomeScreen extends React.Component {
     gesturesEnabled: false,
   };
 
-  componentWillMount() {
+  componentWillMount() {    
     this.state = {
       user: this.props.screenProps.user, 
       profiles: [],
@@ -44,10 +45,19 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this.watchChatsAndProfiles()
-    this.watchUserRejections()
 
     this._navigating = false
-    console.log('DID MOUNT homescreen')
+  }
+
+  componentWillUpdate() {
+    // const uidArray = this.state.profiles.map((profile) => {return profile.uid})
+    // const dataUidArray = this.state.data.map((data) => {return data.profile.uid})
+
+    // console.log('uidArrays', uidArray, dataUidArray)
+
+    // if(uidArray.join(',') != dataUidArray.join(',')) {
+    // 
+    // }
   }
 
   componentDidUpdate() {
@@ -59,7 +69,6 @@ export default class HomeScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('unmounting homescreen')
     FirebaseAPI.turnOffChatListener()
 
     if(this.state.profiles.length > 0)
@@ -75,7 +84,7 @@ export default class HomeScreen extends React.Component {
   }
 
   watchChatsAndProfiles() {
-    FirebaseAPI.watchChatsWithProfilesInKey(this.state.user.uid, (profiles) => {
+    FirebaseAPI.watchChatsWithUser(this.state.user.uid, (profiles) => {
       const oldProfiles = this.state.profiles
       const newProfileUids = profiles.map((profile) => {return profile.uid})
       const oldProfileUids = oldProfiles.map((profile) => {return profile.uid})
@@ -87,6 +96,8 @@ export default class HomeScreen extends React.Component {
             }),
             loaded: true})
         }
+
+        this.watchUserRejections()
       })
     })
   }
@@ -113,14 +124,14 @@ export default class HomeScreen extends React.Component {
 
     if(updatedMatches.length != 0)
       updatedMatches.forEach((match) => {
-          FirebaseAPI.getUserCb(match, (profile) => {
-            profiles.push(profile)
+        FirebaseAPI.getUserCb(match, (profile) => {
+          profiles.push(profile)
 
-            if(this.state.initialMatches.map((match) => {return match.uid}).join(',') != profiles.map(() => {
-              return profile.uid
-            }).join(',')){
-              this.setState({initialMatches: profiles})
-            }
+          if(this.state.initialMatches.map((match) => {return match.uid}).join(',') != profiles.map(() => {
+            return profile.uid
+          }).join(',')){
+            this.setState({initialMatches: profiles})
+          }
         })
       })
     else
@@ -157,7 +168,7 @@ export default class HomeScreen extends React.Component {
       const updatedMessages = this.state.messagePreviews
       const updatedProfiles = this.state.profiles
 
-      console.log('mypenileindex is huge', messagesIndex, this.state.messagePreviews[messagesIndex])
+      // console.log('mypenileindex is huge', messagesIndex, this.state.messagePreviews[messagesIndex])
       if(messagesIndex != -1) {
         const uidArray = [updatedMessages[messagesIndex].otherProfile, this.state.user.uid]
         uidArray.sort()
@@ -175,7 +186,7 @@ export default class HomeScreen extends React.Component {
       }
 
       if(this.state.user != updatedUser) { 
-        this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages, user: updatedUser })
+        this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages, user: updatedUser})
         this.getMatches(updatedUser)
       }
     })
@@ -231,100 +242,100 @@ export default class HomeScreen extends React.Component {
             }).length
             // console.log(profile.name, msgCount)
 
-            if(this.state.profilesUrls != [] && this.state.photoUrls.some((urlObj) => {
+          if(this.state.photoUrls.some((urlObj) => {
+            return urlObj.uid == profile.uid
+          })) {
+            const profileUrlObj = this.state.photoUrls.find((urlObj) => {
               return urlObj.uid == profile.uid
-            })) {
-              const profileUrlObj = this.state.photoUrls.find((urlObj) => {
-                return urlObj.uid == profile.uid
-              })
-              const index = this.state.photoUrls.indexOf(profileUrlObj)
-              const updatedPhotoUrls = this.state.photoUrls
+            })
+            const index = this.state.photoUrls.indexOf(profileUrlObj)
+            const updatedPhotoUrls = this.state.photoUrls
 
-              if(msgCount >= 5) {
-                const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
+            if(msgCount >= 5) {
+              const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
 
-                updatedPhotoUrls[index].url = newUrl
+              updatedPhotoUrls[index].url = newUrl
 
-                if(updatedPhotoUrls[index] != profileUrlObj)
-                  InteractionManager.runAfterInteractions(() => {
-                    this.setState({photoUrls: updatedPhotoUrls})
-                  })
-              } else {
-                const newUrl = ' '
-
-                updatedPhotoUrls[index].url = newUrl
-
-                if(updatedPhotoUrls[index] != profileUrlObj)
-                  InteractionManager.runAfterInteractions(() => {
-                    this.setState({photoUrls: updatedPhotoUrls})
-                  })
-              } 
+              if(updatedPhotoUrls[index] != profileUrlObj)
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({photoUrls: updatedPhotoUrls})
+                })
             } else {
-              if(msgCount >= 5) {
-                const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
+              const newUrl = ' '
 
+              updatedPhotoUrls[index].url = newUrl
+
+              if(updatedPhotoUrls[index] != profileUrlObj)
                 InteractionManager.runAfterInteractions(() => {
-                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
+                  this.setState({photoUrls: updatedPhotoUrls})
                 })
-              } else {
-                const newUrl =  ' '
+            } 
+          } else {
+            if(msgCount >= 5) {
+              const newUrl = 'photoUrls' in profile ? profile.photoUrls[0] : ' '
 
-                InteractionManager.runAfterInteractions(() => {
-                  this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
-                })
-              } 
-            }
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
+              })
+            } else {
+              const newUrl =  ' '
 
-            if(this.state.names != [] && this.state.names.some((nameObj) => {
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({photoUrls: [...this.state.photoUrls, {uid: profile.uid, url: newUrl}]})
+              })
+            } 
+          }
+
+          if(this.state.names != [] && this.state.names.some((nameObj) => {
+            return nameObj.uid == profile.uid
+          })) {
+            const profileNameObj = this.state.names.find((nameObj) => {
               return nameObj.uid == profile.uid
-            })) {
-              const profileNameObj = this.state.names.find((nameObj) => {
-                return nameObj.uid == profile.uid
-              })
-              const index = this.state.names.indexOf(profileNameObj)
-              const updatedNames = this.state.names
+            })
+            const index = this.state.names.indexOf(profileNameObj)
+            const updatedNames = this.state.names
 
-              if(msgCount >= 3) {
-                const newName = profile.name
+            if(msgCount >= 3) {
+              const newName = profile.name
 
-                updatedNames[index].name = newName
+              updatedNames[index].name = newName
 
-                if(updatedNames[index] != profileNameObj)
-                  InteractionManager.runAfterInteractions(() => {
-                    this.setState({names: updatedNames})
-                  })
-              } else {
-                const newName = ' '
-
-                updatedNames[index].name = newName
-
-                if(updatedNames[index] != profileNameObj)
-                  InteractionManager.runAfterInteractions(() => {
-                    this.setState({names: updatedNames})
-                  })
-              } 
+              if(updatedNames[index] != profileNameObj)
+                InteractionManager.runAfterInteractions(() => {
+                  this.setState({names: updatedNames})
+                })
             } else {
-              if(msgCount >= 3) {
-                const newName = profile.name
+              const newName = ' '
 
-                InteractionManager.runAfterInteractions(() => {
-                  this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
-                })
-              } else {
-                const newName =  ' '
+              updatedNames[index].name = newName
 
+              if(updatedNames[index] != profileNameObj)
                 InteractionManager.runAfterInteractions(() => {
-                  this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
+                  this.setState({names: updatedNames})
                 })
-              } 
-            }
+            } 
+          } else {
+            if(msgCount >= 3) {
+              const newName = profile.name
+
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
+              })
+            } else {
+              const newName =  ' '
+
+              InteractionManager.runAfterInteractions(() => {
+                this.setState({names: [...this.state.names, {uid: profile.uid, name: newName}]})
+              })
+            } 
+          }
 
 
           let updatedMessages = this.state.messagePreviews
           let updatedProfiles = this.state.profiles
           // console.log('updatedMessages', updatedMessages, this.state.messagePreviews)
-          console.log('new first message', 
-            this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) ? this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id : 'blank', messages[0]._id)
+          // console.log('new first message', 
+          //   this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) ? this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id : 'blank', messages[0]._id)
 
           if(!this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid })) {
             const profileIndex = updatedProfiles.findIndex((profile) => { return profile.uid == messages[0].otherUser })
@@ -338,7 +349,7 @@ export default class HomeScreen extends React.Component {
             this.forceUpdate()
           }
 
-          if(this.state.messagePreview != [] &&
+          if(this.state.messagePreviews != [] &&
             this.state.messagePreviews.some((msg) => { return msg.otherUser == profile.uid }) &&
             this.state.messagePreviews.find((msg) => { return msg.otherUser == profile.uid })._id != messages[0]._id) {
             const msgIndex = updatedMessages.findIndex((msg) => {return msg.otherUser == messages[0].otherUser})
@@ -351,15 +362,15 @@ export default class HomeScreen extends React.Component {
             updatedMessages.splice(msgIndex, 1)
             updatedMessages.unshift(messages[0])
 
-            console.log(this.state.messagePreviews.map((msg) => {return msg._id}).sort().join(','), messages[0]._id)
+            // console.log(this.state.messagePreviews.map((msg) => {return msg._id}).sort().join(','), messages[0]._id)
             this.forceUpdate()
           }
 
-          console.log(this.state.messagePreviews.map((msg) => {return msg._id}).sort().join(','),  updatedMessages.map((msg) => {return msg._id}).sort().join(','))
+          //console.log(this.state.messagePreviews.map((msg) => {return msg._id}).sort().join(','),  updatedMessages.map((msg) => {return msg._id}).sort().join(','))
 
           if(this.state.messagePreviews.map((profile) => {return profile.uid}).sort().join(',') != updatedMessages.map((profile) => {return profile.uid}).sort().join(','))
             InteractionManager.runAfterInteractions(() => {
-              console.log('called')
+              // console.log('called')
               this.setState({profiles: updatedProfiles, messagePreviews: updatedMessages})
             })
       })
@@ -393,12 +404,14 @@ export default class HomeScreen extends React.Component {
 
   render() {
     console.log('RENDERING HOME SCREEN')
-    console.log('initialMatches', this.state.initialMatches.map((match) => {return match.uid}))
+    // console.log('initialMatches', this.state.initialMatches.map((match) => {return match.uid}))
     // console.log('false', this.state.loaded)
     // console.log(this.state.messagePreviews)
-    console.log("renderProfiles", this.state.profiles.length, this.state.messagePreviews.length)
-    console.log('names', this.state.names.length, this.state.names)
+    // console.log("renderProfiles", this.state.profiles.length, this.state.messagePreviews.length)
+    // console.log('names', this.state.names.length, this.state.names)
+    
     const profiles = this.state.profiles
+    let data = []
 
     if(this.state.loaded && this.state.profiles.length > 0 && this.state.profiles.length == this.state.messagePreviews.length) {
       profiles.sort((a, b) => {
@@ -411,6 +424,17 @@ export default class HomeScreen extends React.Component {
 
         return new Date(aMsg.createdAt) - new Date(bMsg.createdAt)
       }).reverse()
+
+      this.state.profiles.forEach((profile) => {
+        const photoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
+        const name = this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }) != undefined ? this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }).name : ' '
+        const message = this.state.messagePreviews.find((msg) => { 
+          return msg.otherUser == profile.uid 
+        })
+
+        if(profile != undefined)
+          data.push({key: profile.uid, profile: profile, photoUrl: photoUrl, name: name, message: message})
+      })
 
       return(
         <View style={styles.container}>
@@ -450,39 +474,33 @@ export default class HomeScreen extends React.Component {
             }
             </View>
           </ScrollView>
-          <ScrollView style={styles.recentUpdates}>
-            <View style={{flexGrow: 1, width: width}}>
-            {
-              profiles.map((profile) => {
-                const fbPhotoUrl = this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }) != undefined ? this.state.photoUrls.find((urlObj) => { return urlObj.uid == profile.uid }).url : ' '
-                const name = this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }) != undefined ? this.state.names.find((nameObj) => { return nameObj.uid == profile.uid }).name : ' '
-                const message = this.state.messagePreviews.find((msg) => { 
-                  return msg.otherUser == profile.uid 
-                })
-                if(message != undefined) {
-                  const hasRead = message.user._id != this.state.user.uid ? message.read : true
-                  const emojis = !hasRead ? (profile.emojis+' *') : profile.emojis
+          <FlatList
+            style={styles.recentUpdates}
+            data={data}
+            renderItem={(data) => {
+                  if(data.item.message != undefined) {
+                    const hasRead = data.item.message.user._id != this.state.user.uid ? data.item.message.read : true
+                    const emojis = !hasRead ? (data.item.profile.emojis+' *') : data.item.profile.emojis
 
-                  return (
-                    <TouchableOpacity onPress={() => {this.openChat(profile, message)}}
-                    key={profile.uid+"-touchable"} >
-                        <View style={styles.match}  key={profile.uid+"-container"}>
-                          <Image
-                            resizeMode='cover'
-                            source={{uri: fbPhotoUrl}}
-                            style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
-                          <View>   
-                            <Text style={styles.name} key={profile.uid+'-name'}>{name.split(' ')[0]+' '+emojis}</Text>
-                            <Text style={styles.messagePreview} key={profile.uid+'-preview'}>{message.text}</Text>
+                    return (
+                      <TouchableOpacity onPress={() => {this.openChat(data.item.profile, data.item.message)}}
+                      key={data.item.profile.uid+"-touchable"} >
+                          <View style={styles.match}  key={data.item.profile.uid+"-container"}>
+                            <Image
+                              resizeMode='cover'
+                              source={{uri: data.item.photoUrl}}
+                              style={[{width: size, height: size, borderRadius: size/4, alignSelf: 'center'}]}/>  
+                            <View>   
+                              <Text style={styles.name} key={data.item.profile.uid+'-name'}>{data.item.name.split(' ')[0]+' '+emojis}</Text>
+                              <Text style={styles.messagePreview} key={data.item.profile.uid+'-preview'}>{data.item.message.text}</Text>
+                            </View>
                           </View>
-                        </View>
-                    </TouchableOpacity>
-                  )
-                }
-              })
+                      </TouchableOpacity>
+                    )
+                  }
+              }
             }
-            </View>
-          </ScrollView>
+          />
           <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       )
@@ -526,20 +544,20 @@ export default class HomeScreen extends React.Component {
                 }
             </View>
           </ScrollView>
-          <ScrollView style={styles.recentUpdates}>
-            <View style={{width: width, height: height/8*7}}>
-              <View style={styles.match}>
-                <Image
-                  resizeMode='cover'
-                  source={{uri: ' '}}
-                  style={[{width: size, height: size, borderRadius: size/4}]}/>  
-                <View>   
-                  <Text style={styles.name}>Send someone a message!</Text>
-                  <Text style={styles.messagePreview}>Your chats will appear here.</Text>
+            <ScrollView style={styles.recentUpdates}>
+              <View style={{width: width, height: height/8*7}}>
+                <View style={styles.match}>
+                  <Image
+                    resizeMode='cover'
+                    source={{uri: ' '}}
+                    style={[{width: size, height: size, borderRadius: size/4}]}/>  
+                  <View>   
+                    <Text style={styles.name}>Send someone a message!</Text>
+                    <Text style={styles.messagePreview}>Your chats will appear here.</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          </ScrollView>
+            </ScrollView>
           <View style={{height: width/7, width: width, alignSelf: 'flex-end', backgroundColor: '#efefef',}}></View>
         </View>
       )
