@@ -18,7 +18,7 @@ import firebase from 'firebase'
 var env = process.env.NODE_ENV || 'development';
 var config = require('../config')[env];
 
-const APP_ID = config.facebook.appID;
+const APP_ID = config.facebook.appId;
 
 const {height, width} = Dimensions.get('window');
 const size = width*1.45

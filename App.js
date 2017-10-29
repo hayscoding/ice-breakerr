@@ -8,6 +8,8 @@ import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
 import * as firebase from 'firebase'
 
+
+//Automatically set to 'production' when published through Expo
 var env = process.env.NODE_ENV || 'development';
 var config = require('./config')[env];
 
