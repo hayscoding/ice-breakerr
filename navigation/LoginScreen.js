@@ -16,6 +16,7 @@ import * as FirebaseAPI from '../modules/firebaseAPI'
 import firebase from 'firebase'
 
 var env = process.env.NODE_ENV || 'development';
+// var env = 'production'
 var config = require('../config')[env];
 
 const APP_ID = config.facebook.appId;
