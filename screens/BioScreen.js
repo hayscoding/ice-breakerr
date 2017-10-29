@@ -104,6 +104,21 @@ export default class BioScreen extends React.Component {
     }
   }
 
+  removeProfilesInChat() {
+    FirebaseAPI.getProfilesInChatsWithKey(this.state.user.uid, (chattedProfiles) => {
+      const newChattedProfiles = chattedProfiles.filter((chattedProfile) => {
+        return this.state.profiles.some((profile) => {
+          return profile.uid == chattedProfile.uid
+        })
+      })
+
+      if(newChattedProfiles != undefined)
+        newChattedProfiles.forEach((chattedProfile) => {
+          this.removeProfile(chattedProfile)
+        })
+    })
+  }
+
   watchProfiles() {
     InteractionManager.runAfterInteractions(() => {
         this.state.profiles.forEach((profile) => { 
@@ -285,6 +300,7 @@ export default class BioScreen extends React.Component {
     if(!this._navigating) {
       this._navigating = true
       this.props.navigation.navigate('Profile', {profile: profile, user: this.state.user, cb: (profile) => {
+        console.log('called')
         FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
           this.setState({user: user})
         })

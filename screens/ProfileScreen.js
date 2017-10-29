@@ -154,6 +154,9 @@ export default class ProfileScreen extends React.Component {
             })
           })
 
+          if('cb' in this.props.navigation.state.params)
+            this.props.navigation.state.params.cb(profile)
+
           InteractionManager.runAfterInteractions(() => {
             this.props.navigation.dispatch(backAction);
             InteractionManager.runAfterInteractions(() => {
@@ -268,6 +271,8 @@ export default class ProfileScreen extends React.Component {
           // Alert.alert(
           //   ('Thanks for starting a chat.'),
           //   'You will be able to view their pictures after they send you 5 messages.'+'\n\n'+'Same goes for them with you.')
+        if(hasChat)
+          this.props.navigation.state.params.cb(profile)
 
         this.setState({hasChat: hasChat})
       }})
