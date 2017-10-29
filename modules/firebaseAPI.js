@@ -294,7 +294,9 @@ export const getSomeUsersCb = (keyArray, func) => {
 
         keyArray.forEach((key) => {
           index++
-          if(index%10 == randInt) //This should evenly go through the data childs at random selection
+          if(keyArray.length <= 20)
+            users.push(snap.val()[key])
+          else if(index%10 == randInt) //Speeds things up when large data arrays are present
             users.push(snap.val()[key])
         })
 
