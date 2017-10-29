@@ -29,6 +29,7 @@ export default class BioScreen extends React.Component {
         locationEnabled: false,
         likeTimerDone: true,
         nearbyProfiles: [],
+        geoQueryRegistration: {}, //Used to turn the geoQuery listener off
       }
 
       this._mounted = false
@@ -64,6 +65,7 @@ export default class BioScreen extends React.Component {
   componentWillUnmount() {
     this._mounted = false
     this.stopWatchingUsers()
+    this.state.geoQueryRegistration.cancel() //turn of geoFire listener
     FirebaseAPI.removeWatchUser(this.state.user.uid)
   }
 
@@ -77,9 +79,11 @@ export default class BioScreen extends React.Component {
         radius: 80 //80 km is about 50 miles
       })
 
-      geoQuery.on("key_entered", (key) => {
+      const geoQueryRegistration = geoQuery.on("key_entered", (key) => {
         this.setState({nearbyProfiles: [...this.state.nearbyProfiles, key]})
       })
+
+      this.setState({geoQueryRegistration: geoQueryRegistration})
     }) 
   }
 
