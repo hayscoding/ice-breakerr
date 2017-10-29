@@ -1,1 +1,3 @@
 .expo/**/*
+config.js
+node_modules
