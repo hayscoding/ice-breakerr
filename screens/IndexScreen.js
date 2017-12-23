@@ -5,7 +5,7 @@ import { ExpoLinksView } from '@expo/samples';
 
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import BioScreen from '../screens/BioScreen';
+import ShareScreen from '../screens/ShareScreen';
 
 import * as FirebaseAPI from '../modules/firebaseAPI'
 
@@ -129,7 +129,7 @@ export default class IndexScreen extends React.Component {
               <SettingsScreen screenProps={this.state} navigation={this.props.navigation}/>
             </View>
             <View style={this.viewStyle()}>
-              <BioScreen screenProps={this.state} navigation={this.props.navigation}/>
+              <ShareScreen screenProps={this.state} navigation={this.props.navigation}/>
             </View>
             <View style={this.viewStyle()}>
               <HomeScreen scrollBoolCb={(bool) => {this.changeScrollBool(bool)}} screenProps={this.state} navigation={this.props.navigation}/>

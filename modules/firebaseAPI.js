@@ -15,6 +15,14 @@ export const logoutUser = () => {
   return firebase.auth().signOut()
 }
 
+export const createNewStatus = (uid, status, location, func) => {
+
+}
+
+export const getRecentStatuses = (func) => {
+
+}
+
 export const getImgurClientId = (func) => {
   firebase.database().ref().once("value").then((snap) => {
     func(snap.val().imgurClientId)
