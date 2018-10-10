@@ -82,66 +82,68 @@ const LoginNavigator = StackNavigator(
 
 
 export default class RootNavigator extends React.Component {
-  componentWillMount() {
-    this.state = {
+  state = {
       user: {},
       hasUser: false,
       waiting: true,
       registeredToken: false,
     }
 
+  componentWillMount() {
     this.firebaseRef = firebase.database().ref('users')
-    this.checkForUser()
+
+    FirebaseAPI.login('hays@gmail.com', 'smokey28', (user) => {
+      InteractionManager.runAfterInteractions(() => {
+        this.setState({user: user, hasUser: true, waiting: false})
+      })
+    })
+    // this.checkForUser()
     // this.setState({waiting: true})
   }
 
   componentDidUpdate() {
-    if(this.state.hasUser && !this.state.registeredToken) {
-      this.setState({registeredToken: true})
-      InteractionManager.runAfterInteractions(() => {
-        this._notificationSubscription = this._registerForPushNotifications();
-      })
-    }
+    
   }
 
   componentWillUnmount() {
     this._notificationSubscription && this._notificationSubscription.remove();
   }
 
-  checkForUser() {
-    firebase.auth().onAuthStateChanged(fbAuth => {
-      if (fbAuth) {     // user is signed in and is found in db
-        this.firebaseRef.child(fbAuth.uid).on('value', snap => {
-          const user = snap.val()
+  // checkForUser() {
+  //   firebase.auth().onAuthStateChanged(auth => {
+  //     if (auth) {     // user is signed in and is found in db
+  //       this.firebaseRef.child(auth.uid).on('value', snap => {
+  //         const user = snap.val()
 
-          if(user != null) {
-             this.firebaseRef.child(user.uid).once('value').then((snap) => {
-                InteractionManager.runAfterInteractions(() => {
-                  this.firebaseRef.child(fbAuth.uid).off('value')
-                  this.setState({user: snap.val(), hasUser: true, waiting: false})
-                })
-              })
-          }
-        }) 
-      } else {                         // no user is signed in
-        this.setState({user: {}, hasUser: false, waiting: false})
-      }
-    })
-  }
+  //         if(user != null) {
+  //            this.firebaseRef.child(user.uid).once('value').then((snap) => {
+  //               InteractionManager.runAfterInteractions(() => {
+  //                 this.firebaseRef.child(auth.uid).off('value')
+  //                 this.setState({user: snap.val(), hasUser: true, waiting: false})
+  //               })
+  //             })
+  //         }
+  //       }) 
+  //     } else {                         // no user is signed in
+  //       this.setState({user: {}, hasUser: false, waiting: false})
+  //     }
+  //   })
+  // }
 
   render() {
-    if(this.state.waiting)
-      return (
-        <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-          <ActivityIndicator size="small"/>
-        </View>
-      )
-    else
-      if(this.state.hasUser && this.state.registeredToken){
+    // if(this.state.waiting)
+    //   return (
+    //     <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+    //       <ActivityIndicator size="small"/>
+    //     </View>
+    //   )
+    // else
+    //   if(this.state.hasUser && this.state.registeredToken){
+      console.log('alksdjflkasdjflkasjdflkjaskld', this.state.user)
         return <RootStackNavigator screenProps={{user: this.state.user}}/>;
-      }
-      else
-        return <LoginNavigator />
+      // }
+      // else
+      //   return <LoginNavigator />
   }
 
   _registerForPushNotifications() {
@@ -149,7 +151,7 @@ export default class RootNavigator extends React.Component {
     // You can comment the following line out if you want to stop receiving
     // a notification every time you open the app. Check out the source
     // for this function in api/registerForPushNotificationsAsync.js
-    registerForPushNotificationsAsync(this.state.user.uid);
+    // registerForPushNotificationsAsync(this.state.user.uid);
 
     // Watch for incoming notifications
     this._notificationSubscription = Notifications.addListener(

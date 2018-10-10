@@ -16,12 +16,12 @@ import RootStackNavigator from './RootNavigation'
 import LoginScreen from './LoginScreen'
 
 export default class LoadingScreen extends React.Component {
+  state = {
+    needsLogin: false,
+    unsubscribe: '',  //Used to make sure the listener doesn't update unmount
+  }
+  
   componentWillMount() {
-    this.state = {
-      needsLogin: false,
-      unsubscribe: '',  //Used to make sure the listener doesn't update unmount
-    }
-
     this.firebaseRef = firebase.database().ref('users')
   }
 

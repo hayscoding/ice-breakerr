@@ -31,6 +31,10 @@ export default class Login extends React.Component {
 	    gesturesEnabled: false,
 	  };
 
+	state = {
+
+	}
+
 	displayError(messsage) {
 	    Alert.alert(
 	      'Error: ',
@@ -41,22 +45,56 @@ export default class Login extends React.Component {
 	    )
 	 }
 
-	fbLogin = async() => {
-	 	const { type, token } = await Exponent.Facebook.logInWithReadPermissionsAsync(
-		    APP_ID, {
-		      permissions: ['public_profile', 'user_photos', 'user_birthday', 'email'],
-		    });
-		if (type === 'success') {
-	        // facebook user data request
-	        const response = await fetch(`https://graph.facebook.com/me?fields=email,birthday,gender,name&access_token=${token}`)
-	        const user = await FirebaseAPI.loginUser(token)
+	watchForAuth() {
+		firebase.auth().onAuthStateChanged((auth) => {
+	 		console.log('before dat if')
 
-	        FirebaseAPI.mergeUser(await user.uid, await token, await response.json())
-	        	.then(() => console.log('merge success'), () => this.showError('Could not add you to database'))
-		} else {
-			this.displayError('Facebook login failed')
-		}
-    }
+	        if (auth) {     // user is signed in and is found in db
+        	console.log('IN DAT AUTH FUNCUNADASDAF!!fjlkasjdflasjkld')
+	          this.firebaseRef.child(auth.uid).on('value', snap => {
+	            const user = snap.val()
+
+	            console.log('HERE IS THE USER INFO: ', user)
+	            if (user != null) {
+	              InteractionManager.runAfterInteractions(() => {
+	                this.props.navigation.goBack()
+	              })  
+	            }
+	          }) 
+	        }
+	      })
+	}
+
+	login = async() => {
+		FirebaseAPI.createUser()
+		this.watchForAuth()
+	}
+
+	componentWillUnmount() {
+    //Stops listening to onAuthStateChanged() so unmounted updates do not occur
+		// if(this.state.unsubscribe != '')
+		//   InteractionManager.runAfterInteractions(() => {
+		//     this.state.unsubscribe()
+		//   })  
+  	}
+
+
+	// fbLogin = async() => {
+	//  	const { type, token } = await Exponent.Facebook.logInWithReadPermissionsAsync(
+	// 	    APP_ID, {
+	// 	      permissions: ['public_profile', 'user_photos', 'user_birthday', 'email'],
+	// 	    });
+	// 	if (type === 'success') {
+	//         // facebook user data request
+	//         const response = await fetch(`https://graph.facebook.com/me?fields=email,birthday,gender,name&access_token=${token}`)
+	//         const user = await FirebaseAPI.loginUser(token)
+
+	//         FirebaseAPI.mergeUser(await user.uid, await token, await response.json())
+	//         	.then(() => console.log('merge success'), () => this.showError('Could not add you to database'))
+	// 	} else {
+	// 		this.displayError('Facebook login failed')
+	// 	}
+ //    }
     
     render() {
 	    return (
@@ -64,11 +102,11 @@ export default class Login extends React.Component {
 	      	<View style={{flex: 1, justifyContent: 'flex-start',}}>
 				<Image 
 				resizeMode='cover'
-				source={require( "../assets/images/ice-breaker-logo.png")}
+				source={require("../assets/images/ice-breaker-logo.png")}
 				style={{width:size, height:size,}} />
 	      	</View>
 	      	<View style={{flex: 1, width: width/3*2.5, justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 25, paddingRight: 25, paddingBottom: 40, }}>
-		      	<TouchableOpacity style={styles.loginTouchable} onPress={this.fbLogin}>
+		      	<TouchableOpacity style={styles.loginTouchable} onPress={this.login}>
 		      		<Text style={styles.login}>Log in with Facebook</Text>
 		      	</TouchableOpacity>
       		</View>

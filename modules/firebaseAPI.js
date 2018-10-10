@@ -4,11 +4,42 @@ import * as _ from 'lodash'
 import Exponent from 'expo'
 import { Alert, } from 'react-native'
 
-export const loginUser = (accessToken) => {
-    const provider = firebase.auth.FacebookAuthProvider //declare fb provider
-    const credential = provider.credential(accessToken) //generate fb credential
+// export const loginUser = (accessToken) => {
+//     const provider = firebase.auth.FacebookAuthProvider //declare fb provider
+//     const credential = provider.credential(accessToken) //generate fb credential
 
-    return firebase.auth().signInWithCredential(credential) // signin to firebase using facebook credential
+//     return firebase.auth().signInWithCredential(credential) // signin to firebase using facebook credential
+// }
+
+export const login = (email, password, cb) => {
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((user) => cb(user))
+    .catch(function(error) {
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
+      } else {
+        alert(errorMessage);
+      }
+      console.log(error);
+    });
+}
+
+export const createUser = () => {
+  const email = 'hays@gmail.com'
+  const password = 'smokey28'
+
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+  .then((user) => {
+    var user = firebase.auth().currentUser;
+
+    mergeUser(user.uid, token, response.json())
+      .then(() => console.log('New user merge success'), () => this.showError('Could not add you to database'))
+
+    // console.log('USER CREATED SUCCESSFULLY. HERE IS THE DATA: ', user)
+  })
+  .catch((error) => {
+    console.log(error)
+  });
 }
 
 export const logoutUser = () => {
