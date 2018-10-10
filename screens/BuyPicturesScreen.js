@@ -21,12 +21,12 @@ import firebase from 'firebase'
 const {height, width} = Dimensions.get('window');
 
 export default class BuyPicturesScreen extends React.Component {
-  componentWillMount() {
-    this.state = {
-      user: this.props.navigation.state.params.user, 
-      profile: this.props.navigation.state.params.profile,
-    }
+  state = {
+    user: this.props.navigation.state.params.user, 
+    profile: this.props.navigation.state.params.profile,
+  }
 
+  componentWillMount() {
     this._mounted = false
   }
 

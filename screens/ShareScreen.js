@@ -20,6 +20,17 @@ export default class ShareScreen extends React.Component {
     gesturesEnabled: false,
   };
 
+  state = {
+    user: this.props.screenProps.user, 
+    statuses: exampleStatuses,
+    timing: false,
+    locationEnabled: false,
+    likeTimerDone: true,
+    nearbyProfiles: [],
+    geoQueryRegistration: {}, //Used to turn the geoQuery listener off
+  }
+  
+
   componentWillMount() {
     const exampleStatuses = [{
       _id: "uid-1",
@@ -45,16 +56,6 @@ export default class ShareScreen extends React.Component {
       upvotes: 10,
       downvotes: 5,
     }]
-
-      this.state = {
-        user: this.props.screenProps.user, 
-        statuses: exampleStatuses,
-        timing: false,
-        locationEnabled: false,
-        likeTimerDone: true,
-        nearbyProfiles: [],
-        geoQueryRegistration: {}, //Used to turn the geoQuery listener off
-      }
 
       this._mounted = false
       this._navigating = false

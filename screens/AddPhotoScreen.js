@@ -21,12 +21,12 @@ const {height, width} = Dimensions.get('window');
 const size = (width/3-2)
 
 export default class AddPhotoScreen extends React.Component {
-  componentWillMount() {
-    this.state = {
+  state = {
       user: this.props.navigation.state.params.user, 
       photoUrls: [],
     }
 
+  componentWillMount() {
     FirebaseAPI.getAllPhotoUrlsFromFbCb(this.state.user.id, this.state.user.fbAuthToken, (photoUrls) => {
       unusedPhotoUrls = photoUrls.filter((newUrl) => { return 'photoUrls' in this.state.user ? !this.state.user.photoUrls.some((oldUrl) => {
         return newUrl == oldUrl

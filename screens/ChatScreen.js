@@ -53,13 +53,10 @@ export default class ChatScreen extends Component {
       })
   };
 
-
-  componentWillMount() {
-    this.state = { 
-      messages: [],
-      user: this.props.navigation.state.params.user,
-      profile: this.props.navigation.state.params.profile,
-    }
+  state = { 
+    messages: [],
+    user: this.props.navigation.state.params.user,
+    profile: this.props.navigation.state.params.profile,
   }
 
   componentDidMount() {

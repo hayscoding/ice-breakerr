@@ -31,16 +31,14 @@ export default class HomeScreen extends React.Component {
     gesturesEnabled: false,
   };
 
-  componentWillMount() {    
-    this.state = {
-      user: this.props.screenProps.user, 
-      profiles: [],
-      photoUrls: [],
-      initialMatches: [],
-      loaded: false,
-      messagePreviews: [],
-      names: []
-    }
+  state = {
+    user: this.props.screenProps.user, 
+    profiles: [],
+    photoUrls: [],
+    initialMatches: [],
+    loaded: false,
+    messagePreviews: [],
+    names: []
   }
 
   componentDidMount() {

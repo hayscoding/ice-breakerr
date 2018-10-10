@@ -22,11 +22,12 @@ export default class SettingsScreen extends React.Component {
     gesturesEnabled: false,
   };
 
-  componentWillMount() {
-    this.state = {
-      user: this.props.screenProps.user, 
-    }
+  state = {
+    user: this.props.screenProps.user, 
+  }
+    
 
+  componentWillMount() {
     this._navigating = false
   }
 

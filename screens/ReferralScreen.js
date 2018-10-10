@@ -26,12 +26,12 @@ export default class ReferralScreen extends React.Component {
     title: 'Refer A Friend',
   };
 
-  componentWillMount() {
-    this.state = {
-      user: this.props.navigation.state.params.user, 
-      referral: {phoneNumber: '', name: '', confirmed: false},
-    }
+  state = {
+    user: this.props.navigation.state.params.user, 
+    referral: {phoneNumber: '', name: '', confirmed: false},
+  }
 
+  componentWillMount() {
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       if(this.state.user != user) {
         InteractionManager.runAfterInteractions(() => {

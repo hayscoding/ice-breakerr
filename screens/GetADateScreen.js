@@ -26,12 +26,13 @@ export default class GetADateScreen extends React.Component {
     title: 'Get A Date',
   };
 
-  componentWillMount() {
-    this.state = {
-      user: this.props.navigation.state.params.user, 
-      coffeeDateInfo: {phoneNumber: '', submitDate: '', confirmed: false},
-    }
+  state = {
+    user: this.props.navigation.state.params.user, 
+    coffeeDateInfo: {phoneNumber: '', submitDate: '', confirmed: false},
+  }
+  
 
+  componentWillMount() {
     FirebaseAPI.getUserCb(this.state.user.uid, (user) => {
       if(this.state.user != user) {
         InteractionManager.runAfterInteractions(() => {

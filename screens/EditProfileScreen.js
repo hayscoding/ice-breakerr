@@ -26,11 +26,11 @@ export default class EditProfileScreen extends React.Component {
     title: 'Edit Profile',
   };
 
-  componentWillMount() {
-    this.state = {
-      user: this.props.navigation.state.params.user, 
-    }
+  state = {
+    user: this.props.navigation.state.params.user, 
+  }
 
+  componentWillMount() {
     this._mounted = false
     this._navigating = false
 

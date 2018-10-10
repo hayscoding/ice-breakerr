@@ -31,10 +31,6 @@ export default class Login extends React.Component {
 	    gesturesEnabled: false,
 	  };
 
-	state = {
-
-	}
-
 	displayError(messsage) {
 	    Alert.alert(
 	      'Error: ',

@@ -18,13 +18,13 @@ export default class IndexScreen extends React.Component {
     gesturesEnabled: false,
   };
 
-  componentWillMount() {
-      this.state = {
-        appState: AppState.currentState,
-        user: this.props.screenProps.user, 
-        scrollEnabled: true,
-      }
+  state = {
+    appState: AppState.currentState,
+    user: this.props.screenProps.user, 
+    scrollEnabled: true,
+  }
 
+  componentWillMount() {
       if(!('createdDate' in this.state.user)) {
           const now = new Date();
 

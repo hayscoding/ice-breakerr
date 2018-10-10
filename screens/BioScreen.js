@@ -20,18 +20,18 @@ export default class BioScreen extends React.Component {
     gesturesEnabled: false,
   };
 
-  componentWillMount() {
-      this.state = {
-        user: this.props.screenProps.user, 
-        profiles: [],
-        distances: [],
-        timing: false,
-        locationEnabled: false,
-        likeTimerDone: true,
-        nearbyProfiles: [],
-        geoQueryRegistration: {}, //Used to turn the geoQuery listener off
-      }
+  state = {
+    user: this.props.screenProps.user, 
+    profiles: [],
+    distances: [],
+    timing: false,
+    locationEnabled: false,
+    likeTimerDone: true,
+    nearbyProfiles: [],
+    geoQueryRegistration: {}, //Used to turn the geoQuery listener off
+  }
 
+  componentWillMount() {
       this._mounted = false
       this._navigating = false
 

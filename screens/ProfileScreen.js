@@ -20,20 +20,20 @@ import firebase from 'firebase'
 const {height, width} = Dimensions.get('window');
 
 export default class ProfileScreen extends React.Component {
+  state = {
+    user: this.props.navigation.state.params.user, 
+    profile: this.props.navigation.state.params.profile,
+    distance: ' ',
+    photoUrls: null,
+    name: '',
+    gender: '', 
+    interests: null,
+    hasChat: false,
+    startedChat: false,
+    picsShown: false,
+  }
+    
   componentWillMount() {
-    this.state = {
-      user: this.props.navigation.state.params.user, 
-      profile: this.props.navigation.state.params.profile,
-      distance: ' ',
-      photoUrls: null,
-      name: '',
-      gender: '', 
-      interests: null,
-      hasChat: false,
-      startedChat: false,
-      picsShown: false,
-    }
-
     FirebaseAPI.getUserCb(this.props.navigation.state.params.profile.uid, (profile) => { 
       InteractionManager.runAfterInteractions(() => {
         if(this._mounted) {

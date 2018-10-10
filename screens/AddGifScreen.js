@@ -21,13 +21,13 @@ const {height, width} = Dimensions.get('window');
 const size = (width/3-2)
 
 export default class AddGifScreen extends React.Component {
-  componentWillMount() {
-    this.state = {
+  state = {
       user: this.props.navigation.state.params.user, 
       searchTerm: '',
       photoUrls: [],
     }
-
+    
+  componentWillMount() {
     FirebaseAPI.getImgurGifs(null, (gifs) => {
       InteractionManager.runAfterInteractions(() => {
         this.setState({photoUrls: gifs})
