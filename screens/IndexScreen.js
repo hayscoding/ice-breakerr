@@ -13,9 +13,10 @@ const {height, width} = Dimensions.get('window');
 
 export default class IndexScreen extends React.Component {
   static navigationOptions = {
-    title: 'Ice Breakerr',
-    headerLeft: null,
-    gesturesEnabled: false,
+    header: null,
+    // title: 'Ice Breakerr',
+    // headerLeft: null,
+    // gesturesEnabled: false,
   };
 
   state = {

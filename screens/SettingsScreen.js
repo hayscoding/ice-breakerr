@@ -28,6 +28,7 @@ export default class SettingsScreen extends React.Component {
     
 
   componentWillMount() {
+    console.log('Settings Screen Log:\nUser data: ', this.state.user)
     this._navigating = false
   }
 

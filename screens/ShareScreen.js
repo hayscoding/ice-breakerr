@@ -13,26 +13,7 @@ import * as ServerAPI from '../modules/serverAPI'
 const {height, width} = Dimensions.get('window');
 const size = width/5.4
 
-export default class ShareScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Ice Breakerr',
-    headerLeft: null,
-    gesturesEnabled: false,
-  };
-
-  state = {
-    user: this.props.screenProps.user, 
-    statuses: exampleStatuses,
-    timing: false,
-    locationEnabled: false,
-    likeTimerDone: true,
-    nearbyProfiles: [],
-    geoQueryRegistration: {}, //Used to turn the geoQuery listener off
-  }
-  
-
-  componentWillMount() {
-    const exampleStatuses = [{
+const exampleStatuses = [{
       _id: "uid-1",
       username: "Haysss",
       location: "5 miles away",
@@ -56,6 +37,27 @@ export default class ShareScreen extends React.Component {
       upvotes: 10,
       downvotes: 5,
     }]
+
+export default class ShareScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Ice Breakerr',
+    headerLeft: null,
+    gesturesEnabled: false,
+  };
+
+  state = {
+    user: this.props.screenProps.user, 
+    statuses: exampleStatuses,
+    timing: false,
+    locationEnabled: false,
+    likeTimerDone: true,
+    nearbyProfiles: [],
+    geoQueryRegistration: {}, //Used to turn the geoQuery listener off
+  }
+  
+
+  componentWillMount() {
+    
 
       this._mounted = false
       this._navigating = false

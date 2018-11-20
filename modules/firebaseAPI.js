@@ -11,17 +11,19 @@ import { Alert, } from 'react-native'
 //     return firebase.auth().signInWithCredential(credential) // signin to firebase using facebook credential
 // }
 
-export const login = (email, password, cb) => {
+export const login = (email, password, cb = () => {}) => {
   firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((user) => cb(user))
-    .catch(function(error) {
-      if (errorCode === 'auth/wrong-password') {
-        alert('Wrong password.');
-      } else {
-        alert(errorMessage);
-      }
-      console.log(error);
-    });
+    .then((data) => {
+      getUserCb(data.uid, (user) => cb(user))
+    })
+    .catch((error) => logError(error));
+}
+
+const logError = (error) => {
+  if (error.code === 'auth/wrong-password')
+    alert('Wrong password.');
+  else
+    alert(error.message);
 }
 
 export const createUser = () => {
