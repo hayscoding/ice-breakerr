@@ -83,7 +83,7 @@ const LoginNavigator = StackNavigator(
 
 export default class RootNavigator extends React.Component {
   state = {
-      user: {},
+      user: null,
       hasUser: false,
       waiting: true,
       registeredToken: false,
@@ -97,13 +97,9 @@ export default class RootNavigator extends React.Component {
         this.setState({user: user, hasUser: true, waiting: false})
       })
     })
-    // this.checkForUser()
-    // this.setState({waiting: true})
   }
 
-  componentDidUpdate() {
-    
-  }
+
 
   componentWillUnmount() {
     this._notificationSubscription && this._notificationSubscription.remove();
@@ -139,8 +135,11 @@ export default class RootNavigator extends React.Component {
     //   )
     // else
     //   if(this.state.hasUser && this.state.registeredToken){
-      console.log('alksdjflkasdjflkasjdflkjaskld', this.state.user)
+      console.log('RootNavigator:\nUser data:', this.state.user)
+      if(this.state.user != null)
         return <RootStackNavigator screenProps={{user: this.state.user}}/>;
+      else
+        return <LoginNavigator />
       // }
       // else
       //   return <LoginNavigator />
