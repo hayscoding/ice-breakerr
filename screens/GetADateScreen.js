@@ -61,7 +61,7 @@ export default class GetADateScreen extends React.Component {
   }
 
   validatePhoneNumber(text) {
-    var re = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
+    var re = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/ //Accepts valid phone formats with '-' or not.
     return re.test(text);
 }
 
