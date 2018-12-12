@@ -15,7 +15,7 @@
     "icon": "./assets/icons/app-icon.png",
     "notification": {
       "icon": "./assets/icons/notification-icon.png",
-      "color": "#000000"
+      "color": "#00000f"
     },
     "loading": {
       "icon": "./assets/icons/loading-icon.png",
