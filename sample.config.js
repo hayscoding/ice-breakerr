@@ -5,12 +5,12 @@ var config = {
 	    //mongodb connection settings
 	    database: {
 			firebaseApiKey: "",
-			firebaseAuthDomain: "ice-breakerr-development.firebaseapp.com",
-			databaseURL: "https://ice-breakerr-development.firebaseio.com",
+			firebaseAuthDomain: "",
+			databaseURL: "",
  		},
 	    //server details
 	    server: {
-	        baseUrl: 'https://ice-breaker-server.herokuapp.com/'
+	        baseUrl: ''
 	    },
 	    //facebook api details
 	    facebook: {
@@ -23,12 +23,12 @@ var config = {
 	    //mongodb connection settings
 	    database: {
 			firebaseApiKey: "",
-			firebaseAuthDomain: "ice-breakerr.firebaseapp.com",
-			databaseURL: "https://ice-breakerr.firebaseio.com"
+			firebaseAuthDomain: "",
+			databaseURL: ""
 	 	}, 
 	    //server details
 	    server: {
-	        baseUrl: 'https://ice-breaker-server.herokuapp.com/'
+	        baseUrl: ''
 	    },
 	    //facebook api details
 	    facebook: {
