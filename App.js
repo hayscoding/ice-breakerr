@@ -14,6 +14,7 @@ var env = process.env.NODE_ENV || 'development';
 // var env = 'production'
 var config = require('./config')[env];
 
+//Change included sample.config.js to config.js & include your own variables.
 const firebaseConfig = {
    apiKey: config.database.firebaseApiKey,
    authDomain: config.database.firebaseAuthDomain,
