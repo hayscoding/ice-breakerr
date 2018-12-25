@@ -27,11 +27,11 @@
       ]
     },
     "ios": {
-      "bundleIdentifier": "city.icebreakerr.exp",
+      "bundleIdentifier": "com.icebreakerr.exp",
       "supportsTablet": true
     },
     "android": {
-      "package": "city.icebreakerr.exp",
+      "package": "com.icebreakerr.exp",
       "versionCode": 2
     }
   }
