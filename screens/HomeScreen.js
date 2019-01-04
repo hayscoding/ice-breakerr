@@ -166,7 +166,6 @@ export default class HomeScreen extends React.Component {
       const updatedMessages = this.state.messagePreviews
       const updatedProfiles = this.state.profiles
 
-      // console.log('mypenileindex is huge', messagesIndex, this.state.messagePreviews[messagesIndex])
       if(messagesIndex != -1) {
         const uidArray = [updatedMessages[messagesIndex].otherProfile, this.state.user.uid]
         uidArray.sort()
