@@ -1,7 +1,7 @@
 var config = {
 	development: {
 	    //url to be used in link generation
-	    url: 'http://www.icebreakerr.com',
+	    url: '',
 	    //mongodb connection settings
 	    database: {
 			firebaseApiKey: "",
